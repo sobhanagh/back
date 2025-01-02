@@ -48,3 +48,9 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/yourusername/gamatrain-backend.git
    cd gamatrain-backend
+
+
+### Run
+1. **Production**
+    ```bash
+    dotnet publish -c Release -o out      
