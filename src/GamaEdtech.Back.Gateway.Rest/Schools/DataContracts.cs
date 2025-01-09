@@ -1,10 +1,17 @@
 ﻿namespace GamaEdtech.Back.Gateway.Rest.Controllers;
 
-public class RegisterNewSchoolReq
+public class RegisterNewSchoolDto
 {
 	public SchoolNameDto Name { get; set; }
 	public int Type { get; set; }
 	public AddressDto Address { get; set; }
+}
+
+public class SchoolInListDto
+{
+	public Guid Id { get; set; }
+	public SchoolNameDto Name { get; set; }
+	public int Type { get; set; }
 }
 
 
@@ -30,3 +37,6 @@ public class LocationDto
 	public double Latitude { get; set; }
 	public double Longitude { get; set; }
 }
+
+
+
