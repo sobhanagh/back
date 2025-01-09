@@ -25,8 +25,8 @@ public class SchoolsController : ControllerBase
 	{
 		var schools = await _schoolRepository.FindByLocation(
 			location: new Location(
-				latitude: dto.Location.Latitude,
-				longitude: dto.Location.Longitude),
+				latitude: dto.Latitude,
+				longitude: dto.Longitude),
 			radiusInKm: dto.RadiusInKm);
 
 		return Ok(schools.Select(x => new SchoolInListDto

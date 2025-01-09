@@ -16,7 +16,8 @@ public class SchoolInListDto
 
 public class SerachByLocationDto
 {
-	public LocationDto Location { get; set; }
+	public double Latitude { get; set; }
+	public double Longitude { get; set; }
 	public double RadiusInKm { get; set; }
 }
 
