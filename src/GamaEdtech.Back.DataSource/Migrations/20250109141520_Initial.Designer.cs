@@ -6,13 +6,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace GamaEdtech.Back.DataSource.Migrations
 {
     [DbContext(typeof(GamaEdtechDbContext))]
-    [Migration("20250108181944_Initial")]
+    [Migration("20250109141520_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -88,13 +89,10 @@ namespace GamaEdtech.Back.DataSource.Migrations
                                     b2.Property<Guid>("AddressSchoolId")
                                         .HasColumnType("uniqueidentifier");
 
-                                    b2.Property<double>("Latitude")
-                                        .HasColumnType("float")
-                                        .HasColumnName("AddressLatitude");
-
-                                    b2.Property<double>("Longitude")
-                                        .HasColumnType("float")
-                                        .HasColumnName("AddressLongitude");
+                                    b2.Property<Point>("Geography")
+                                        .IsRequired()
+                                        .HasColumnType("GEOGRAPHY")
+                                        .HasColumnName("AddressGeography");
 
                                     b2.HasKey("AddressSchoolId");
 

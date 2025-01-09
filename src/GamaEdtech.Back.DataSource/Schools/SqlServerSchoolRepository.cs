@@ -22,16 +22,30 @@ public class SqlServerSchoolRepository : ISchoolRepository
 		if (name is not null)
 			schools = schools.Where(x => x.Name == name);
 
-
-		if (location is not null)
-			schools = schools.Where(x => x.Address.Location == location);
-
 		return await schools.ToListAsync();
 
+	}
+
+	public async Task<IReadOnlyList<School>> FindByLocation(
+		Location location, double radiusInKm = 0)
+	{
+		var geometryFactory = 
+			NetTopologySuite.NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+		var searchLocation = geometryFactory.CreatePoint(
+			new NetTopologySuite.Geometries.Coordinate(location.Longitude, location.Latitude));
+
+		return await _dbContext.Schools
+			.Where(s => s.Address.Location.Geography.Distance(searchLocation) <= radiusInKm * 1000)
+			.ToListAsync();
 	}
 
 	public async Task Add(School school)
 	{
 		await _dbContext.Schools.AddAsync(school);
+	}
+
+	public Task<IReadOnlyList<School>> Find(SchoolName? name = null)
+	{
+		throw new NotImplementedException();
 	}
 }

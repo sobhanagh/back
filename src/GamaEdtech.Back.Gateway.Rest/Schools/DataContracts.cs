@@ -14,6 +14,12 @@ public class SchoolInListDto
 	public int Type { get; set; }
 }
 
+public class SerachByLocationDto
+{
+	public LocationDto Location { get; set; }
+	public double RadiusInKm { get; set; }
+}
+
 
 public class SchoolNameDto
 {

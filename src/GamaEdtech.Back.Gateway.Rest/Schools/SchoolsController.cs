@@ -20,14 +20,18 @@ public class SchoolsController : ControllerBase
 	}
 
 	[HttpGet("geo-search")]
-	public async Task<IActionResult> SearchByLocation([FromQuery] LocationDto dto)
+	public async Task<IActionResult> SearchByLocation(
+		[FromQuery] SerachByLocationDto dto)
 	{
-		var schools = await _schoolRepository.Find(location: new Location(
-			latitude: dto.Latitude,
-			longitude: dto.Longitude));
+		var schools = await _schoolRepository.FindByLocation(
+			location: new Location(
+				latitude: dto.Location.Latitude,
+				longitude: dto.Location.Longitude),
+			radiusInKm: dto.RadiusInKm);
 
 		return Ok(schools.Select(x => new SchoolInListDto
 		{
+			Id = x.Id,
 			Name = new SchoolNameDto
 			{
 				InEnglish = x.Name.InEnglish,

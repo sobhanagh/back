@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using GamaEdtech.Back.Domain.Schools;
+using NetTopologySuite.Geometries;
 
 namespace GamaEdtech.Back.DataSource.Schools;
 
@@ -32,13 +33,10 @@ internal class SchoolConfiguration : IEntityTypeConfiguration<School>
 
 			b.OwnsOne(x => x.Location, b =>
 			{
-				b.Property(location => location.Latitude)
-					.HasColumnName("AddressLatitude")
-					.IsRequired();
-
-				b.Property(location => location.Longitude)
-					.HasColumnName("AddressLongitude")
-					.IsRequired();
+				b.Property(l => l.Geography)
+					.HasColumnType("GEOGRAPHY")
+					.HasColumnName("AddressGeography")
+					.IsRequired(); // Ensures the column is stored as a spatial type
 			});
 
 			b.Property(name => name.Country)

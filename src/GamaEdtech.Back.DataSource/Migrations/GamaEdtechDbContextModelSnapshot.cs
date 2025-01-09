@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
@@ -85,13 +86,10 @@ namespace GamaEdtech.Back.DataSource.Migrations
                                     b2.Property<Guid>("AddressSchoolId")
                                         .HasColumnType("uniqueidentifier");
 
-                                    b2.Property<double>("Latitude")
-                                        .HasColumnType("float")
-                                        .HasColumnName("AddressLatitude");
-
-                                    b2.Property<double>("Longitude")
-                                        .HasColumnType("float")
-                                        .HasColumnName("AddressLongitude");
+                                    b2.Property<Point>("Geography")
+                                        .IsRequired()
+                                        .HasColumnType("GEOGRAPHY")
+                                        .HasColumnName("AddressGeography");
 
                                     b2.HasKey("AddressSchoolId");
 

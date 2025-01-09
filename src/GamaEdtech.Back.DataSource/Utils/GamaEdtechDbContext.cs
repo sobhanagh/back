@@ -20,7 +20,9 @@ public class GamaEdtechDbContext : DbContext
 		base.OnConfiguring(optionsBuilder);
 		optionsBuilder
 			//.UseLazyLoadingProxies()
-			.UseSqlServer(_connectionString.Value);
+			.UseSqlServer(
+			_connectionString.Value,
+			x => x.UseNetTopologySuite());
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)

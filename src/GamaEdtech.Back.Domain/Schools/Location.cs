@@ -1,21 +1,26 @@
 ﻿using CSharpFunctionalExtensions;
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
 
 namespace GamaEdtech.Back.Domain.Schools;
 
 public class Location : ValueObject
 {
-	public double Latitude { get; }
-	public double Longitude { get; }
+	public Point Geography { get; private set; }
+
+	protected Location() { }
 
 	public Location(double latitude, double longitude)
 	{
-		Latitude = latitude;
-		Longitude = longitude;
+		var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
+		Geography = geometryFactory.CreatePoint(new Coordinate(longitude, latitude));
 	}
+
+	public double Latitude => Geography.Y; // Latitude is Y in NetTopologySuite
+	public double Longitude => Geography.X; // Longitude is X in NetTopologySuite
 
 	protected override IEnumerable<object> GetEqualityComponents()
 	{
-		yield return Latitude;
-		yield return Longitude;
+		yield return Geography;
 	}
 }
