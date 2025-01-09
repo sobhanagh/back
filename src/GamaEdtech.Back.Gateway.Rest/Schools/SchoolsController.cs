@@ -19,6 +19,23 @@ public class SchoolsController : ControllerBase
 		_schoolRepository = schoolRepository;
 	}
 
+	[HttpGet]
+	public async Task<IActionResult> Search([FromQuery] string? name)
+	{
+		var schools = await _schoolRepository.Find(name);
+
+		return Ok(schools.Select(x => new SchoolInListDto
+		{
+			Id = x.Id,
+			Name = new SchoolNameDto
+			{
+				InEnglish = x.Name.InEnglish,
+				InLocalLanguage = x.Name.InLocalLanguage,
+			},
+			Type = x.Type == SchoolType.Public ? 0 : 1
+		}));
+	}
+
 	[HttpGet("geo-search")]
 	public async Task<IActionResult> SearchByLocation(
 		[FromQuery] SerachByLocationDto dto)

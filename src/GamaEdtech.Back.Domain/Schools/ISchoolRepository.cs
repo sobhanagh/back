@@ -2,7 +2,7 @@
 
 public interface ISchoolRepository
 {
-	public Task<IReadOnlyList<School>> Find(SchoolName? name = null);
+	public Task<IReadOnlyList<School>> Find(string? namePattern = null);
 	public Task<IReadOnlyList<School>> FindByLocation(
 		Location location, double radiusInKm = 0);
 

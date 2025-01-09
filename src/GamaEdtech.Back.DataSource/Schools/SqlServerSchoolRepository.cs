@@ -13,17 +13,16 @@ public class SqlServerSchoolRepository : ISchoolRepository
 		_dbContext = dbContext;
 	}
 
-	public async Task<IReadOnlyList<School>> Find(
-		SchoolName? name = null, 
-		Location? location = null)
+	public async Task<IReadOnlyList<School>> Find(string? namePattern = null)
 	{
 		IQueryable<School> schools = _dbContext.Schools;
 
-		if (name is not null)
-			schools = schools.Where(x => x.Name == name);
+		if (namePattern is not null)
+			schools = schools.Where(
+				x => x.Name.InEnglish.Contains(namePattern) ||
+				x.Name.InLocalLanguage.Contains(namePattern));
 
 		return await schools.ToListAsync();
-
 	}
 
 	public async Task<IReadOnlyList<School>> FindByLocation(
@@ -42,10 +41,5 @@ public class SqlServerSchoolRepository : ISchoolRepository
 	public async Task Add(School school)
 	{
 		await _dbContext.Schools.AddAsync(school);
-	}
-
-	public Task<IReadOnlyList<School>> Find(SchoolName? name = null)
-	{
-		throw new NotImplementedException();
 	}
 }
