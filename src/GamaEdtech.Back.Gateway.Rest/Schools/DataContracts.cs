@@ -1,6 +1,6 @@
 ﻿namespace GamaEdtech.Back.Gateway.Rest.Controllers;
 
-public class RegisterNewSchoolDto
+public class RegisterSchoolDto
 {
 	public SchoolNameDto Name { get; set; }
 	public int Type { get; set; }

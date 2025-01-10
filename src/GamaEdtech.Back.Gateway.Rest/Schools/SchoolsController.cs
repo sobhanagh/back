@@ -1,5 +1,7 @@
-﻿using GamaEdtech.Back.DataSource.Utils;
+﻿using CSharpFunctionalExtensions;
+using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Schools;
+using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GamaEdtech.Back.Gateway.Rest.Controllers;
@@ -40,10 +42,15 @@ public class SchoolsController : ControllerBase
 	public async Task<IActionResult> SearchByLocation(
 		[FromQuery] SerachByLocationDto dto)
 	{
-		var schools = await _schoolRepository.FindByLocation(
-			location: new Location(
+		var locationOrError = Location.Create(
 				latitude: dto.Latitude,
-				longitude: dto.Longitude),
+				longitude: dto.Longitude);
+
+		if (locationOrError.IsFailure)
+			return BadRequest(Envelope.Error(locationOrError.Error));
+
+		var schools = await _schoolRepository.FindByLocation(
+			location: locationOrError.Value,
 			radiusInKm: dto.RadiusInKm);
 
 		return Ok(schools.Select(x => new SchoolInListDto
@@ -59,23 +66,38 @@ public class SchoolsController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> RegisterNewSchool(
-		[FromBody] RegisterNewSchoolDto dto)
+	public async Task<IActionResult> RegisterSchool(
+		[FromBody] RegisterSchoolDto dto)
 	{
-		var school = new School(
-			name: new SchoolName(
-				inEnglish: dto.Name.InEnglish, 
-				inLocalLanguage: dto.Name.InLocalLanguage),
-			type: dto.Type == 0 ? SchoolType.Public : SchoolType.Private,
-			address: new Address(
-				description: dto.Address.Description, 
-				location: new Location(
-					latitude: dto.Address.Location.Latitude, 
-					longitude: dto.Address.Location.Longitude),
+		var nameOrError = SchoolName.Create(
+				nameInEnglish: dto.Name.InEnglish,
+				nameInLocalLanguage: dto.Name.InLocalLanguage);
+
+		if (nameOrError.IsFailure)
+			return BadRequest(Envelope.Error(nameOrError.Error));
+
+		var locationOrError = Location.Create(
+					latitude: dto.Address.Location.Latitude,
+					longitude: dto.Address.Location.Longitude);
+
+		if (locationOrError.IsFailure)
+			return BadRequest(Envelope.Error(locationOrError.Error));
+
+		var addressOrError = Address.Create(
+				description: dto.Address.Description,
+				location: locationOrError.Value,
 				country: dto.Address.Country,
 				state: dto.Address.State,
 				city: dto.Address.City,
-				zipCode: dto.Address.ZipCode));
+				zipCode: dto.Address.ZipCode);
+
+		if (addressOrError.IsFailure)
+			return BadRequest(Envelope.Error(addressOrError.Error));
+
+		var school = new School(
+			name: nameOrError.Value,
+			type: dto.Type == 0 ? SchoolType.Public : SchoolType.Private,
+			address: addressOrError.Value);
 
 		await _schoolRepository.Add(school);
 		await _dbContext.SaveChangesAsync();

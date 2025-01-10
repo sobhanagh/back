@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using GamaEdtech.Back.Domain.Schools;
-using NetTopologySuite.Geometries;
 
 namespace GamaEdtech.Back.DataSource.Schools;
 
