@@ -42,15 +42,12 @@ public class SchoolsController : ControllerBase
 	public async Task<IActionResult> SearchByLocation(
 		[FromQuery] SearchByLocationDto dto)
 	{
-		var locationOrError = Location.Create(
+		var location = new Location(
 				latitude: dto.Latitude,
 				longitude: dto.Longitude);
 
-		if (locationOrError.IsFailure)
-			return BadRequest(Envelope.Error(locationOrError.Error));
-
 		var schools = await _schoolRepository.FindByLocation(
-			location: locationOrError.Value,
+			location: location,
 			radiusInKm: dto.RadiusInKm);
 
 		return Ok(schools.Select(x => new SchoolInListDto
@@ -69,35 +66,27 @@ public class SchoolsController : ControllerBase
 	public async Task<IActionResult> RegisterSchool(
 		[FromBody] RegisterSchoolDto dto)
 	{
-		var nameOrError = SchoolName.Create(
-				nameInEnglish: dto.Name.InEnglish,
-				nameInLocalLanguage: dto.Name.InLocalLanguage);
+		var name = new SchoolName(
+				inEnglish: dto.Name.InEnglish,
+				inLocalLanguage: dto.Name.InLocalLanguage);
 
-		if (nameOrError.IsFailure)
-			return BadRequest(Envelope.Error(nameOrError.Error));
-
-		var locationOrError = Location.Create(
+		var location = new Location(
 					latitude: dto.Address.Location.Latitude,
 					longitude: dto.Address.Location.Longitude);
 
-		if (locationOrError.IsFailure)
-			return BadRequest(Envelope.Error(locationOrError.Error));
-
-		var addressOrError = Address.Create(
+		var address = new Address(
 				description: dto.Address.Description,
-				location: locationOrError.Value,
+				location: location,
 				country: dto.Address.Country,
 				state: dto.Address.State,
 				city: dto.Address.City,
 				zipCode: dto.Address.ZipCode);
 
-		if (addressOrError.IsFailure)
-			return BadRequest(Envelope.Error(addressOrError.Error));
 
 		var school = new School(
-			name: nameOrError.Value,
+			name: name,
 			type: dto.Type == 0 ? SchoolType.Public : SchoolType.Private,
-			address: addressOrError.Value);
+			address: address);
 
 		await _schoolRepository.Add(school);
 		await _dbContext.SaveChangesAsync();
