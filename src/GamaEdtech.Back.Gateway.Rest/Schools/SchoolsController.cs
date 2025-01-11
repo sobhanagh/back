@@ -77,7 +77,6 @@ public class SchoolsController : ControllerBase
 		var address = new Address(
 				description: dto.Address.Description,
 				location: location,
-				country: dto.Address.Country,
 				state: dto.Address.State,
 				city: dto.Address.City,
 				zipCode: dto.Address.ZipCode);
