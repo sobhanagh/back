@@ -14,7 +14,7 @@ public class SchoolInListDto
 	public int Type { get; set; }
 }
 
-public class SerachByLocationDto
+public class SearchByLocationDto
 {
 	public double Latitude { get; set; }
 	public double Longitude { get; set; }

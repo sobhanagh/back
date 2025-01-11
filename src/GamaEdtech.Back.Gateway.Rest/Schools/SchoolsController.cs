@@ -40,7 +40,7 @@ public class SchoolsController : ControllerBase
 
 	[HttpGet("geo-search")]
 	public async Task<IActionResult> SearchByLocation(
-		[FromQuery] SerachByLocationDto dto)
+		[FromQuery] SearchByLocationDto dto)
 	{
 		var locationOrError = Location.Create(
 				latitude: dto.Latitude,
