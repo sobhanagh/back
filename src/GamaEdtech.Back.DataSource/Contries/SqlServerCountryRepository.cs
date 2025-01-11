@@ -15,9 +15,9 @@ public class SqlServerCountryRepository : ICountryRepository
 		_dbContext = dbContext;
 	}
 
-	public async Task Add(Country country)
+	public async Task<Country?> GetBy(Guid id)
 	{
-		await _dbContext.Countries.AddAsync(country);
+		return await _dbContext.Countries.FindAsync(id);
 	}
 
 	public async Task<bool> ContainsCountrywithName(string name)
@@ -30,5 +30,10 @@ public class SqlServerCountryRepository : ICountryRepository
 	{
 		return await _dbContext.Countries
 			.SingleOrDefaultAsync(x => x.Code == code) is not null;
+	}
+
+	public async Task Add(Country country)
+	{
+		await _dbContext.Countries.AddAsync(country);
 	}
 }

@@ -12,4 +12,10 @@ public class Country : Entity<Guid>
 		Name = name;
 		Code = code;
 	}
+
+	public void EditInfo(string name, string code)
+	{
+		Name = name;
+		Code = code;
+	}
 }

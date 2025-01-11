@@ -21,8 +21,8 @@ public class CountriesController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> AddCountry(AddCountryDto dto)
-	{
+	public async Task<IActionResult> AddCountry([FromBody] AddCountryDto dto)
+	{ 
 		if (await _countryRepository.ContainsCountrywithName(dto.Name))
 			return BadRequest(Envelope.Error("name is duplicate"));
 
@@ -35,5 +35,27 @@ public class CountriesController : ControllerBase
 		await _dbCotext.SaveChangesAsync();
 
 		return Created();
+	}
+
+	[HttpPatch("{id:guid}")]
+	public async Task<IActionResult> EditCountryInfo(
+		[FromRoute] Guid id, [FromBody] EditCountryInfoDto dto)
+	{
+		var country = await _countryRepository.GetBy(id);
+
+		if (country is null)
+			return NotFound();
+
+		if (await _countryRepository.ContainsCountrywithName(dto.Name))
+			return BadRequest(Envelope.Error("name is duplicate"));
+
+		if (await _countryRepository.ContainsCountrywithCode(dto.Code))
+			return BadRequest(Envelope.Error("code is duplicate"));
+
+		country.EditInfo(dto.Name, dto.Code);
+
+		await _dbCotext.SaveChangesAsync();
+
+		return NoContent();
 	}
 }
