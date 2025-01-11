@@ -38,11 +38,6 @@ internal class SchoolConfiguration : IEntityTypeConfiguration<School>
 					.IsRequired(); // Ensures the column is stored as a spatial type
 			});
 
-			b.Property(name => name.Country)
-				.HasColumnName("AddressCountry")
-				.HasMaxLength(50)
-				.IsRequired();
-
 			b.Property(name => name.State)
 				.HasColumnName("AddressState")
 				.HasMaxLength(50)

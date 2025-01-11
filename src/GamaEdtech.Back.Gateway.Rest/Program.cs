@@ -1,6 +1,9 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using GamaEdtech.Back.DataSource.Schools;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Schools;
+using GamaEdtech.Back.Gateway.Rest.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +11,16 @@ var conectionString =
 	new ConnectionString(builder.Configuration.GetConnectionString("Default")!);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services
+	.AddControllers()
+	.ConfigureApiBehaviorOptions(options =>
+		options.InvalidModelStateResponseFactory = ModelStateValidator.Validate); ;
+
+builder.Services
+	.AddFluentValidationAutoValidation()
+	.AddFluentValidationClientsideAdapters()
+	.AddValidatorsFromAssemblyContaining<Program>(); ;
+
 builder.Services.AddSingleton(conectionString);
 builder.Services.AddScoped<GamaEdtechDbContext>();
 builder.Services.AddTransient<ISchoolRepository, SqlServerSchoolRepository>();
