@@ -6,4 +6,5 @@ public interface ICountryRepository
 	public Task<bool> ContainsCountrywithName(string name);
 	public Task<bool> ContainsCountrywithCode(string code);
 	public Task Add(Country country);
+	public Task Remove(Country country);
 }

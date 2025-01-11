@@ -58,4 +58,18 @@ public class CountriesController : ControllerBase
 
 		return NoContent();
 	}
+
+	[HttpDelete("{id:guid}")]
+	public async Task<IActionResult> RemoveCountry([FromRoute] Guid id)
+	{
+		var country = await _countryRepository.GetBy(id);
+
+		if (country is null)
+			return NotFound();
+
+		await _countryRepository.Remove(country);
+		await _dbCotext.SaveChangesAsync();
+
+		return NoContent();
+	}
 }

@@ -36,4 +36,9 @@ public class SqlServerCountryRepository : ICountryRepository
 	{
 		await _dbContext.Countries.AddAsync(country);
 	}
+
+	public async Task Remove(Country country)
+	{
+		_dbContext.Countries.Remove(country);
+	}
 }
