@@ -3,7 +3,7 @@ name: Build and deploy ASP.Net Core app to an Azure Web App
 
 env:
   AZURE_WEBAPP_NAME: gamatrain  # Set this to the name of your Azure Web App
-  AZURE_WEBAPP_PACKAGE_PATH: 'src/GamaEdtech.Back.Gateway.Rest'  # Path to the REST API project in your solution
+  AZURE_WEBAPP_PACKAGE_PATH: '.'  # Path to the REST API project in your solution
   DOTNET_VERSION: '9'          # Set this to the .NET Core version to use
 
 on:
