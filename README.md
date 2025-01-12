@@ -53,11 +53,36 @@ Before you begin, ensure you have the following installed:
 ### Installation
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/gamatrain-backend.git
-   cd gamatrain-backend
-
+   git https://github.com/GamaEdtech/back.git
+   cd back
+   ``` 
 
 ### Run
-1. **Production**
-    ```bash
-    dotnet publish -c Release -o out      
+1. **Development**
+
+To open solution in visual studio run the following command
+
+  ```bash
+   start back.sln 
+   ``` 
+
+
+To create database and tables, go to tools menu and follow the below path:
+
+(Tools >> NuGet Package Manager >> Package Manager Console)
+
+![image](https://github.com/user-attachments/assets/097dccba-be05-45ce-862b-e210c8b5263e)
+
+Then Select the GamaEdTech.back.DataSource as Default Project:
+
+![image](https://github.com/user-attachments/assets/35346f7c-bf02-4277-b139-6d406dd56d13)
+
+Then run the following command:
+
+   ```bash
+   update-database  
+   ```
+
+![image](https://github.com/user-attachments/assets/3752b597-1c2c-4cea-bec7-bbd61772fd63)
+
+Then press ctrl + F5 to run the project.
