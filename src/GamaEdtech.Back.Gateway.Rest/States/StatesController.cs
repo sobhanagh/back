@@ -3,6 +3,7 @@ using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GamaEdtech.Back.Gateway.Rest.States;
 
@@ -44,5 +45,19 @@ public class StatesController : ControllerBase
 		await _dbContext.SaveChangesAsync();
 
 		return Created();
+	}
+
+	[HttpDelete("{id:guid}")]
+	public async Task<IActionResult> RemoveState([FromRoute] Guid id)
+	{
+		var state = await _stateRepository.GetBy(id);
+
+		if (state is null)
+			return NotFound();
+
+		await _stateRepository.Remove(state);
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
 	}
 }

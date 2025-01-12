@@ -13,6 +13,11 @@ public class SqlServerStateRepository : IStateRepository
 		_dbContext = dbContext;
 	}
 
+	public async Task<State?> GetBy(Guid id)
+	{
+		return await _dbContext.States.FindAsync(id);
+	}
+
 	public async Task<bool> ContainsStateWithNameInCountry(string name, Guid countryId)
 	{
 		return await _dbContext.States
@@ -30,5 +35,10 @@ public class SqlServerStateRepository : IStateRepository
 	public async Task Add(State state)
 	{
 		await _dbContext.States.AddAsync(state);
+	}
+
+	public async Task Remove(State state)
+	{
+		_dbContext.States.Remove(state);
 	}
 }
