@@ -29,6 +29,30 @@ public class StatesController : ControllerBase
 		_stateRepository = stateRepository;
 	}
 
+	///<summary>
+	/// Find States
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	/// 
+	///     GET /States
+	///     
+	///		Query params:
+	///		{
+	///			"page": int - Positive - Default(1),
+	///			"pageSize": int - Range Between [1, 50], Default(10), 
+	///			"countryId": guid - nullable
+	///			"sortBy": "Name" or "Code" - Default("Name"),
+	///			"order": "ASC" or "DESC" - Default("ASC"),
+	///		}
+	///</remarks>
+	///
+	///<response code="200">Returns list of states 
+	///						(returns empty list if no state is found based on search queries)
+	///</response>
+	///<response code="400"></response>
+	///<response code="500">Server error</response>
 	[HttpGet]
 	public async Task<IActionResult> FindStates([FromQuery] FindStatesDto dto)
 	{
@@ -54,6 +78,27 @@ public class StatesController : ControllerBase
 		}
 	}
 
+	///<summary>
+	/// Add state to country
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     POST /States
+	///     
+	///     Request body:
+	///     {
+	///		  "name": Required - MaxLenght(50),
+	///		  "code": Required - ISO Alpha-2/Alpha-3,
+	///		  "countryId": Required - GUID
+	///		}
+	///</remarks>
+	///
+	///<response code="201"></response>
+	///<response code="400"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
 	[HttpPost]
 	public async Task<IActionResult> AddStateToCountry([FromBody] AddStateDto dto)
 	{
@@ -76,6 +121,26 @@ public class StatesController : ControllerBase
 		return Created();
 	}
 
+	///<summary>
+	/// Edit state info (name and code)
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     PUT /States/{id:guid}/EditInfo
+	///     
+	///     Request body:
+	///     {
+	///		  "name": Required - MaxLenght(50),
+	///		  "code": Required - ISO Alpha-2/Alpha-3
+	///		}
+	///</remarks>
+	///
+	///<response code="204"></response>
+	///<response code="400"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
 	[HttpPut("{id:guid}/EditInfo")]
 	public async Task<IActionResult> EditStateInfo(
 		[FromRoute] Guid id, [FromBody] EditStateInfoDto dto)
@@ -98,6 +163,25 @@ public class StatesController : ControllerBase
 		return NoContent();
 	}
 
+	///<summary>
+	/// Move state to another country
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     PUT /States/{id:guid}/ChangeCountry
+	///     
+	///     Request body:
+	///     {
+	///		  "countryId": Required - GUID
+	///		}
+	///</remarks>
+	///
+	///<response code="204"></response>
+	///<response code="400"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
 	[HttpPut("{id:guid}/ChangeCountry")]
 	public async Task<IActionResult> MoveStateToAnotherCountry(
 		[FromRoute] Guid id, [FromBody] MoveStateToAnotherDto dto)
@@ -125,6 +209,19 @@ public class StatesController : ControllerBase
 		return NoContent();
 	}
 
+	///<summary>
+	/// Remove state
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     DELETE /States/{id:guid}
+	///</remarks>
+	///
+	///<response code="204"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
 	[HttpDelete("{id:guid}")]
 	public async Task<IActionResult> RemoveState([FromRoute] Guid id)
 	{
