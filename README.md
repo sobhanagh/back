@@ -29,10 +29,14 @@ Gamatrain Backend is an ASP.NET Core-based RESTful API designed to support the G
 
 ## Technology Stack
 - **Backend Framework:** ASP.NET Core
-- **Database:** PostgreSQL
+- **Database:** SQL Server
 - **Authentication:** JWT (JSON Web Token)
 - **Development Tools:** 
   - Entity Framework Core
+  - Dapper
+  - Fluent Validation
+  - XUnit
+  - Fluent Assertion
   - Swagger (API Documentation)
 
 ---
@@ -41,7 +45,10 @@ Gamatrain Backend is an ASP.NET Core-based RESTful API designed to support the G
 
 ### Prerequisites
 Before you begin, ensure you have the following installed:
-- [.NET SDK 7.0 or later](https://dotnet.microsoft.com/download)
+- [.NET SDK 9.0 or later](https://dotnet.microsoft.com/download)
+- [Visual Studio Community 2022 - v17.12.3 or later](https://visualstudio.microsoft.com/vs/community/)
+- [SQL Server 2022 or later](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [Microsoft SQL Server management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16#download-ssms)
 
 ### Installation
 1. **Clone the Repository:**
