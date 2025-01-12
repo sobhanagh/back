@@ -1,7 +1,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using GamaEdtech.Back.DataSource.Contries;
 using GamaEdtech.Back.DataSource.Schools;
 using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.OpenApi.Models;
@@ -26,6 +28,7 @@ builder.Services
 builder.Services.AddSingleton(conectionString);
 builder.Services.AddScoped<GamaEdtechDbContext>();
 builder.Services.AddTransient<ISchoolRepository, SqlServerSchoolRepository>();
+builder.Services.AddTransient<ICountryRepository, SqlServerCountryRepository>();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(options =>
 {

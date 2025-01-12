@@ -1,4 +1,6 @@
-﻿using GamaEdtech.Back.DataSource.Schools;
+﻿using GamaEdtech.Back.DataSource.Contries;
+using GamaEdtech.Back.DataSource.Schools;
+using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,7 @@ public class GamaEdtechDbContext : DbContext
 	}
 
 	public DbSet<School> Schools { get; set; }
+	public DbSet<Country> Countries { get; set; }
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
@@ -34,6 +37,7 @@ public class GamaEdtechDbContext : DbContext
 	private static void ApplyConfigurations(ModelBuilder modelBuilder)
 	{
 		modelBuilder.ApplyConfiguration(new SchoolConfiguration());
+		modelBuilder.ApplyConfiguration(new CountryConfiguration());
 	}
 }
 
