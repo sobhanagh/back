@@ -4,7 +4,6 @@ using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using System.Globalization;
 
 namespace GamaEdtech.Back.Gateway.Rest.Countries;
 
@@ -45,7 +44,7 @@ public class CountriesController : ControllerBase
 	///</remarks>
 	///
 	///<response code="200">Returns list of contries 
-	///						(returns empty list if no school is found based on search queries)
+	///						(returns empty list if no country is found based on search queries)
 	///</response>
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
@@ -137,10 +136,10 @@ public class CountriesController : ControllerBase
 		if (country is null)
 			return NotFound();
 
-		if (await _countryRepository.ContainsCountrywithName(dto.Name))
+		if (dto.Name != country.Name && await _countryRepository.ContainsCountrywithName(dto.Name))
 			return BadRequest(Envelope.Error("name is duplicate"));
 
-		if (await _countryRepository.ContainsCountrywithCode(dto.Code))
+		if (dto.Code != country.Code && await _countryRepository.ContainsCountrywithCode(dto.Code))
 			return BadRequest(Envelope.Error("code is duplicate"));
 
 		country.EditInfo(dto.Name, dto.Code);
