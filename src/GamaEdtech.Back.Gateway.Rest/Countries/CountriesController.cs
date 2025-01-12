@@ -1,7 +1,10 @@
-﻿using GamaEdtech.Back.DataSource.Utils;
+﻿using Dapper;
+using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using System.Globalization;
 
 namespace GamaEdtech.Back.Gateway.Rest.Countries;
 
@@ -9,15 +12,41 @@ namespace GamaEdtech.Back.Gateway.Rest.Countries;
 [ApiController]
 public class CountriesController : ControllerBase
 {
+	private readonly ConnectionString _connectionString;
 	private readonly GamaEdtechDbContext _dbCotext;
 	private readonly ICountryRepository _countryRepository;
 
 	public CountriesController(
+		ConnectionString connectionString,
 		GamaEdtechDbContext dbCotext, 
 		ICountryRepository countryRepository)
 	{
+		_connectionString = connectionString;
 		_dbCotext = dbCotext;
 		_countryRepository = countryRepository;
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> FindContries([FromQuery] FindCountriesDto dto)
+	{
+		var query = @"
+            SELECT [Id], [Name], [Code]
+            FROM [GamaEdtech].[dbo].[Country]
+            ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+		using (var connection = new SqlConnection(_connectionString.Value))
+		{
+			var contries = await connection.QueryAsync<ContryInListDto>(
+				query,
+				new 
+				{
+					Offset = (dto.Page - 1) * dto.PageSize, 
+					PageSize = dto.PageSize,
+				});
+
+			return Ok(Envelope.Ok(contries));
+		}
 	}
 
 	[HttpPost]
