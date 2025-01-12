@@ -26,6 +26,29 @@ public class CountriesController : ControllerBase
 		_countryRepository = countryRepository;
 	}
 
+	///<summary>
+	/// Find Countries
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	/// 
+	///     GET /Countries
+	///     
+	///		Query params:
+	///		{
+	///			"page": int - Positive - Default(1),
+	///			"pageSize": int - Range Between [1, 50], Default(10), 
+	///			"sortBy": "Name" or "Code" - Default("Name"),
+	///			"order": "ASC" or "DESC" - Default("ASC"),
+	///		}
+	///</remarks>
+	///
+	///<response code="200">Returns list of contries 
+	///						(returns empty list if no school is found based on search queries)
+	///</response>
+	///<response code="400"></response>
+	///<response code="500">Server error</response>
 	[HttpGet]
 	public async Task<IActionResult> FindContries([FromQuery] FindCountriesDto dto)
 	{
@@ -49,6 +72,25 @@ public class CountriesController : ControllerBase
 		}
 	}
 
+	///<summary>
+	/// Add Country
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     POST /Countries
+	///     
+	///     Request body:
+	///     {
+	///		  "name": Required - MaxLenght(50),
+	///		  "code": Required - ISO Alpha-2/Alpha-3
+	///		}
+	///</remarks>
+	///
+	///<response code="201"></response>
+	///<response code="400"></response>
+	///<response code="500">Server error</response>
 	[HttpPost]
 	public async Task<IActionResult> AddCountry([FromBody] AddCountryDto dto)
 	{ 
@@ -66,6 +108,26 @@ public class CountriesController : ControllerBase
 		return Created();
 	}
 
+	///<summary>
+	/// Edit Country info
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     PATCH /Countries/{id:guid}
+	///     
+	///     Request body:
+	///     {
+	///		  "name": Required - MaxLenght(50),
+	///		  "code": Required - ISO Alpha-2/Alpha-3
+	///		}
+	///</remarks>
+	///
+	///<response code="204"></response>
+	///<response code="400"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
 	[HttpPatch("{id:guid}")]
 	public async Task<IActionResult> EditCountryInfo(
 		[FromRoute] Guid id, [FromBody] EditCountryInfoDto dto)
@@ -88,6 +150,19 @@ public class CountriesController : ControllerBase
 		return NoContent();
 	}
 
+	///<summary>
+	/// Remove Country
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     DELETE /Countries/{id:guid}
+	///</remarks>
+	///
+	///<response code="204"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
 	[HttpDelete("{id:guid}")]
 	public async Task<IActionResult> RemoveCountry([FromRoute] Guid id)
 	{
