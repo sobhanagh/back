@@ -2,11 +2,9 @@
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
-using GamaEdtech.Back.Gateway.Rest.Countries;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 namespace GamaEdtech.Back.Gateway.Rest.States;
 
@@ -78,55 +76,27 @@ public class StatesController : ControllerBase
 		return Created();
 	}
 
-	//[HttpPut("{id:guid}")]
-	//public async Task<IActionResult> EditStateInfo(
-	//	[FromRoute] Guid id, [FromBody] EditStateInfoDto dto)
-	//{
-	//	var state = await _stateRepository.GetBy(id);
+	[HttpPut("{id:guid}/EditInfo")]
+	public async Task<IActionResult> EditStateInfo(
+		[FromRoute] Guid id, [FromBody] EditStateInfoDto dto)
+	{
+		var state = await _stateRepository.GetBy(id);
 
-	//	if (state is null)
-	//		return NotFound();
+		if (state is null)
+			return NotFound();
 
+		if (dto.Name != state.Name && await _stateRepository.ContainsStateWithNameInCountry(dto.Name, state.CountryId))
+			return BadRequest(Envelope.Error("name is duplicate"));
 
-	//	if (dto.Name != state.Name && await _stateRepository.ContainsStateWithNameInCountry(dto.Name, state.CountryId))
-	//		return BadRequest(Envelope.Error("name is duplicate"));
+		if (dto.Code != state.Code && await _stateRepository.ContainsStateWithCodeInCountry(dto.Code, state.CountryId))
+			return BadRequest(Envelope.Error("code is duplicate"));
 
-	//	if (dto.Code != state.Code && await _stateRepository.ContainsStateWithCodeInCountry(dto.Code, state.CountryId))
-	//		return BadRequest(Envelope.Error("code is duplicate"));
+		state.EditInfo(dto.Name, dto.Code);
 
-	//	state.EditInfo(dto.Name, dto.Code);
+		await _dbContext.SaveChangesAsync();
 
-	//	await _dbContext.SaveChangesAsync();
-
-	//	return NoContent();
-	//}
-
-	//[HttpPut("{id:guid}")]
-	//public async Task<IActionResult> MoveStateToAnotherCountry(
-	//	[FromRoute] Guid id, [FromBody] MoveStateToAnotherDto dto)
-	//{
-	//	var state = await _stateRepository.GetBy(id);
-
-	//	if (state is null)
-	//		return NotFound();
-
-	//	var country = await _countryRepository.GetBy(dto.CountryId);
-
-	//	if (country is null)
-	//		return NotFound();
-
-	//	if (dto.Name != state.Name && await _stateRepository.ContainsStateWithNameInCountry(dto.Name, state.CountryId))
-	//		return BadRequest(Envelope.Error("name is duplicate"));
-
-	//	if (dto.Code != state.Code && await _stateRepository.ContainsStateWithCodeInCountry(dto.Code, state.CountryId))
-	//		return BadRequest(Envelope.Error("code is duplicate"));
-
-	//	state.MoveTo(country);
-
-	//	await _dbContext.SaveChangesAsync();
-
-	//	return NoContent();
-	//}
+		return NoContent();
+	}
 
 	[HttpDelete("{id:guid}")]
 	public async Task<IActionResult> RemoveState([FromRoute] Guid id)
