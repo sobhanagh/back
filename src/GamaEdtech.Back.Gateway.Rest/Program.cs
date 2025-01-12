@@ -4,6 +4,8 @@ using GamaEdtech.Back.DataSource.Schools;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Gateway.Rest.Utils;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +27,11 @@ builder.Services.AddSingleton(conectionString);
 builder.Services.AddScoped<GamaEdtechDbContext>();
 builder.Services.AddTransient<ISchoolRepository, SqlServerSchoolRepository>();
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+	var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+	options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 var app = builder.Build();
 
