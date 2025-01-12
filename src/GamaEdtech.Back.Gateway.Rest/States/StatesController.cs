@@ -98,6 +98,33 @@ public class StatesController : ControllerBase
 		return NoContent();
 	}
 
+	[HttpPut("{id:guid}/ChangeCountry")]
+	public async Task<IActionResult> MoveStateToAnotherCountry(
+		[FromRoute] Guid id, [FromBody] MoveStateToAnotherDto dto)
+	{
+		var state = await _stateRepository.GetBy(id);
+
+		if (state is null)
+			return NotFound();
+
+		var country = await _countryRepository.GetBy(dto.CountryId);
+
+		if (country is null)
+			return NotFound();
+
+		if (await _stateRepository.ContainsStateWithNameInCountry(state.Name, country.Id))
+			return BadRequest(Envelope.Error("State's name is duplicate in target country"));
+
+		if (await _stateRepository.ContainsStateWithCodeInCountry(state.Code, country.Id))
+			return BadRequest(Envelope.Error("State's code is duplicate in target country"));
+
+		state.MoveTo(country);
+
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
+	}
+
 	[HttpDelete("{id:guid}")]
 	public async Task<IActionResult> RemoveState([FromRoute] Guid id)
 	{
