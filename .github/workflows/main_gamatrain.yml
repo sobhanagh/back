@@ -58,9 +58,6 @@ jobs:
         with:
           app-name: 'gamatrain'
           slot-name: 'Production'
-          package: ./publish
+          package: .
 
-      - name: Update database with EF Core migrations
-        run: |
-          cd ./publish
-          dotnet ef database update
+     
