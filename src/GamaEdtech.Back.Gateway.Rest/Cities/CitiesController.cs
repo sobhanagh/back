@@ -34,30 +34,51 @@ public class CitiesController : ControllerBase
 		_cityRepository = cityRepository;
 	}
 
-	//[HttpGet]
-	//public async Task<IActionResult> FindCities([FromQuery] FindStatesDto dto)
-	//{
-	//	var query = @"
-	//           SELECT [Id], [Name], [Code], [CountryId]
-	//           FROM [GamaEdtech].[dbo].[State] "
-	//		+ (dto.CountryId.HasValue ? @"WHERE [CountryId] = @CountryId " : " ") +
-	//		"ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
-	//           OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+	[HttpGet]
+	public async Task<IActionResult> GetCities([FromQuery] GetCitiesDto dto)
+	{
 
-	//	using (var connection = new SqlConnection(_connectionString.Value))
-	//	{
-	//		var contries = await connection.QueryAsync<StateInListDto>(
-	//			query,
-	//			new
-	//			{
-	//				CountryId = dto.CountryId,
-	//				Offset = (dto.Page - 1) * dto.PageSize,
-	//				PageSize = dto.PageSize,
-	//			});
+		var where = "";
 
-	//		return Ok(Envelope.Ok(contries));
-	//	}
-	//}
+		if(dto.CountryId.HasValue)
+		{
+			where = "WHERE [c].[CountryId] = @CountryId ";
+
+			if (dto.StateId.HasValue)
+				where += "AND [c].[StateId] = @StateId ";
+		}else if (dto.StateId.HasValue)
+			where += "WHERE [c].[StateId] = @StateId ";
+
+
+		var query = @"
+			SELECT 
+				[c].[Id], [c].[Name], 
+				[co].[Name] AS Country,
+				[s].[Name] AS State
+			FROM [GamaEdtech].[dbo].[City] c
+			JOIN [GamaEdtech].[dbo].[Country] co
+				ON [c].[CountryId] = [co].[Id]
+			LEFT JOIN [GamaEdtech].[dbo].[State] s
+				ON [c].[StateId] = [s].[Id] " +
+			where + 
+			"ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY"; 
+
+		using (var connection = new SqlConnection(_connectionString.Value))
+		{
+			var cities = await connection.QueryAsync<CityInListDto>(
+				query,
+				new
+				{
+					CountryId = dto.CountryId,
+					StateId = dto.StateId,
+					Offset = (dto.Page - 1) * dto.PageSize,
+					PageSize = dto.PageSize,
+				});
+
+			return Ok(Envelope.Ok(cities));
+		}
+	}
 
 	[HttpGet("{id:int}")]
 	public async Task<IActionResult> GetCityDetail([FromRoute] int id)
