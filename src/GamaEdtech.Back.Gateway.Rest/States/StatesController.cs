@@ -42,7 +42,7 @@ public class StatesController : ControllerBase
 	///		{
 	///			"page": int - Positive - Default(1),
 	///			"pageSize": int - Range Between [1, 50], Default(10), 
-	///			"countryId": guid - nullable
+	///			"countryId": int - nullable
 	///			"sortBy": "Name" or "Code" - Default("Name"),
 	///			"order": "ASC" or "DESC" - Default("ASC"),
 	///		}
@@ -91,7 +91,7 @@ public class StatesController : ControllerBase
 	///     {
 	///		  "name": Required - MaxLenght(50),
 	///		  "code": Required - ISO Alpha-2/Alpha-3,
-	///		  "countryId": Required - GUID
+	///		  "countryId": Required - int
 	///		}
 	///</remarks>
 	///
@@ -128,7 +128,7 @@ public class StatesController : ControllerBase
 	///<remarks>
 	/// Sample request:
 	///
-	///     PUT /States/{id:guid}/EditInfo
+	///     PUT /States/{id:int}/EditInfo
 	///     
 	///     Request body:
 	///     {
@@ -141,9 +141,9 @@ public class StatesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
-	[HttpPut("{id:guid}/EditInfo")]
+	[HttpPut("{id:int}/EditInfo")]
 	public async Task<IActionResult> EditStateInfo(
-		[FromRoute] Guid id, [FromBody] EditStateInfoDto dto)
+		[FromRoute] int id, [FromBody] EditStateInfoDto dto)
 	{
 		var state = await _stateRepository.GetBy(id);
 
@@ -170,11 +170,11 @@ public class StatesController : ControllerBase
 	///<remarks>
 	/// Sample request:
 	///
-	///     PUT /States/{id:guid}/ChangeCountry
+	///     PUT /States/{id:int}/ChangeCountry
 	///     
 	///     Request body:
 	///     {
-	///		  "countryId": Required - GUID
+	///		  "countryId": Required - int
 	///		}
 	///</remarks>
 	///
@@ -182,9 +182,9 @@ public class StatesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
-	[HttpPut("{id:guid}/ChangeCountry")]
+	[HttpPut("{id:int}/ChangeCountry")]
 	public async Task<IActionResult> MoveStateToAnotherCountry(
-		[FromRoute] Guid id, [FromBody] MoveStateToAnotherDto dto)
+		[FromRoute] int id, [FromBody] MoveStateToAnotherDto dto)
 	{
 		var state = await _stateRepository.GetBy(id);
 
@@ -216,14 +216,14 @@ public class StatesController : ControllerBase
 	///<remarks>
 	/// Sample request:
 	///
-	///     DELETE /States/{id:guid}
+	///     DELETE /States/{id:int}
 	///</remarks>
 	///
 	///<response code="204"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
-	[HttpDelete("{id:guid}")]
-	public async Task<IActionResult> RemoveState([FromRoute] Guid id)
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> RemoveState([FromRoute] int id)
 	{
 		var state = await _stateRepository.GetBy(id);
 

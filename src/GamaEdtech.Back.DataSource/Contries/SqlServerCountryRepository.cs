@@ -15,7 +15,7 @@ public class SqlServerCountryRepository : ICountryRepository
 		_dbContext = dbContext;
 	}
 
-	public async Task<Country?> GetBy(Guid id)
+	public async Task<Country?> GetBy(int id)
 	{
 		return await _dbContext.Countries.FindAsync(id);
 	}

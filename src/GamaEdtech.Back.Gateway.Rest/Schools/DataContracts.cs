@@ -9,7 +9,7 @@ public class RegisterSchoolDto
 
 public class SchoolInListDto
 {
-	public Guid Id { get; set; }
+	public int Id { get; set; }
 	public SchoolNameDto Name { get; set; }
 	public int Type { get; set; }
 }

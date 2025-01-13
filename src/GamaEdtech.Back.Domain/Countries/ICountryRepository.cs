@@ -2,7 +2,7 @@
 
 public interface ICountryRepository
 {
-	public Task<Country?> GetBy(Guid id);
+	public Task<Country?> GetBy(int id);
 	public Task<bool> ContainsCountrywithName(string name);
 	public Task<bool> ContainsCountrywithCode(string code);
 	public Task Add(Country country);

@@ -13,19 +13,19 @@ public class SqlServerStateRepository : IStateRepository
 		_dbContext = dbContext;
 	}
 
-	public async Task<State?> GetBy(Guid id)
+	public async Task<State?> GetBy(int id)
 	{
 		return await _dbContext.States.FindAsync(id);
 	}
 
-	public async Task<bool> ContainsStateWithNameInCountry(string name, Guid countryId)
+	public async Task<bool> ContainsStateWithNameInCountry(string name, int countryId)
 	{
 		return await _dbContext.States
 			.Where(x => x.Name == name && x.CountryId == countryId)
 			.AnyAsync();
 	}
 
-	public async Task<bool> ContainsStateWithCodeInCountry(string code, Guid countryId)
+	public async Task<bool> ContainsStateWithCodeInCountry(string code, int countryId)
 	{
 		return await _dbContext.States
 			.Where(x => x.Code == code && x.CountryId == countryId)

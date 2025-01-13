@@ -2,7 +2,7 @@
 
 namespace GamaEdtech.Back.Domain.Schools;
 
-public class School : Entity<Guid>
+public class School : Entity<int>
 {
 
 	public SchoolName Name { get; private set; }

@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Schools;
-using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GamaEdtech.Back.Gateway.Rest.Controllers;
