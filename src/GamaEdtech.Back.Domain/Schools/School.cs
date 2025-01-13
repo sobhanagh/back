@@ -1,10 +1,10 @@
 ﻿using CSharpFunctionalExtensions;
+using GamaEdtech.Back.Domain.Base;
 
 namespace GamaEdtech.Back.Domain.Schools;
 
-public class School : Entity<int>
+public class School : AggregateRoot
 {
-
 	public SchoolName Name { get; private set; }
 	public SchoolType Type { get; private set; }
 	public Address Address { get; private set; }

@@ -1,6 +1,7 @@
 ﻿
 
 using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ public class SqlServerCountryRepository : ICountryRepository
 		_dbContext = dbContext;
 	}
 
-	public async Task<Country?> GetBy(int id)
+	public async Task<Country?> GetBy(Id id)
 	{
 		return await _dbContext.Countries.FindAsync(id);
 	}

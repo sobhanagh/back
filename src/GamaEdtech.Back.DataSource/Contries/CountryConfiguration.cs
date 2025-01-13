@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using GamaEdtech.Back.Domain.Countries;
+using GamaEdtech.Back.Domain.Base;
 
 
 namespace GamaEdtech.Back.DataSource.Contries;
@@ -12,15 +13,23 @@ internal class CountryConfiguration : IEntityTypeConfiguration<Country>
 	{
 		builder.ToTable("Country").HasKey(x => x.Id);
 
+		builder.Property(x => x.Id)
+		.HasConversion(
+			id => id.Value,   
+			value => new Id(value)
+		)
+		.HasColumnName("Id")
+		.ValueGeneratedOnAdd();
+
 		builder.Property(x => x.Name)
-				.HasColumnName("Name")
-				.HasMaxLength(50)
-				.IsRequired();
+			.HasColumnName("Name")
+			.HasMaxLength(50)
+			.IsRequired();
 
 		builder.Property(x => x.Code)
-				.HasColumnName("Code")
-				.HasMaxLength(3)
-				.IsRequired();
+			.HasColumnName("Code")
+			.HasMaxLength(3)
+			.IsRequired();
 	}
 }
 

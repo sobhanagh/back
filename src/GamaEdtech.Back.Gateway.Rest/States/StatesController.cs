@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
@@ -102,7 +103,7 @@ public class StatesController : ControllerBase
 	[HttpPost]
 	public async Task<IActionResult> AddStateToCountry([FromBody] AddStateDto dto)
 	{
-		var country = await _countryRepository.GetBy(dto.CountryId);
+		var country = await _countryRepository.GetBy(new Id(dto.CountryId));
 
 		if (country is null)
 			return NotFound();
@@ -145,7 +146,7 @@ public class StatesController : ControllerBase
 	public async Task<IActionResult> EditStateInfo(
 		[FromRoute] int id, [FromBody] EditStateInfoDto dto)
 	{
-		var state = await _stateRepository.GetBy(id);
+		var state = await _stateRepository.GetBy(new Id(id));
 
 		if (state is null)
 			return NotFound();
@@ -186,12 +187,12 @@ public class StatesController : ControllerBase
 	public async Task<IActionResult> MoveStateToAnotherCountry(
 		[FromRoute] int id, [FromBody] MoveStateToAnotherDto dto)
 	{
-		var state = await _stateRepository.GetBy(id);
+		var state = await _stateRepository.GetBy(new Id(id));
 
 		if (state is null)
 			return NotFound();
 
-		var country = await _countryRepository.GetBy(dto.CountryId);
+		var country = await _countryRepository.GetBy(new Id(dto.CountryId));
 
 		if (country is null)
 			return NotFound();
@@ -225,7 +226,7 @@ public class StatesController : ControllerBase
 	[HttpDelete("{id:int}")]
 	public async Task<IActionResult> RemoveState([FromRoute] int id)
 	{
-		var state = await _stateRepository.GetBy(id);
+		var state = await _stateRepository.GetBy(new Id(id));
 
 		if (state is null)
 			return NotFound();

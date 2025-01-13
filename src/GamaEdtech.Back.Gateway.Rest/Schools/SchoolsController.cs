@@ -46,7 +46,7 @@ public class SchoolsController : ControllerBase
 
 		return Ok(schools.Select(x => new SchoolInListDto
 		{
-			Id = x.Id,
+			Id = x.Id.Value,
 			Name = new SchoolNameDto
 			{
 				InEnglish = x.Name.InEnglish,
@@ -92,7 +92,7 @@ public class SchoolsController : ControllerBase
 
 		return Ok(schools.Select(x => new SchoolInListDto
 		{
-			Id = x.Id,
+			Id = x.Id.Value,
 			Name = new SchoolNameDto
 			{
 				InEnglish = x.Name.InEnglish,

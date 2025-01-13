@@ -126,7 +126,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
 
                             b1.HasKey("SchoolId");
 
-                            b1.ToTable("School");
+                            b1.ToTable("School", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SchoolId");
@@ -143,7 +143,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
 
                                     b2.HasKey("AddressSchoolId");
 
-                                    b2.ToTable("School");
+                                    b2.ToTable("School", (string)null);
 
                                     b2.WithOwner()
                                         .HasForeignKey("AddressSchoolId");
@@ -172,7 +172,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
 
                             b1.HasKey("SchoolId");
 
-                            b1.ToTable("School");
+                            b1.ToTable("School", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("SchoolId");

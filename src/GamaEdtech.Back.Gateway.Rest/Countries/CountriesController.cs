@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -131,7 +132,7 @@ public class CountriesController : ControllerBase
 	public async Task<IActionResult> EditCountryInfo(
 		[FromRoute] int id, [FromBody] EditCountryInfoDto dto)
 	{
-		var country = await _countryRepository.GetBy(id);
+		var country = await _countryRepository.GetBy(new Id(id));
 
 		if (country is null)
 			return NotFound();
@@ -165,7 +166,7 @@ public class CountriesController : ControllerBase
 	[HttpDelete("{id:int}")]
 	public async Task<IActionResult> RemoveCountry([FromRoute] int id)
 	{
-		var country = await _countryRepository.GetBy(id);
+		var country = await _countryRepository.GetBy(new Id(id));
 
 		if (country is null)
 			return NotFound();
