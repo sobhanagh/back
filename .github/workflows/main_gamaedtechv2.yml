@@ -71,7 +71,7 @@ jobs:
       - name: Run EF Core Migrations
         run: |
           cd src/GamaEdtech.Back.DataSource
-          dotnet ef database update 
+          dotnet ef database update -- --environment Production
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
