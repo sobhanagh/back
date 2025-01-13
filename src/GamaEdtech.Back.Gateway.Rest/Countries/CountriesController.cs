@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -114,7 +115,7 @@ public class CountriesController : ControllerBase
 	///<remarks>
 	/// Sample request:
 	///
-	///     PATCH /Countries/{id:guid}
+	///     PATCH /Countries/{id:int}
 	///     
 	///     Request body:
 	///     {
@@ -129,9 +130,9 @@ public class CountriesController : ControllerBase
 	///<response code="500">Server error</response>
 	[HttpPatch("{id:guid}")]
 	public async Task<IActionResult> EditCountryInfo(
-		[FromRoute] Guid id, [FromBody] EditCountryInfoDto dto)
+		[FromRoute] int id, [FromBody] EditCountryInfoDto dto)
 	{
-		var country = await _countryRepository.GetBy(id);
+		var country = await _countryRepository.GetBy(new Id(id));
 
 		if (country is null)
 			return NotFound();
@@ -156,16 +157,16 @@ public class CountriesController : ControllerBase
 	///<remarks>
 	/// Sample request:
 	///
-	///     DELETE /Countries/{id:guid}
+	///     DELETE /Countries/{id:int}
 	///</remarks>
 	///
 	///<response code="204"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
-	[HttpDelete("{id:guid}")]
-	public async Task<IActionResult> RemoveCountry([FromRoute] Guid id)
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> RemoveCountry([FromRoute] int id)
 	{
-		var country = await _countryRepository.GetBy(id);
+		var country = await _countryRepository.GetBy(new Id(id));
 
 		if (country is null)
 			return NotFound();

@@ -1,4 +1,5 @@
 ﻿using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.States;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,19 +14,19 @@ public class SqlServerStateRepository : IStateRepository
 		_dbContext = dbContext;
 	}
 
-	public async Task<State?> GetBy(Guid id)
+	public async Task<State?> GetBy(Id id)
 	{
 		return await _dbContext.States.FindAsync(id);
 	}
 
-	public async Task<bool> ContainsStateWithNameInCountry(string name, Guid countryId)
+	public async Task<bool> ContainsStateWithNameInCountry(string name, Id countryId)
 	{
 		return await _dbContext.States
 			.Where(x => x.Name == name && x.CountryId == countryId)
 			.AnyAsync();
 	}
 
-	public async Task<bool> ContainsStateWithCodeInCountry(string code, Guid countryId)
+	public async Task<bool> ContainsStateWithCodeInCountry(string code, Id countryId)
 	{
 		return await _dbContext.States
 			.Where(x => x.Code == code && x.CountryId == countryId)

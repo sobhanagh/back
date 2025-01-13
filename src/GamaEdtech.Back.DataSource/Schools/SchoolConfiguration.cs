@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using GamaEdtech.Back.Domain.Schools;
+using GamaEdtech.Back.Domain.Base;
 
 namespace GamaEdtech.Back.DataSource.Schools;
 
@@ -9,6 +10,14 @@ internal class SchoolConfiguration : IEntityTypeConfiguration<School>
 	public void Configure(EntityTypeBuilder<School> builder)
 	{
 		builder.ToTable("School").HasKey(x => x.Id);
+
+		builder.Property(x => x.Id)
+			.HasConversion(
+				id => id.Value,
+				value => new Id(value)
+			)
+			.HasColumnName("Id")
+			.ValueGeneratedOnAdd();
 
 		builder.OwnsOne(x => x.Name, b =>
 		{

@@ -1,15 +1,15 @@
-﻿using CSharpFunctionalExtensions;
+﻿using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
 
 namespace GamaEdtech.Back.Domain.States;
 
-public class State : Entity<Guid>
+public class State : AggregateRoot
 {
 	public string Name { get; private set; }
 	public string Code { get; private set; }
-	public Guid CountryId { get; private set; }
+	public Id CountryId { get; private set; }
 
-	public State(string name, string code, Guid countryId)
+	public State(string name, string code, Id countryId)
 	{
 		Name = name;
 		Code = code;

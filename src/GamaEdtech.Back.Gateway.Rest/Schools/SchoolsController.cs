@@ -1,7 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Schools;
-using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GamaEdtech.Back.Gateway.Rest.Controllers;
@@ -47,7 +46,7 @@ public class SchoolsController : ControllerBase
 
 		return Ok(schools.Select(x => new SchoolInListDto
 		{
-			Id = x.Id,
+			Id = x.Id.Value,
 			Name = new SchoolNameDto
 			{
 				InEnglish = x.Name.InEnglish,
@@ -93,7 +92,7 @@ public class SchoolsController : ControllerBase
 
 		return Ok(schools.Select(x => new SchoolInListDto
 		{
-			Id = x.Id,
+			Id = x.Id.Value,
 			Name = new SchoolNameDto
 			{
 				InEnglish = x.Name.InEnglish,
