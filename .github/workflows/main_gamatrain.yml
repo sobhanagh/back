@@ -21,13 +21,13 @@ jobs:
       # Build the main project
       - name: Build Gateway Project
         run: |
-          cd src/GamaEdtech.back.Gateway.Rest
+          cd src/GamaEdtech.Back.Gateway.Rest
           dotnet build --configuration Release
 
       # Publish the main project
       - name: Publish Gateway Project
         run: |
-          cd src/GamaEdtech.back.Gateway.Rest
+          cd src/GamaEdtech.Back.Gateway.Rest
           dotnet publish --configuration Release -o ${{env.DOTNET_ROOT}}/myapp
 
       # Install EF Core tools
