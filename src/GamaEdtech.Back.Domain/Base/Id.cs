@@ -8,8 +8,8 @@ public class Id : ValueObject, IComparable<Id>
 
 	public Id(int value)
 	{
-		if(value < 0)
-			throw new ArgumentOutOfRangeException();
+		//if(value < 0)
+		//	throw new ArgumentOutOfRangeException();
 
 		Value = value;
 	}
