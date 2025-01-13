@@ -34,8 +34,8 @@ jobs:
           dotnet publish --configuration Release -o ${{env.DOTNET_ROOT}}/myapp
 
       # Install EF Core tools
-      - name: Install dotnet ef
-        run: dotnet tool install --global dotnet-ef --version 9.*
+      #- name: Install dotnet ef
+      # run: dotnet tool install --global dotnet-ef --version 9.*
 
      
 
