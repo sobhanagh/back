@@ -3,6 +3,7 @@ using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
+using GamaEdtech.Back.Gateway.Rest.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 namespace GamaEdtech.Back.Gateway.Rest.Cities;
@@ -57,6 +58,31 @@ public class CitiesController : ControllerBase
 		await _dbContext.SaveChangesAsync();
 
 		return Created();
+	}
+
+	[HttpPut("{id:int}/EditInfo")]
+	public async Task<IActionResult> EditCityInfo(
+		[FromRoute] int id, [FromBody] EditCityInfoDto dto)
+	{
+		var city = await _cityRepository.GetBy(new Id(id));
+
+		if (city is null)
+			return NotFound();
+
+		if (dto.Name == city.Name)
+			return NoContent();
+
+		if (city.IsPartOfAState && await _cityRepository.ContainsCityWithNameInState(dto.Name, city.CountryId!))
+			return BadRequest(Envelope.Error("name is duplicate"));
+
+		if (await _cityRepository.ContainsCityWithNameInCountry(dto.Name, city.CountryId))
+			return BadRequest(Envelope.Error("name is duplicate"));
+
+		city.EditInfo(dto.Name);
+
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
 	}
 
 	[HttpDelete("{id:int}")]

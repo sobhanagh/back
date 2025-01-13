@@ -14,4 +14,11 @@ public class City : AggregateRoot
 		StateId = stateId;
 		CountryId = countryId;
 	}
+
+	public bool IsPartOfAState => StateId is not null;
+
+	public void EditInfo(string name)
+	{
+		Name = name;
+	}
 }

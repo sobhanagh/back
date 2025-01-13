@@ -6,3 +6,8 @@ public class AddCityDto
 	public int? StateId { get; set; }
 	public int CountryId { get; set; }
 }
+
+public class EditCityInfoDto
+{
+	public string Name { get; set; }
+}
