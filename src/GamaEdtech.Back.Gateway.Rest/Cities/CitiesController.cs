@@ -1,4 +1,5 @@
-﻿using GamaEdtech.Back.DataSource.Utils;
+﻿using Dapper;
+using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
@@ -6,28 +7,98 @@ using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 namespace GamaEdtech.Back.Gateway.Rest.Cities;
 
 [Route("api/[controller]")]
 [ApiController]
 public class CitiesController : ControllerBase
 {
+	private readonly ConnectionString _connectionString;
 	private readonly GamaEdtechDbContext _dbContext;
 	private readonly IStateRepository _stateRepository;
 	private readonly ICountryRepository _countryRepository;
 	private readonly ICityRepository _cityRepository;
 
 	public CitiesController(
+		ConnectionString connectionString,
 		GamaEdtechDbContext dbContext, 
 		IStateRepository stateRepository, 
 		ICountryRepository countryRepository, 
 		ICityRepository cityRepository)
 	{
+		_connectionString = connectionString;
 		_dbContext = dbContext;
 		_stateRepository = stateRepository;
 		_countryRepository = countryRepository;
 		_cityRepository = cityRepository;
 	}
+
+	//[HttpGet]
+	//public async Task<IActionResult> FindCities([FromQuery] FindStatesDto dto)
+	//{
+	//	var query = @"
+	//           SELECT [Id], [Name], [Code], [CountryId]
+	//           FROM [GamaEdtech].[dbo].[State] "
+	//		+ (dto.CountryId.HasValue ? @"WHERE [CountryId] = @CountryId " : " ") +
+	//		"ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
+	//           OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+	//	using (var connection = new SqlConnection(_connectionString.Value))
+	//	{
+	//		var contries = await connection.QueryAsync<StateInListDto>(
+	//			query,
+	//			new
+	//			{
+	//				CountryId = dto.CountryId,
+	//				Offset = (dto.Page - 1) * dto.PageSize,
+	//				PageSize = dto.PageSize,
+	//			});
+
+	//		return Ok(Envelope.Ok(contries));
+	//	}
+	//}
+
+	[HttpGet("{id:int}")]
+	public async Task<IActionResult> GetCityDetail([FromRoute] int id)
+	{
+		var query = @"
+            SELECT 
+                [c].[Id], [c].[Name], 
+                [co].[Id], [co].[Name], [co].[Code],
+                [s].[Id], [s].[Name], [s].[Code]
+            FROM [GamaEdtech].[dbo].[City] c
+            JOIN [GamaEdtech].[dbo].[Country] co
+                ON [c].[CountryId] = [co].[Id]
+            LEFT JOIN [GamaEdtech].[dbo].[State] s
+                ON [c].[StateId] = [s].[Id]
+            WHERE [c].[Id] = @CityId";
+
+		using (var connection = new SqlConnection(_connectionString.Value))
+		{
+			var city = (await connection
+				.QueryAsync<CityDetailDto, CountryInCityDto, StateInCityDto?, CityDetailDto>(
+					query,
+					(city, country, state) =>
+					{
+						city.Country = country;
+						city.State = state;
+						return city;
+					},
+					new 
+					{ 
+						CityId = id 
+					},
+					splitOn: "Id,Id"))
+				.FirstOrDefault();
+
+			if (city is null)
+				return NotFound();
+
+			return Ok(Envelope.Ok(city));
+		}
+	}
+
 
 	[HttpPost]
 	public async Task<IActionResult> AddCity([FromBody] AddCityDto dto)
