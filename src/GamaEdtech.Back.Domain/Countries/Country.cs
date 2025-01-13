@@ -1,4 +1,5 @@
 ﻿using GamaEdtech.Back.Domain.Base;
+using GamaEdtech.Back.Domain.Cities;
 
 namespace GamaEdtech.Back.Domain.Countries;
 
@@ -17,5 +18,10 @@ public class Country : AggregateRoot
 	{
 		Name = name;
 		Code = code;
+	}
+
+	public City CreateCityWith(string name)
+	{
+		return new City(name, null, Id);
 	}
 }
