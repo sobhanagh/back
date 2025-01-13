@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - gamatrain
+name: Build, Migrate, and Deploy ASP.Net Core app to Azure
 
 on:
   push:
@@ -18,17 +18,34 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      - name: Build with dotnet
-        run: dotnet build src/GamaEdtech.Back.Gateway.Rest/GamaEdtech.Back.Gateway.Rest.csproj --configuration Release
+      # Build the main project
+      - name: Build Gateway Project
+        run: |
+          cd GamaEdtech.back.Gateway.Rest
+          dotnet build --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish src/GamaEdtech.Back.Gateway.Rest/GamaEdtech.Back.Gateway.Rest.csproj -c Release -o ./publish
+      # Publish the main project
+      - name: Publish Gateway Project
+        run: |
+          cd GamaEdtech.back.Gateway.Rest
+          dotnet publish --configuration Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: Upload artifact for deployment job
+      # Install EF Core tools
+      - name: Install dotnet ef
+        run: dotnet tool install --global dotnet-ef --version 9.*
+
+      # Run migrations for the DataSource project
+      - name: Run EF Core Migrations
+        run: |
+          cd GamaEdtech.back.DataSource
+          dotnet ef database update 
+
+      # Upload artifact for deployment
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./publish
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -37,7 +54,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # This is required for requesting the JWT
+      id-token: write
 
     steps:
       - name: Download artifact from build job
@@ -48,9 +65,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E42B5113ACF94145963E674ED1373C24 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F9BE20A127EF41688B7BECB70A3D0488 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_90EA3F3D9BF045B59BB93F25E3BAD1CA }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
