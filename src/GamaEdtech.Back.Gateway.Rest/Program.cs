@@ -10,19 +10,26 @@ using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConnectionString connectionString;
+ConnectionString conectionString;
 
 if(builder.Environment.IsDevelopment())
 {
-	connectionString = new ConnectionString(builder.Configuration.GetConnectionString("Default")!);
+	conectionString = new ConnectionString(builder.Configuration.GetConnectionString("Default")!);
 }
 else
 {
-	connectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
+	conectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
+
+	builder.Services.AddStackExchangeRedisCache(options =>
+	{
+		options.Configuration = builder.Configuration["AZURE_REDIS_CONNECTIONSTRING"];
+		options.InstanceName = "SampleInstance";
+	});
 }
 
 // Add services to the container.
