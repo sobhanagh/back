@@ -58,4 +58,18 @@ public class CitiesController : ControllerBase
 
 		return Created();
 	}
+
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> RemoveCity([FromRoute] int id)
+	{
+		var city = await _cityRepository.GetBy(new Id(id));
+
+		if (city is null)
+			return NotFound();
+
+		await _cityRepository.Remove(city);
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
+	}
 }

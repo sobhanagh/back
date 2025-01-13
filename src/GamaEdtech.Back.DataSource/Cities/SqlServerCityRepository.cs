@@ -14,6 +14,11 @@ public class SqlServerCityRepository : ICityRepository
 		_dbContext = dbContext;
 	}
 
+	public async Task<City?> GetBy(Id id)
+	{
+		return await _dbContext.Cities.FindAsync(id);
+	}
+
 	public async Task<bool> ContainsCityWithNameInCountry(string name, Id countryId)
 	{
 		return await _dbContext.Cities
@@ -31,5 +36,10 @@ public class SqlServerCityRepository : ICityRepository
 	public async Task Add(City city)
 	{
 		await _dbContext.Cities.AddAsync(city);
+	}
+
+	public async Task Remove(City city)
+	{
+		_dbContext.Cities.Remove(city);
 	}
 }
