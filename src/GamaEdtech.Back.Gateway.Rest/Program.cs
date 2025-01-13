@@ -10,13 +10,20 @@ using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
-using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var conectionString =
-	new ConnectionString(builder.Configuration.GetConnectionString("Default")!);
+ConnectionString connectionString;
+
+if(builder.Environment.IsDevelopment())
+{
+	connectionString = new ConnectionString(builder.Configuration.GetConnectionString("Default")!);
+}
+else
+{
+	connectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
+}
 
 // Add services to the container.
 builder.Services
