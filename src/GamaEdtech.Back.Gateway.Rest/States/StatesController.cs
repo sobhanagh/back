@@ -147,7 +147,7 @@ public class StatesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
-	[HttpPut("{id:int}/EditInfo")]
+	[HttpPut("{id:int}")]
 	public async Task<IActionResult> EditInfo(
 		[FromRoute] int id, [FromBody] EditStateInfoDto dto)
 	{
