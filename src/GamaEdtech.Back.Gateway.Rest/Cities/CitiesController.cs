@@ -3,6 +3,7 @@ using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
+using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Common;
 using GamaEdtech.Back.Gateway.Rest.Utils;
@@ -16,22 +17,25 @@ public class CitiesController : ControllerBase
 {
 	private readonly ConnectionString _connectionString;
 	private readonly GamaEdtechDbContext _dbContext;
+	private readonly ICityRepository _cityRepository;
 	private readonly IStateRepository _stateRepository;
 	private readonly ICountryRepository _countryRepository;
-	private readonly ICityRepository _cityRepository;
+	private readonly ISchoolRepository _schoolRepository;
 
 	public CitiesController(
 		ConnectionString connectionString,
-		GamaEdtechDbContext dbContext, 
+		GamaEdtechDbContext dbContext,
+		ICityRepository cityRepository, 
 		IStateRepository stateRepository, 
 		ICountryRepository countryRepository, 
-		ICityRepository cityRepository)
+		ISchoolRepository schoolRepository)
 	{
 		_connectionString = connectionString;
 		_dbContext = dbContext;
+		_cityRepository = cityRepository;
 		_stateRepository = stateRepository;
 		_countryRepository = countryRepository;
-		_cityRepository = cityRepository;
+		_schoolRepository = schoolRepository;
 	}
 
 	[HttpGet]
@@ -189,6 +193,9 @@ public class CitiesController : ControllerBase
 
 		if (city is null)
 			return NotFound();
+
+		if (await _schoolRepository.ContainsSchoolInCityWith(city.Id))
+			return BadRequest(Envelope.Error("City has related schools"));
 
 		await _cityRepository.Remove(city);
 		await _dbContext.SaveChangesAsync();
