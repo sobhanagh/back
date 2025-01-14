@@ -128,7 +128,7 @@ public class CountriesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
-	[HttpPatch("{id:guid}")]
+	[HttpPut("{id:guid}")]
 	public async Task<IActionResult> EditCountryInfo(
 		[FromRoute] int id, [FromBody] EditCountryInfoDto dto)
 	{
