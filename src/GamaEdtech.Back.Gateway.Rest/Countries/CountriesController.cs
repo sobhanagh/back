@@ -50,7 +50,7 @@ public class CountriesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
-	public async Task<IActionResult> FindContries([FromQuery] FindCountriesDto dto)
+	public async Task<IActionResult> Find([FromQuery] FindCountriesDto dto)
 	{
 		var query = @"
             SELECT [Id], [Name], [Code]
@@ -92,7 +92,7 @@ public class CountriesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpPost]
-	public async Task<IActionResult> AddCountry([FromBody] AddCountryDto dto)
+	public async Task<IActionResult> Add([FromBody] AddCountryDto dto)
 	{ 
 		if (await _countryRepository.ContainsCountrywithName(dto.Name))
 			return BadRequest(Envelope.Error("name is duplicate"));
@@ -129,7 +129,7 @@ public class CountriesController : ControllerBase
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpPut("{id:guid}")]
-	public async Task<IActionResult> EditCountryInfo(
+	public async Task<IActionResult> EditInfo(
 		[FromRoute] int id, [FromBody] EditCountryInfoDto dto)
 	{
 		var country = await _countryRepository.GetBy(new Id(id));
@@ -164,7 +164,7 @@ public class CountriesController : ControllerBase
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> RemoveCountry([FromRoute] int id)
+	public async Task<IActionResult> Remove([FromRoute] int id)
 	{
 		var country = await _countryRepository.GetBy(new Id(id));
 
