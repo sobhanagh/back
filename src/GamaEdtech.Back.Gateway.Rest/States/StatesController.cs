@@ -230,6 +230,7 @@ public class StatesController : ControllerBase
 	///</remarks>
 	///
 	///<response code="204"></response>
+	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpDelete("{id:int}")]
