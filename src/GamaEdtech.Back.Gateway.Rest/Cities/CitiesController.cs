@@ -157,7 +157,7 @@ public class CitiesController : ControllerBase
 		return Created();
 	}
 
-	[HttpPut("{id:int}/EditInfo")]
+	[HttpPut("{id:int}")]
 	public async Task<IActionResult> EditInfo(
 		[FromRoute] int id, [FromBody] EditCityInfoDto dto)
 	{
