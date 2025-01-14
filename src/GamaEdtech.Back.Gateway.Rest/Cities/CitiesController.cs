@@ -127,7 +127,7 @@ public class CitiesController : ControllerBase
 
 
 	[HttpPost]
-	public async Task<IActionResult> AddCity([FromBody] AddCityDto dto)
+	public async Task<IActionResult> Add([FromBody] AddCityDto dto)
 	{
 		if(dto.StateId.HasValue)
 		{
@@ -158,7 +158,7 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpPut("{id:int}/EditInfo")]
-	public async Task<IActionResult> EditCityInfo(
+	public async Task<IActionResult> EditInfo(
 		[FromRoute] int id, [FromBody] EditCityInfoDto dto)
 	{
 		var city = await _cityRepository.GetBy(new Id(id));
@@ -183,7 +183,7 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> RemoveCity([FromRoute] int id)
+	public async Task<IActionResult> Remove([FromRoute] int id)
 	{
 		var city = await _cityRepository.GetBy(new Id(id));
 
