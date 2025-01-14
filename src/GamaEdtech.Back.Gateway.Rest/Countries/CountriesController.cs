@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
+using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
+using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Common;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +18,21 @@ public class CountriesController : ControllerBase
 	private readonly ConnectionString _connectionString;
 	private readonly GamaEdtechDbContext _dbCotext;
 	private readonly ICountryRepository _countryRepository;
+	private readonly IStateRepository _stateRepository;
+	private readonly ICityRepository _cityRepository;
 
 	public CountriesController(
 		ConnectionString connectionString,
 		GamaEdtechDbContext dbCotext, 
-		ICountryRepository countryRepository)
+		ICountryRepository countryRepository,
+		IStateRepository stateRepository,
+		ICityRepository cityRepository)
 	{
 		_connectionString = connectionString;
 		_dbCotext = dbCotext;
 		_countryRepository = countryRepository;
+		_stateRepository = stateRepository;
+		_cityRepository = cityRepository;
 	}
 
 	///<summary>
@@ -165,6 +173,7 @@ public class CountriesController : ControllerBase
 	///</remarks>
 	///
 	///<response code="204"></response>
+	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpDelete("{id:int}")]
@@ -174,6 +183,12 @@ public class CountriesController : ControllerBase
 
 		if (country is null)
 			return NotFound();
+
+		if (await _stateRepository.ContainsStateInCountryWith(country.Id))
+			return BadRequest(Envelope.Error("Country has related states"));
+
+		if (await _cityRepository.ContainsCityInCountryWith(country.Id))
+			return BadRequest(Envelope.Error("Country has related cities"));
 
 		await _countryRepository.Remove(country);
 		await _dbCotext.SaveChangesAsync();
