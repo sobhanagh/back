@@ -54,30 +54,23 @@ internal class SchoolConfiguration : IEntityTypeConfiguration<School>
 				.HasMaxLength(20)
 				.IsRequired();
 
-			//b.Property(address => address.StateId)
-			//	.HasConversion(
-			//		id => id?.Value,
-			//		value => value.HasValue ? new Id(value.Value) : null
-			//	)
-			//	.HasColumnName("AddressStateId");
+			b.Property(address => address.StateId)
+				.HasColumnName("AddressStateId");
 
 			b.HasOne<State>()
 				.WithMany()
 				.HasForeignKey(x => x.StateId)
 				.IsRequired(false);
 
-			//b.Property(address => address.CityId)
-			//	.HasConversion(
-			//		id => id.Value,
-			//		value => new Id(value)
-			//	)
-			//	.HasColumnName("AddressCityId");
+			b.Property(address => address.CityId)
+				.HasColumnName("AddressCityId");
 
 			b.HasOne<City>()
 				.WithMany()
 				.HasForeignKey(x => x.CityId)
 				.IsRequired();
 		});
+
 
 
 	}
