@@ -50,7 +50,7 @@ public class CountriesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
-	public async Task<IActionResult> Find([FromQuery] FindCountriesDto dto)
+	public async Task<IActionResult> List([FromQuery] FindCountriesDto dto)
 	{
 		var query = @"
             SELECT [Id], [Name], [Code]
