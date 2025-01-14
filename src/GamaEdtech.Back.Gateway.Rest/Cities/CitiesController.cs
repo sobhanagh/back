@@ -4,7 +4,6 @@ using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
-using GamaEdtech.Back.Gateway.Rest.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -35,7 +34,7 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> GetCities([FromQuery] GetCitiesDto dto)
+	public async Task<IActionResult> List([FromQuery] GetCitiesDto dto)
 	{
 
 		var where = "";
