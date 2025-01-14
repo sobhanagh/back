@@ -2,6 +2,7 @@
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
+using GamaEdtech.Back.Gateway.Rest.Common;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -50,12 +51,16 @@ public class CountriesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
-	public async Task<IActionResult> List([FromQuery] FindCountriesDto dto)
+	[PaginationTransformer]
+	[SortingTransformer(DefaultSortKey = "Name", ValidSortKeys = "Name,Code")]
+	public async Task<IActionResult> List(
+		[FromQuery] PaginationDto pagination,
+		[FromQuery] SortingDto sorting)
 	{
 		var query = @"
             SELECT [Id], [Name], [Code]
-            FROM [GamaEdtech].[dbo].[Country]
-            ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
+            FROM [GamaEdtech].[dbo].[Country]" +
+            "ORDER BY [" + sorting.SortBy + "] " + sorting.Order + @"
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
 
 		using (var connection = new SqlConnection(_connectionString.Value))
@@ -64,8 +69,8 @@ public class CountriesController : ControllerBase
 				query,
 				new 
 				{
-					Offset = (dto.Page - 1) * dto.PageSize, 
-					PageSize = dto.PageSize,
+					Offset = (pagination.Page - 1) * pagination.PageSize, 
+					PageSize = pagination.PageSize,
 				});
 
 			return Ok(Envelope.Ok(contries));
@@ -177,3 +182,5 @@ public class CountriesController : ControllerBase
 		return NoContent();
 	}
 }
+
+
