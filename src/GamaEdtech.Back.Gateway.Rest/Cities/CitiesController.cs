@@ -86,7 +86,7 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpGet("{id:int}")]
-	public async Task<IActionResult> GetCityDetail([FromRoute] int id)
+	public async Task<IActionResult> GetDetail([FromRoute] int id)
 	{
 		var query = @"
             SELECT 
