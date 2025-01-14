@@ -42,8 +42,8 @@ public class StatesController : ControllerBase
 	///     
 	///		Query params:
 	///		{
-	///			"page": int - Positive - Default(1),
-	///			"pageSize": int - Range Between [1, 50], Default(10), 
+	///			"page": int - nullablr,
+	///			"pageSize": int - nullablr, 
 	///			"countryId": int - nullable
 	///			"sortBy": "Name" or "Code" - Default("Name"),
 	///			"order": "ASC" or "DESC" - Default("ASC"),
@@ -53,7 +53,6 @@ public class StatesController : ControllerBase
 	///<response code="200">Returns list of states 
 	///						(returns empty list if no state is found based on search queries)
 	///</response>
-	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
 	[PaginationTransformer]
