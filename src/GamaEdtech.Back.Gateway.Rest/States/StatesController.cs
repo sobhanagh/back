@@ -148,7 +148,7 @@ public class StatesController : ControllerBase
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpPut("{id:int}/EditInfo")]
-	public async Task<IActionResult> EditStateInfo(
+	public async Task<IActionResult> EditInfo(
 		[FromRoute] int id, [FromBody] EditStateInfoDto dto)
 	{
 		var state = await _stateRepository.GetBy(new Id(id));
