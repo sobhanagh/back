@@ -21,6 +21,18 @@ jobs:
         with:
           dotnet-version: '9.x'
 
+      # Install EF Core tools
+      - name: Install dotnet ef
+        run: |
+            dotnet tool install --global dotnet-ef --version 9.*
+            dotnet tool restore
+
+      # Run migrations for the DataSource project
+      - name: Run EF Core Migrations
+        run: |
+          cd src/GamaEdtech.Back.DataSource
+          dotnet ef database update -c GamaEdtechDbContext -p GamaEdtech.Back.DataSource
+
       # Build the main project
       - name: Build Gateway Project
         run: |
@@ -33,17 +45,6 @@ jobs:
           cd src/GamaEdtech.Back.Gateway.Rest
           dotnet publish --configuration Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      # Install EF Core tools
-      - name: Install dotnet ef
-        run: dotnet tool install --global dotnet-ef --version 9.*
-
-      # Run migrations for the DataSource project
-      - name: Run EF Core Migrations
-        run: |
-          cd src/GamaEdtech.Back.DataSource
-          dotnet ef database update -c GamaEdtechDbContext -p GamaEdtech.Back.DataSource
-
-     
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
