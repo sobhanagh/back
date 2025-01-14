@@ -28,7 +28,7 @@ public class CountriesController : ControllerBase
 	}
 
 	///<summary>
-	/// Find Countries
+	/// List Countries (sort and paginate them)
 	///</summary>
 	/// 
 	///<remarks>
@@ -38,17 +38,16 @@ public class CountriesController : ControllerBase
 	///     
 	///		Query params:
 	///		{
-	///			"page": int - Positive - Default(1),
-	///			"pageSize": int - Range Between [1, 50], Default(10), 
+	///			"page": int - nullable,
+	///			"pageSize": int - nullable, 
 	///			"sortBy": "Name" or "Code" - Default("Name"),
 	///			"order": "ASC" or "DESC" - Default("ASC"),
 	///		}
 	///</remarks>
 	///
-	///<response code="200">Returns list of contries 
+	///<response code="200">Returns list of countries 
 	///						(returns empty list if no country is found based on search queries)
 	///</response>
-	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
 	[PaginationTransformer]
