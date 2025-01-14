@@ -55,7 +55,7 @@ public class StatesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
-	public async Task<IActionResult> FindStates([FromQuery] FindStatesDto dto)
+	public async Task<IActionResult> List([FromQuery] FindStatesDto dto)
 	{
 		var query = @"
             SELECT [Id], [Name], [Code], [CountryId]
