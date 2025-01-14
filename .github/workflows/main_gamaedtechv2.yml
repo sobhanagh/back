@@ -40,7 +40,7 @@ jobs:
       # Run migrations for the DataSource project
       - name: Run EF Core Migrations
         run: |
-          cd src/GamaEdtech.back.DataSource
+          cd src/GamaEdtech.Back.DataSource
           dotnet ef database update -c GamaEdtechDbContext -p GamaEdtech.Back.DataSource
 
      
