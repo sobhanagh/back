@@ -64,7 +64,7 @@ public class CountriesController : ControllerBase
 
 		using (var connection = new SqlConnection(_connectionString.Value))
 		{
-			var contries = await connection.QueryAsync<ContryInListDto>(
+			var countries = await connection.QueryAsync<ContryInListDto>(
 				query,
 				new 
 				{
@@ -72,7 +72,7 @@ public class CountriesController : ControllerBase
 					PageSize = pagination.PageSize,
 				});
 
-			return Ok(Envelope.Ok(contries));
+			return Ok(Envelope.Ok(countries));
 		}
 	}
 
