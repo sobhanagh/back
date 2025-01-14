@@ -229,7 +229,7 @@ public class StatesController : ControllerBase
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> RemoveState([FromRoute] int id)
+	public async Task<IActionResult> Remove([FromRoute] int id)
 	{
 		var state = await _stateRepository.GetBy(new Id(id));
 
