@@ -1,5 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Schools;
 using Microsoft.AspNetCore.Mvc;
 
@@ -150,8 +151,8 @@ public class SchoolsController : ControllerBase
 		var address = new Address(
 				description: dto.Address.Description,
 				location: location,
-				state: dto.Address.State,
-				city: dto.Address.City,
+				stateId: dto.Address.StateId.HasValue ? new Id(dto.Address.StateId.Value) : null,
+				cityId: new Id(dto.Address.CityId),
 				zipCode: dto.Address.ZipCode);
 
 
