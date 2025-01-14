@@ -4,7 +4,7 @@ using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
-using GamaEdtech.Back.Gateway.Rest.States;
+using GamaEdtech.Back.Gateway.Rest.Common;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -35,18 +35,23 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> GetCities([FromQuery] GetCitiesDto dto)
+	[PaginationTransformer]
+	[SortingTransformer(DefaultSortKey = "Name", ValidSortKeys = "Name")]
+	public async Task<IActionResult> List(
+		[FromQuery] FilterCitiesDto filtering,
+		[FromQuery] SortingDto sorting,
+		[FromQuery] PaginationDto pagination)
 	{
 
 		var where = "";
 
-		if(dto.CountryId.HasValue)
+		if(filtering.CountryId.HasValue)
 		{
 			where = "WHERE [c].[CountryId] = @CountryId ";
 
-			if (dto.StateId.HasValue)
+			if (filtering.StateId.HasValue)
 				where += "AND [c].[StateId] = @StateId ";
-		}else if (dto.StateId.HasValue)
+		}else if (filtering.StateId.HasValue)
 			where += "WHERE [c].[StateId] = @StateId ";
 
 
@@ -61,7 +66,7 @@ public class CitiesController : ControllerBase
 			LEFT JOIN [GamaEdtech].[dbo].[State] s
 				ON [c].[StateId] = [s].[Id] " +
 			where + 
-			"ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
+			"ORDER BY [" + sorting.SortBy + "] " + sorting.Order + @"
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY"; 
 
 		using (var connection = new SqlConnection(_connectionString.Value))
@@ -70,10 +75,10 @@ public class CitiesController : ControllerBase
 				query,
 				new
 				{
-					CountryId = dto.CountryId,
-					StateId = dto.StateId,
-					Offset = (dto.Page - 1) * dto.PageSize,
-					PageSize = dto.PageSize,
+					CountryId = filtering.CountryId,
+					StateId = filtering.StateId,
+					Offset = (pagination.Page - 1) * pagination.PageSize,
+					PageSize = pagination.PageSize,
 				});
 
 			return Ok(Envelope.Ok(cities));
@@ -81,7 +86,7 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpGet("{id:int}")]
-	public async Task<IActionResult> GetCityDetail([FromRoute] int id)
+	public async Task<IActionResult> GetDetail([FromRoute] int id)
 	{
 		var query = @"
             SELECT 
@@ -122,7 +127,7 @@ public class CitiesController : ControllerBase
 
 
 	[HttpPost]
-	public async Task<IActionResult> AddCity([FromBody] AddCityDto dto)
+	public async Task<IActionResult> Add([FromBody] AddCityDto dto)
 	{
 		if(dto.StateId.HasValue)
 		{
@@ -152,8 +157,8 @@ public class CitiesController : ControllerBase
 		return Created();
 	}
 
-	[HttpPut("{id:int}/EditInfo")]
-	public async Task<IActionResult> EditCityInfo(
+	[HttpPut("{id:int}")]
+	public async Task<IActionResult> EditInfo(
 		[FromRoute] int id, [FromBody] EditCityInfoDto dto)
 	{
 		var city = await _cityRepository.GetBy(new Id(id));
@@ -178,7 +183,7 @@ public class CitiesController : ControllerBase
 	}
 
 	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> RemoveCity([FromRoute] int id)
+	public async Task<IActionResult> Remove([FromRoute] int id)
 	{
 		var city = await _cityRepository.GetBy(new Id(id));
 
