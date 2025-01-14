@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
+using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Common;
@@ -18,17 +19,20 @@ public class StatesController : ControllerBase
 	private readonly GamaEdtechDbContext _dbContext;
 	private readonly ICountryRepository _countryRepository;
 	private readonly IStateRepository _stateRepository;
+	private readonly ICityRepository _cityRepository;
 
 	public StatesController(
 		ConnectionString connectionString,
 		GamaEdtechDbContext dbContext,
 		ICountryRepository countryRepository,
-		IStateRepository stateRepository)
+		IStateRepository stateRepository,
+		ICityRepository cityRepository)
 	{
 		_connectionString = connectionString;
 		_dbContext = dbContext;
 		_countryRepository = countryRepository;
 		_stateRepository = stateRepository;
+		_cityRepository = cityRepository;
 	}
 
 	///<summary>
@@ -226,6 +230,7 @@ public class StatesController : ControllerBase
 	///</remarks>
 	///
 	///<response code="204"></response>
+	///<response code="400"></response>
 	///<response code="404"></response>
 	///<response code="500">Server error</response>
 	[HttpDelete("{id:int}")]
@@ -235,6 +240,9 @@ public class StatesController : ControllerBase
 
 		if (state is null)
 			return NotFound();
+
+		if (await _cityRepository.ContainsCityInStateWith(state.Id))
+			return BadRequest(Envelope.Error("State has related cities"));
 
 		await _stateRepository.Remove(state);
 		await _dbContext.SaveChangesAsync();
