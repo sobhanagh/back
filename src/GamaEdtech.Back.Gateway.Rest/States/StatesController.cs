@@ -3,6 +3,7 @@ using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
+using GamaEdtech.Back.Gateway.Rest.Common;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -55,13 +56,18 @@ public class StatesController : ControllerBase
 	///<response code="400"></response>
 	///<response code="500">Server error</response>
 	[HttpGet]
-	public async Task<IActionResult> List([FromQuery] FindStatesDto dto)
+	[PaginationTransformer]
+	[SortingTransformer(DefaultSortKey = "Name", ValidSortKeys = "Name,Code")]
+	public async Task<IActionResult> List(
+		[FromQuery] FilterStatesDto filtering,
+		[FromQuery] SortingDto sorting,
+		[FromQuery] PaginationDto pagination)
 	{
 		var query = @"
             SELECT [Id], [Name], [Code], [CountryId]
             FROM [GamaEdtech].[dbo].[State] "
-			+ (dto.CountryId.HasValue ?  @"WHERE [CountryId] = @CountryId " : " ") +
-            "ORDER BY [" + dto.SortBy + "] " + dto.Order + @"
+			+ (filtering.CountryId.HasValue ?  @"WHERE [CountryId] = @CountryId " : " ") +
+            "ORDER BY [" + sorting.SortBy + "] " + sorting.Order + @"
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
 
 		using (var connection = new SqlConnection(_connectionString.Value))
@@ -70,9 +76,9 @@ public class StatesController : ControllerBase
 				query,
 				new
 				{
-					CountryId = dto.CountryId,
-					Offset = (dto.Page - 1) * dto.PageSize,
-					PageSize = dto.PageSize,
+					CountryId = filtering.CountryId,
+					Offset = (pagination.Page - 1) * pagination.PageSize,
+					PageSize = pagination.PageSize,
 				});
 
 			return Ok(Envelope.Ok(contries));
