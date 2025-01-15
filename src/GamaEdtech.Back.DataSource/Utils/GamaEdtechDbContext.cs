@@ -5,6 +5,7 @@ using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace GamaEdtech.Back.DataSource.Utils;
 
@@ -12,9 +13,14 @@ public class GamaEdtechDbContext : DbContext
 {
 	private readonly ConnectionString _connectionString;
 
-	public GamaEdtechDbContext(ConnectionString connectionString)
+	//public GamaEdtechDbContext(ConnectionString connectionString)
+	//{
+	//	_connectionString = connectionString;
+	//}
+
+	public GamaEdtechDbContext(DbContextOptions options) : base(options)
 	{
-		_connectionString = connectionString;
+		
 	}
 
 	public DbSet<School> Schools { get; set; }
@@ -22,15 +28,15 @@ public class GamaEdtechDbContext : DbContext
 	public DbSet<State> States { get; set; }
 	public DbSet<City> Cities { get; set; }
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-	{
-		base.OnConfiguring(optionsBuilder);
-		optionsBuilder
-			//.UseLazyLoadingProxies()
-			.UseSqlServer(
-			_connectionString.Value,
-			x => x.UseNetTopologySuite());
-	}
+	//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	//{
+	//	base.OnConfiguring(optionsBuilder);
+	//	optionsBuilder
+	//		//.UseLazyLoadingProxies()
+	//		.UseSqlServer(
+	//		_connectionString.Value,
+	//		x => x.UseNetTopologySuite());
+	//}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
