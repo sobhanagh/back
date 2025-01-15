@@ -27,10 +27,7 @@ jobs:
             dotnet tool install --global dotnet-ef --version 9.*
             dotnet tool restore
 
-      - name: Set Azure Environment Variables
-        run: |
-            echo "AZURE_SQL_CONNECTIONSTRING=${{ secrets.AZURE_SQL_CONNECTIONSTRING }}" >> $GITHUB_ENV
-            echo "AZURE_REDIS_CONNECTIONSTRING=${{ secrets.AZURE_REDIS_CONNECTIONSTRING }}" >> $GITHUB_ENV
+      
 
       # Run migrations for the DataSource project
       - name: Run EF Core Migrations
