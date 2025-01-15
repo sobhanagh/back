@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using GamaEdtech.Back.DataSource.Utils;
 using GamaEdtech.Back.Domain.Base;
+using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Schools;
 using Microsoft.AspNetCore.Mvc;
 
@@ -165,6 +166,33 @@ public class SchoolsController : ControllerBase
 		await _dbContext.SaveChangesAsync();
 
 		return CreatedAtAction(nameof(RegisterSchool), new { id = school.Id }, null); ;
+	}
+
+	///<summary>
+	/// Remove School
+	///</summary>
+	/// 
+	///<remarks>
+	/// Sample request:
+	///
+	///     DELETE /Schools/{id:int}
+	///</remarks>
+	///
+	///<response code="204"></response>
+	///<response code="404"></response>
+	///<response code="500">Server error</response>
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> Remove([FromRoute] int id)
+	{
+		var city = await _schoolRepository.GetBy(new Id(id));
+
+		if (city is null)
+			return NotFound();
+
+		await _schoolRepository.Remove(city);
+		await _dbContext.SaveChangesAsync();
+
+		return NoContent();
 	}
 }
 
