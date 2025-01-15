@@ -11,9 +11,7 @@ using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
 using GamaEdtech.Back.Gateway.Rest.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using static CSharpFunctionalExtensions.Result;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +26,8 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-	//connectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
-	connectionString = new ConnectionString(Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!);
+	connectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
+	//connectionString = new ConnectionString(Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!);
 
 	builder.Services.AddStackExchangeRedisCache(options =>
 	{
@@ -50,8 +48,6 @@ builder.Services
 	.AddValidatorsFromAssemblyContaining<Program>(); ;
 
 builder.Services.AddSingleton(connectionString);
-//builder.Services.AddDbContext<GamaEdtechDbContext>(options => 
-//	options.UseSqlServer(connectionStringValue!, x => x.UseNetTopologySuite()));
 builder.Services.AddScoped<GamaEdtechDbContext>();
 builder.Services.AddTransient<ISchoolRepository, SqlServerSchoolRepository>();
 builder.Services.AddTransient<ICountryRepository, SqlServerCountryRepository>();

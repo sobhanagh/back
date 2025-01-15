@@ -5,6 +5,8 @@ using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace GamaEdtech.Back.DataSource.Utils;
@@ -17,11 +19,6 @@ public class GamaEdtechDbContext : DbContext
 	{
 		_connectionString = connectionString;
 	}
-
-	//public GamaEdtechDbContext(DbContextOptions options) : base(options)
-	//{
-		
-	//}
 
 	public DbSet<School> Schools { get; set; }
 	public DbSet<Country> Countries { get; set; }
@@ -53,3 +50,24 @@ public class GamaEdtechDbContext : DbContext
 	}
 }
 
+
+public class GamaEdtechDbContextFactory : IDesignTimeDbContextFactory<GamaEdtechDbContext>
+{
+	public GamaEdtechDbContext CreateDbContext(string[] args)
+	{
+		var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
+		var configuration = new ConfigurationBuilder()
+			.SetBasePath(Directory.GetCurrentDirectory())
+			.AddJsonFile("appsettings.json")
+			.AddJsonFile($"appsettings.{environment}.json", optional: true)
+			.AddEnvironmentVariables()
+			.Build();
+
+		var connectionString = environment == "Development"
+			? configuration.GetConnectionString("Default")
+			: configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+
+		return new GamaEdtechDbContext(new ConnectionString(connectionString!));
+	}
+}
