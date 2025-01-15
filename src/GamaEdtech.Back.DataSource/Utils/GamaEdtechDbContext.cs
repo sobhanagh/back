@@ -66,7 +66,7 @@ public class GamaEdtechDbContextFactory : IDesignTimeDbContextFactory<GamaEdtech
 
 		var connectionString = environment == "Development"
 			? configuration.GetConnectionString("Default")
-			: configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+			: Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!;
 
 		return new GamaEdtechDbContext(new ConnectionString(connectionString!));
 	}
