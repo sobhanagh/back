@@ -23,7 +23,7 @@ jobs:
       
       # Set environment variables explicitly
       - name: Set environment variable
-        run: echo "AZURE_SQL_CONNECTIONSTRING=${{ secrets.AZURE_SQL_CONNECTIONSTRING }}" >> $GITHUB_ENV
+        run: echo "AZURE_SQL_CONNECTIONSTRING=${{ env.AZURE_SQL_CONNECTIONSTRING }}" >> $GITHUB_ENV
 
       # Install EF Core tools
       - name: Install dotnet ef
