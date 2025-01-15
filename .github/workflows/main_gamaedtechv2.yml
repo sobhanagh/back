@@ -26,8 +26,12 @@ jobs:
         run: echo "AZURE_SQL_CONNECTIONSTRING=${{ secrets.AZURE_SQL_CONNECTIONSTRING }}" >> $GITHUB_ENV
 
       # Debug Connection String explicitly
-       - name: Debug Connection String
-         run: echo "Connection String: ${AZURE_SQL_CONNECTIONSTRING:0:10}..." # Logs only first 10 characters
+      - name: Debug Connection String
+        run: echo "Connection String: ${AZURE_SQL_CONNECTIONSTRING:0:10}..." # Logs only first 10 characters
+
+     
+      
+      
 
       # Install EF Core tools
       - name: Install dotnet ef
@@ -35,7 +39,7 @@ jobs:
             dotnet tool install --global dotnet-ef --version 9.*
             dotnet tool restore
 
-
+      
 
 
       # Run migrations for the DataSource project
