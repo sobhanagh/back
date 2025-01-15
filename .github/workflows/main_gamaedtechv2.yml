@@ -20,6 +20,10 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
+      
+      # Set environment variables explicitly
+      - name: Set environment variable
+        run: echo "AZURE_SQL_CONNECTIONSTRING=${{ secrets.AZURE_SQL_CONNECTIONSTRING }}" >> $GITHUB_ENV
 
       # Install EF Core tools
       - name: Install dotnet ef
@@ -27,13 +31,14 @@ jobs:
             dotnet tool install --global dotnet-ef --version 9.*
             dotnet tool restore
 
-      
+
+
 
       # Run migrations for the DataSource project
       - name: Run EF Core Migrations
         run: |
           cd src/GamaEdtech.Back.DataSource
-          dotnet ef database update  --runtime linux-x64 --connection ${{ secrets.AZURE_SQL_CONNECTIONSTRING }}  --context GamaEdtechDbContext --project GamaEdtech.Back.DataSource.csproj
+          dotnet ef database update  --runtime linux-x64 --connection "$AZURE_SQL_CONNECTIONSTRING"  --context GamaEdtechDbContext --project GamaEdtech.Back.DataSource.csproj
 
 
         # dotnet ef migrations bundle-o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
