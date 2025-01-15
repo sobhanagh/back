@@ -33,7 +33,9 @@ jobs:
       - name: Run EF Core Migrations
         run: |
           cd src/GamaEdtech.Back.DataSource
-          dotnet ef database update -c GamaEdtechDbContext -p GamaEdtech.Back.DataSource.csproj
+          dotnet ef migrations bundle --runtime linux-x64 -o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
+
+      # dotnet ef database update -c GamaEdtechDbContext -p GamaEdtech.Back.DataSource.csproj
 
       # Build the main project
       - name: Build Gateway Project
