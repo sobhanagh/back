@@ -28,7 +28,7 @@ else
 
 	builder.Services.AddStackExchangeRedisCache(options =>
 	{
-		options.Configuration = Environment.GetEnvironmentVariable("AZURE_REDIS_CONNECTIONSTRING")!;
+		options.Configuration = builder.Configuration.GetConnectionString("AZURE_REDIS_CONNECTIONSTRING")!;
 		options.InstanceName = "SampleInstance";
 	});
 }
