@@ -19,6 +19,13 @@ public class SqlServerSchoolRepository : ISchoolRepository
 		return await _dbContext.Schools.FindAsync(id);
 	}
 
+	public async Task<bool> ContainsSchoolInCityWith(Id id)
+	{
+		return await _dbContext.Schools
+			.Where(x => x.Address.CityId == id)
+			.AnyAsync();
+	}
+
 	public async Task<IReadOnlyList<School>> Find(string? namePattern = null)
 	{
 		IQueryable<School> schools = _dbContext.Schools;
