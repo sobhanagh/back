@@ -27,7 +27,7 @@ jobs:
 
       # Debug Connection String explicitly
       - name: Debug Connection String
-        run: echo " ${AZURE_SQL_CONNECTIONSTRING:0:10}..."
+        run: echo  ${AZURE_SQL_CONNECTIONSTRING:0:10}...
 
      
       
