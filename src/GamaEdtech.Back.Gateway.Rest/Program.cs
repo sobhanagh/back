@@ -15,9 +15,6 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-
-
 ConnectionString connectionString;
 
 if (builder.Environment.IsDevelopment())
@@ -26,12 +23,12 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-	//connectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
-	connectionString = new ConnectionString(Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!);
+	connectionString = new ConnectionString(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")!);
+	//connectionString = new ConnectionString(Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING")!);
 
 	builder.Services.AddStackExchangeRedisCache(options =>
 	{
-		options.Configuration = Environment.GetEnvironmentVariable("AZURE_REDIS_CONNECTIONSTRING")!;
+		options.Configuration = builder.Configuration.GetConnectionString("AZURE_REDIS_CONNECTIONSTRING")!;
 		options.InstanceName = "SampleInstance";
 	});
 }
