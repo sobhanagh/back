@@ -39,7 +39,9 @@ jobs:
       - name: Run EF Core Migrations
         run: |
           cd src/GamaEdtech.Back.DataSource
-          dotnet ef database update  --runtime linux-x64 --connection "$AZURE_SQL_CONNECTIONSTRING" 
+          dotnet ef database update   
+        env:
+          AZURE_SQL_CONNECTIONSTRING: ${{ secrets.AZURE_SQL_CONNECTIONSTRING }}
         # dotnet ef migrations bundle-o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
 
       # Build the main project
