@@ -39,7 +39,7 @@ jobs:
       - name: Run EF Core Migrations
         run: |
           cd src/GamaEdtech.Back.DataSource
-          dotnet ef database update  --runtime linux-x64 --connection "$AZURE_SQL_CONNECTIONSTRING"  --context GamaEdtechDbContext --project GamaEdtech.Back.DataSource.csproj
+        #  dotnet ef database update  --runtime linux-x64 --connection "$AZURE_SQL_CONNECTIONSTRING"  --context GamaEdtechDbContext --project GamaEdtech.Back.DataSource.csproj
 
 
         # dotnet ef migrations bundle-o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
