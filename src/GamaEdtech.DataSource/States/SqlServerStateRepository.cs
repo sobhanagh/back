@@ -1,9 +1,9 @@
-﻿using GamaEdtech.Back.DataSource.Utils;
+﻿using GamaEdtech.DataSource.Utils;
 using GamaEdtech.Domain.Base;
 using GamaEdtech.Domain.States;
 using Microsoft.EntityFrameworkCore;
 
-namespace GamaEdtech.Back.DataSource.States;
+namespace GamaEdtech.DataSource.States;
 
 public class SqlServerStateRepository : IStateRepository
 {

@@ -5,7 +5,7 @@ using GamaEdtech.Domain.Base;
 using GamaEdtech.Domain.States;
 using GamaEdtech.Domain.Cities;
 
-namespace GamaEdtech.Back.DataSource.Schools;
+namespace GamaEdtech.DataSource.Schools;
 
 internal class SchoolConfiguration : IEntityTypeConfiguration<School>
 {

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.DataSource.Utils;
+﻿namespace GamaEdtech.DataSource.Utils;
 
 public class ConnectionString
 {

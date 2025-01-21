@@ -1,9 +1,9 @@
-﻿using GamaEdtech.Back.DataSource.Utils;
+﻿using GamaEdtech.DataSource.Utils;
 using GamaEdtech.Domain.Base;
 using GamaEdtech.Domain.Schools;
 using Microsoft.EntityFrameworkCore;
 
-namespace GamaEdtech.Back.DataSource.Schools;
+namespace GamaEdtech.DataSource.Schools;
 
 public class SqlServerSchoolRepository : ISchoolRepository
 {

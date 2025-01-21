@@ -1,5 +1,5 @@
-﻿using GamaEdtech.Back.DataSource.Contries;
-using GamaEdtech.Back.DataSource.Schools;
+﻿using GamaEdtech.DataSource.Contries;
+using GamaEdtech.DataSource.Schools;
 using GamaEdtech.Domain.Cities;
 using GamaEdtech.Domain.Countries;
 using GamaEdtech.Domain.Schools;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace GamaEdtech.Back.DataSource.Utils;
+namespace GamaEdtech.DataSource.Utils;
 
 public class GamaEdtechDbContext : DbContext
 {

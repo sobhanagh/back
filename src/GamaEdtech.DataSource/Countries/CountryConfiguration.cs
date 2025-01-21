@@ -5,7 +5,7 @@ using GamaEdtech.Domain.Countries;
 using GamaEdtech.Domain.Base;
 
 
-namespace GamaEdtech.Back.DataSource.Contries;
+namespace GamaEdtech.DataSource.Contries;
 
 internal class CountryConfiguration : IEntityTypeConfiguration<Country>
 {

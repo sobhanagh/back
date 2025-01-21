@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Gateway.RestApi"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Domain", "src\GamaEdtech.Domain\GamaEdtech.Domain.csproj", "{F5BC080E-9DF9-40E3-B88A-129275C3FDFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Back.DataSource", "src\GamaEdtech.Back.DataSource\GamaEdtech.Back.DataSource.csproj", "{9A58F91C-93CC-47FA-A4EF-A46E374520FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.DataSource", "src\GamaEdtech.DataSource\GamaEdtech.DataSource.csproj", "{9A58F91C-93CC-47FA-A4EF-A46E374520FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Back.Tests.Unit", "tests\GamaEdtech.Back.Tests.Unit\GamaEdtech.Back.Tests.Unit.csproj", "{C31CBCA5-790A-4645-93B5-93C0B60CD3E2}"
 EndProject

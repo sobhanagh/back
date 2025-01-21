@@ -1,9 +1,9 @@
-﻿using GamaEdtech.Back.DataSource.Utils;
+﻿using GamaEdtech.DataSource.Utils;
 using GamaEdtech.Domain.Base;
 using GamaEdtech.Domain.Cities;
 using Microsoft.EntityFrameworkCore;
 
-namespace GamaEdtech.Back.DataSource.Cities;
+namespace GamaEdtech.DataSource.Cities;
 
 public class SqlServerCityRepository : ICityRepository
 {

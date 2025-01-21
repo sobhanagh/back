@@ -5,7 +5,7 @@ using GamaEdtech.Domain.Cities;
 using GamaEdtech.Domain.States;
 using GamaEdtech.Domain.Countries;
 
-namespace GamaEdtech.Back.DataSource.Contries;
+namespace GamaEdtech.DataSource.Contries;
 
 internal class CityConfiguration : IEntityTypeConfiguration<City>
 {

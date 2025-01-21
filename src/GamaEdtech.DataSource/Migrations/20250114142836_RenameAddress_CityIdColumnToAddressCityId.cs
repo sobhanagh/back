@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace GamaEdtech.Back.DataSource.Migrations
+namespace GamaEdtech.DataSource.Migrations
 {
     /// <inheritdoc />
     public partial class RenameAddress_CityIdColumnToAddressCityId : Migration

@@ -1,11 +1,11 @@
 ﻿
 
-using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.DataSource.Utils;
 using GamaEdtech.Domain.Base;
 using GamaEdtech.Domain.Countries;
 using Microsoft.EntityFrameworkCore;
 
-namespace GamaEdtech.Back.DataSource.Contries;
+namespace GamaEdtech.DataSource.Contries;
 
 public class SqlServerCountryRepository : ICountryRepository
 {

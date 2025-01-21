@@ -1,10 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using GamaEdtech.Back.DataSource.Cities;
-using GamaEdtech.Back.DataSource.Contries;
-using GamaEdtech.Back.DataSource.Schools;
-using GamaEdtech.Back.DataSource.States;
-using GamaEdtech.Back.DataSource.Utils;
+using GamaEdtech.DataSource.Cities;
+using GamaEdtech.DataSource.Contries;
+using GamaEdtech.DataSource.Schools;
+using GamaEdtech.DataSource.States;
+using GamaEdtech.DataSource.Utils;
 using GamaEdtech.Domain.Cities;
 using GamaEdtech.Domain.Countries;
 using GamaEdtech.Domain.Schools;

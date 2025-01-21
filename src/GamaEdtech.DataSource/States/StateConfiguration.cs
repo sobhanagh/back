@@ -4,7 +4,7 @@ using GamaEdtech.Domain.States;
 using GamaEdtech.Domain.Countries;
 using GamaEdtech.Domain.Base;
 
-namespace GamaEdtech.Back.DataSource.Schools;
+namespace GamaEdtech.DataSource.Schools;
 
 internal class StateConfiguration : IEntityTypeConfiguration<State>
 {

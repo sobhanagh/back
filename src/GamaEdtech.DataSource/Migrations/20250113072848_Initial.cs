@@ -3,7 +3,7 @@ using NetTopologySuite.Geometries;
 
 #nullable disable
 
-namespace GamaEdtech.Back.DataSource.Migrations
+namespace GamaEdtech.DataSource.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
