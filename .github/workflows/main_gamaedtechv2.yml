@@ -36,22 +36,22 @@ jobs:
       # Run migrations for the DataSource project
       - name: Run EF Core Migrations
         run: |
-          cd src/GamaEdtech.Back.DataSource
+          cd src/GamaEdtech.DataSource
           dotnet ef database update   
         env:
           AZURE_SQL_CONNECTIONSTRING: ${{ secrets.AZURE_SQL_CONNECTIONSTRING }}
         # dotnet ef migrations bundle-o ${{env.DOTNET_ROOT}}/myapp/migrationsbundle
 
       # Build the main project
-      - name: Build Gateway Project
+      - name: Build Rest API Project
         run: |
-          cd src/GamaEdtech.Back.Gateway.Rest
+          cd src/GamaEdtech.Gateway.RestApi
           dotnet build --configuration Release
 
       # Publish the main project
-      - name: Publish Gateway Project
+      - name: Publish Rest API Project
         run: |
-          cd src/GamaEdtech.Back.Gateway.Rest
+          cd src/GamaEdtech.Gateway.RestApi
           dotnet publish --configuration Release -o ${{env.DOTNET_ROOT}}/myapp
 
 
