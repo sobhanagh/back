@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.DataSource", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Tests.Unit", "tests\GamaEdtech.Tests.Unit\GamaEdtech.Tests.Unit.csproj", "{C31CBCA5-790A-4645-93B5-93C0B60CD3E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Back.Tests.Integration", "tests\GamaEdtech.Back.Tests.Integration\GamaEdtech.Back.Tests.Integration.csproj", "{EA6822C1-2245-41B2-AF06-6BE2A0061649}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamaEdtech.Tests.Integration", "tests\GamaEdtech.Tests.Integration\GamaEdtech.Tests.Integration.csproj", "{EA6822C1-2245-41B2-AF06-6BE2A0061649}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
