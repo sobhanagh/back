@@ -4,12 +4,12 @@ using GamaEdtech.Back.Domain.Base;
 using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.States;
-using GamaEdtech.Back.Gateway.Rest.Common;
-using GamaEdtech.Back.Gateway.Rest.Utils;
+using GamaEdtech.Gateway.RestApi.Common;
+using GamaEdtech.Gateway.RestApi.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
-namespace GamaEdtech.Back.Gateway.Rest.Countries;
+namespace GamaEdtech.Gateway.RestApi.Countries;
 
 [Route("api/[controller]")]
 [ApiController]

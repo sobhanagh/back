@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace GamaEdtech.Back.Gateway.Rest.Common;
+namespace GamaEdtech.Gateway.RestApi.Common;
 
 public class PaginationTransformerAttribute : ActionFilterAttribute
 {

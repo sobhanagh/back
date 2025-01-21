@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.Gateway.Rest.Common;
+﻿namespace GamaEdtech.Gateway.RestApi.Common;
 
 public class PaginationDto
 {

@@ -9,7 +9,7 @@ using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Countries;
 using GamaEdtech.Back.Domain.Schools;
 using GamaEdtech.Back.Domain.States;
-using GamaEdtech.Back.Gateway.Rest.Utils;
+using GamaEdtech.Gateway.RestApi.Utils;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 

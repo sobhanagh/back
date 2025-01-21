@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GamaEdtech.Back.Gateway.Rest.Utils;
+namespace GamaEdtech.Gateway.RestApi.Utils;
 
 public class ModelStateValidator
 {

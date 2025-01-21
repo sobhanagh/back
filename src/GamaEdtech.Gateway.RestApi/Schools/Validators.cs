@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using GamaEdtech.Back.Gateway.Rest.Controllers;
+using GamaEdtech.Gateway.RestApi.Controllers;
 
-namespace GamaEdtech.Back.Gateway.Rest.Schools;
+namespace GamaEdtech.Gateway.RestApi.Schools;
 
 public class RegisterSchoolDtoValidator : AbstractValidator<RegisterSchoolDto>
 {

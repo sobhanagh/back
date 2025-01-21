@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.Gateway.Rest.Controllers;
+﻿namespace GamaEdtech.Gateway.RestApi.Controllers;
 
 public class RegisterSchoolDto
 {

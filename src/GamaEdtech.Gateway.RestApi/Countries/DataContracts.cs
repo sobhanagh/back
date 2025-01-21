@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.Gateway.Rest.Countries;
+﻿namespace GamaEdtech.Gateway.RestApi.Countries;
 
 public class ContryInListDto
 {

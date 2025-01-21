@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace GamaEdtech.Back.Gateway.Rest.Countries;
+namespace GamaEdtech.Gateway.RestApi.States;
 
-public class AddCountryDtoValidator : AbstractValidator<AddCountryDto>
+public class AddStateDtoValidator : AbstractValidator<AddStateDto>
 {
-	public AddCountryDtoValidator()
+	public AddStateDtoValidator()
 	{
 		RuleFor(x => x.Name)
 			.NotNull().WithMessage("name is required")
@@ -13,14 +13,13 @@ public class AddCountryDtoValidator : AbstractValidator<AddCountryDto>
 
 		RuleFor(x => x.Code)
 			.NotNull().WithMessage("code is required")
-			.NotEmpty().WithMessage("code is required")
-			.Matches("^[A-Z]{2,3}$").WithMessage("code is invalid");
+			.MaximumLength(5).WithMessage("code is too long");
 	}
 }
 
-public class EditCountryInfoDtoValidator : AbstractValidator<EditCountryInfoDto>
+public class EditStateInfoDtoValidator : AbstractValidator<EditStateInfoDto>
 {
-	public EditCountryInfoDtoValidator()
+	public EditStateInfoDtoValidator()
 	{
 		RuleFor(x => x.Name)
 			.NotNull().WithMessage("name is required")
@@ -29,8 +28,7 @@ public class EditCountryInfoDtoValidator : AbstractValidator<EditCountryInfoDto>
 
 		RuleFor(x => x.Code)
 			.NotNull().WithMessage("code is required")
-			.NotEmpty().WithMessage("code is required")
-			.Matches("^[A-Z]{2,3}$").WithMessage("code is invalid");
+			.MaximumLength(5).WithMessage("code is too long");
 	}
 }
 

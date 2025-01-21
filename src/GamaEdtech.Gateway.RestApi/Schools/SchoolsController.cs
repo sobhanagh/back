@@ -5,7 +5,7 @@ using GamaEdtech.Back.Domain.Cities;
 using GamaEdtech.Back.Domain.Schools;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GamaEdtech.Back.Gateway.Rest.Controllers;
+namespace GamaEdtech.Gateway.RestApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.Gateway.Rest.States;
+﻿namespace GamaEdtech.Gateway.RestApi.States;
 
 public class FilterStatesDto
 {

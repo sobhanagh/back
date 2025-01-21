@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.Gateway.Rest.Cities;
+﻿namespace GamaEdtech.Gateway.RestApi.Cities;
 
 public class FilterCitiesDto
 {
