@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Back.Tests.Unit
+﻿namespace GamaEdtech.Tests.Unit
 {
 	public class UnitTest1
 	{
