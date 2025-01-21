@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GamaEdtech.Back.Domain\GamaEdtech.Back.Domain.csproj" />
+    <ProjectReference Include="..\GamaEdtech.Domain\GamaEdtech.Domain.csproj" />
   </ItemGroup>
 
 </Project>

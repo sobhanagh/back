@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace GamaEdtech.Back.Domain.Schools;
+namespace GamaEdtech.Domain.Schools;
 
 public class SchoolName : ValueObject
 {

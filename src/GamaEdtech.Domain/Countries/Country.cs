@@ -1,7 +1,7 @@
-﻿using GamaEdtech.Back.Domain.Base;
-using GamaEdtech.Back.Domain.Cities;
+﻿using GamaEdtech.Domain.Base;
+using GamaEdtech.Domain.Cities;
 
-namespace GamaEdtech.Back.Domain.Countries;
+namespace GamaEdtech.Domain.Countries;
 
 public class Country : AggregateRoot
 {

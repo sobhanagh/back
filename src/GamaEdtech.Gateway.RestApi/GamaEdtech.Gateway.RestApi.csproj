@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GamaEdtech.Back.DataSource\GamaEdtech.Back.DataSource.csproj" />
-    <ProjectReference Include="..\GamaEdtech.Back.Domain\GamaEdtech.Back.Domain.csproj" />
+    <ProjectReference Include="..\GamaEdtech.Domain\GamaEdtech.Domain.csproj" />
   </ItemGroup>
 
 </Project>

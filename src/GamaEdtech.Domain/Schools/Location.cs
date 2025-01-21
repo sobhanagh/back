@@ -2,7 +2,7 @@
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
-namespace GamaEdtech.Back.Domain.Schools;
+namespace GamaEdtech.Domain.Schools;
 
 public class Location : ValueObject
 {

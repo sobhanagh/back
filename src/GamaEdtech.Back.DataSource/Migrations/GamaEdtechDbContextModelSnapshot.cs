@@ -22,7 +22,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.Cities.City", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.Cities.City", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
                     b.ToTable("City", (string)null);
                 });
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.Countries.Country", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.Countries.Country", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +78,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
                     b.ToTable("Country", (string)null);
                 });
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.Schools.School", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.Schools.School", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,7 +95,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
                     b.ToTable("School", (string)null);
                 });
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.States.State", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.States.State", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -126,22 +126,22 @@ namespace GamaEdtech.Back.DataSource.Migrations
                     b.ToTable("State", (string)null);
                 });
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.Cities.City", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.Cities.City", b =>
                 {
-                    b.HasOne("GamaEdtech.Back.Domain.Countries.Country", null)
+                    b.HasOne("GamaEdtech.Domain.Countries.Country", null)
                         .WithMany()
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Back.Domain.States.State", null)
+                    b.HasOne("GamaEdtech.Domain.States.State", null)
                         .WithMany()
                         .HasForeignKey("StateId");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.Schools.School", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.Schools.School", b =>
                 {
-                    b.OwnsOne("GamaEdtech.Back.Domain.Schools.Address", "Address", b1 =>
+                    b.OwnsOne("GamaEdtech.Domain.Schools.Address", "Address", b1 =>
                         {
                             b1.Property<int>("SchoolId")
                                 .HasColumnType("int");
@@ -174,7 +174,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
 
                             b1.ToTable("School");
 
-                            b1.HasOne("GamaEdtech.Back.Domain.Cities.City", null)
+                            b1.HasOne("GamaEdtech.Domain.Cities.City", null)
                                 .WithMany()
                                 .HasForeignKey("CityId")
                                 .OnDelete(DeleteBehavior.Cascade)
@@ -183,11 +183,11 @@ namespace GamaEdtech.Back.DataSource.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("SchoolId");
 
-                            b1.HasOne("GamaEdtech.Back.Domain.States.State", null)
+                            b1.HasOne("GamaEdtech.Domain.States.State", null)
                                 .WithMany()
                                 .HasForeignKey("StateId");
 
-                            b1.OwnsOne("GamaEdtech.Back.Domain.Schools.Location", "Location", b2 =>
+                            b1.OwnsOne("GamaEdtech.Domain.Schools.Location", "Location", b2 =>
                                 {
                                     b2.Property<int>("AddressSchoolId")
                                         .HasColumnType("int");
@@ -209,7 +209,7 @@ namespace GamaEdtech.Back.DataSource.Migrations
                                 .IsRequired();
                         });
 
-                    b.OwnsOne("GamaEdtech.Back.Domain.Schools.SchoolName", "Name", b1 =>
+                    b.OwnsOne("GamaEdtech.Domain.Schools.SchoolName", "Name", b1 =>
                         {
                             b1.Property<int>("SchoolId")
                                 .HasColumnType("int");
@@ -241,9 +241,9 @@ namespace GamaEdtech.Back.DataSource.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GamaEdtech.Back.Domain.States.State", b =>
+            modelBuilder.Entity("GamaEdtech.Domain.States.State", b =>
                 {
-                    b.HasOne("GamaEdtech.Back.Domain.Countries.Country", null)
+                    b.HasOne("GamaEdtech.Domain.Countries.Country", null)
                         .WithMany()
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)

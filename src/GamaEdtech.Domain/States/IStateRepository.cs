@@ -1,6 +1,6 @@
-﻿using GamaEdtech.Back.Domain.Base;
+﻿using GamaEdtech.Domain.Base;
 
-namespace GamaEdtech.Back.Domain.States;
+namespace GamaEdtech.Domain.States;
 
 public interface IStateRepository
 {

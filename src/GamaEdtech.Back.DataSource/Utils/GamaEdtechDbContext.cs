@@ -1,9 +1,9 @@
 ﻿using GamaEdtech.Back.DataSource.Contries;
 using GamaEdtech.Back.DataSource.Schools;
-using GamaEdtech.Back.Domain.Cities;
-using GamaEdtech.Back.Domain.Countries;
-using GamaEdtech.Back.Domain.Schools;
-using GamaEdtech.Back.Domain.States;
+using GamaEdtech.Domain.Cities;
+using GamaEdtech.Domain.Countries;
+using GamaEdtech.Domain.Schools;
+using GamaEdtech.Domain.States;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;

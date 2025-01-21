@@ -1,6 +1,6 @@
-﻿using GamaEdtech.Back.Domain.Base;
+﻿using GamaEdtech.Domain.Base;
 
-namespace GamaEdtech.Back.Domain.Cities;
+namespace GamaEdtech.Domain.Cities;
 
 public class City : AggregateRoot
 {

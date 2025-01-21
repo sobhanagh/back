@@ -1,6 +1,6 @@
-﻿using GamaEdtech.Back.Domain.Base;
+﻿using GamaEdtech.Domain.Base;
 
-namespace GamaEdtech.Back.Domain.Countries;
+namespace GamaEdtech.Domain.Countries;
 
 public interface ICountryRepository
 {

@@ -1,8 +1,8 @@
 ﻿
 
 using GamaEdtech.Back.DataSource.Utils;
-using GamaEdtech.Back.Domain.Base;
-using GamaEdtech.Back.Domain.Countries;
+using GamaEdtech.Domain.Base;
+using GamaEdtech.Domain.Countries;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamaEdtech.Back.DataSource.Contries;

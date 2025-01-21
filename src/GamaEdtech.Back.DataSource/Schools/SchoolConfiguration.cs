@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using GamaEdtech.Back.Domain.Schools;
-using GamaEdtech.Back.Domain.Base;
-using GamaEdtech.Back.Domain.States;
-using GamaEdtech.Back.Domain.Cities;
+using GamaEdtech.Domain.Schools;
+using GamaEdtech.Domain.Base;
+using GamaEdtech.Domain.States;
+using GamaEdtech.Domain.Cities;
 
 namespace GamaEdtech.Back.DataSource.Schools;
 

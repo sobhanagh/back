@@ -1,6 +1,6 @@
 ﻿using GamaEdtech.Back.DataSource.Utils;
-using GamaEdtech.Back.Domain.Base;
-using GamaEdtech.Back.Domain.Schools;
+using GamaEdtech.Domain.Base;
+using GamaEdtech.Domain.Schools;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamaEdtech.Back.DataSource.Schools;

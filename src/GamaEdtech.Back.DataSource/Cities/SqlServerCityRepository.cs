@@ -1,6 +1,6 @@
 ﻿using GamaEdtech.Back.DataSource.Utils;
-using GamaEdtech.Back.Domain.Base;
-using GamaEdtech.Back.Domain.Cities;
+using GamaEdtech.Domain.Base;
+using GamaEdtech.Domain.Cities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamaEdtech.Back.DataSource.Cities;

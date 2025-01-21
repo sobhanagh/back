@@ -1,6 +1,6 @@
 ﻿using CSharpFunctionalExtensions;
 
-namespace GamaEdtech.Back.Domain.Base;
+namespace GamaEdtech.Domain.Base;
 
 public abstract class AggregateRoot : Entity<Id>
 {
