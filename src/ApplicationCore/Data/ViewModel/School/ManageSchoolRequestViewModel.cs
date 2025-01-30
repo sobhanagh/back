@@ -4,7 +4,6 @@ namespace GamaEdtech.Backend.Data.ViewModel.School
 
     public sealed class ManageSchoolRequestViewModel
     {
-        public int? Id { get; set; }
         public string? Name { get; set; }
         public SchoolType? SchoolType { get; set; }
         public int? StateId { get; set; }
