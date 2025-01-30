@@ -80,15 +80,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3537E9F2B0E14A21A5EC203D42DD6D94 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_248A5777BC4A4A1C98D6889D496727DD }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0306BA9026D64CB9A40B357693B76487 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F0426DD3627F4E16A744183F6707BD10 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_E585A7FBF15B4C6FB17A62F70D23B4DA }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3F067EE4F6174E3988EA5DB3F14818F9 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'gamaapi'
+          app-name: 'gamacoreapp'
           slot-name: 'Production'
           package: .
           
