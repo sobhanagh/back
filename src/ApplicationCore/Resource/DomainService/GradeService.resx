@@ -117,13 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SchoolNotFound" xml:space="preserve">
-    <value>School was not found.</value>
+  <data name="GradeNotFound" xml:space="preserve">
+    <value>Grade was not found.</value>
   </data>
-  <data name="SchoolCantBeRemoved" xml:space="preserve">
-    <value>School can't be removed.</value>
+  <data name="GradeCantBeRemoved" xml:space="preserve">
+    <value>Grade can't be removed.</value>
   </data>
-  <data name="InvalidSchoolId" xml:space="preserve">
-    <value>School was not found.</value>
+  <data name="InvalidGradeId" xml:space="preserve">
+    <value>Grade was not found.</value>
   </data>
 </root>
