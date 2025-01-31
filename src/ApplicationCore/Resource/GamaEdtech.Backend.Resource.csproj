@@ -171,6 +171,16 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
       </Compile>
+      <Compile Update="DomainService\TopicService.Designer.cs">
+        <DependentUpon>TopicService.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+      <Compile Update="DomainService\SubjectService.Designer.cs">
+        <DependentUpon>SubjectService.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
       <Compile Update="DomainService\GradeService.Designer.cs">
         <DependentUpon>GradeService.resx</DependentUpon>
         <DesignTime>True</DesignTime>
@@ -357,6 +367,14 @@
       </EmbeddedResource>
       <EmbeddedResource Update="Data\ViewModel\Limit\LimitsRequestViewModel.resx">
         <LastGenOutput>LimitsRequestViewModel.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="DomainService\TopicService.resx">
+        <LastGenOutput>TopicService.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="DomainService\SubjectService.resx">
+        <LastGenOutput>SubjectService.Designer.cs</LastGenOutput>
         <Generator>PublicResXFileCodeGenerator</Generator>
       </EmbeddedResource>
       <EmbeddedResource Update="DomainService\GradeService.resx">

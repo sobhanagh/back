@@ -115,10 +115,6 @@ namespace GamaEdtech.Backend.DomainService
 
                 return new(OperationResult.Succeeded) { Data = board.Id };
             }
-            catch (ReferenceConstraintException)
-            {
-                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InvalidStateId"], }] };
-            }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);

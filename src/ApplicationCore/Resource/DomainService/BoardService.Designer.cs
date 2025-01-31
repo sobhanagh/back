@@ -77,14 +77,5 @@ namespace GamaEdtech.Backend.Resource.DomainService {
                 return ResourceManager.GetString("BoardNotFound", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Board was not found..
-        /// </summary>
-        public static string InvalidBoardId {
-            get {
-                return ResourceManager.GetString("InvalidBoardId", resourceCulture);
-            }
-        }
     }
 }

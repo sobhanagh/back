@@ -59,6 +59,8 @@ namespace GamaEdtech.Backend.DomainService
                     Title = t.Title,
                     Description = t.Description,
                     Icon = t.Icon,
+                    BoardId = t.BoardId,
+                    BoardTitle = t.Board!.Title,
                 }).FirstOrDefaultAsync();
 
                 return grade is null
@@ -97,6 +99,7 @@ namespace GamaEdtech.Backend.DomainService
                     grade.Title = requestDto.Title;
                     grade.Description = requestDto.Description;
                     grade.Icon = requestDto.Icon;
+                    grade.BoardId = requestDto.BoardId;
 
                     _ = repository.Update(grade);
                 }
@@ -107,6 +110,7 @@ namespace GamaEdtech.Backend.DomainService
                         Title = requestDto.Title,
                         Description = requestDto.Description,
                         Icon = requestDto.Icon,
+                        BoardId = requestDto.BoardId,
                     };
                     repository.Add(grade);
                 }
@@ -117,7 +121,7 @@ namespace GamaEdtech.Backend.DomainService
             }
             catch (ReferenceConstraintException)
             {
-                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InvalidStateId"], }] };
+                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InvalidBoardId"], }] };
             }
             catch (Exception exc)
             {
