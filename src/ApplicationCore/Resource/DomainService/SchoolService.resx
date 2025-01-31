@@ -123,7 +123,7 @@
   <data name="SchoolCantBeRemoved" xml:space="preserve">
     <value>School can't be removed.</value>
   </data>
-  <data name="InvalidSchoolId" xml:space="preserve">
-    <value>School was not found.</value>
+  <data name="InvalidStateId" xml:space="preserve">
+    <value>State was not found.</value>
   </data>
 </root>

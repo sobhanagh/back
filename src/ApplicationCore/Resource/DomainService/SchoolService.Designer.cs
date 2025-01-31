@@ -61,11 +61,11 @@ namespace GamaEdtech.Backend.Resource.DomainService {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to School was not found..
+        ///   Looks up a localized string similar to State was not found..
         /// </summary>
-        public static string InvalidSchoolId {
+        public static string InvalidStateId {
             get {
-                return ResourceManager.GetString("InvalidSchoolId", resourceCulture);
+                return ResourceManager.GetString("InvalidStateId", resourceCulture);
             }
         }
         

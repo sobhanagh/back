@@ -36,6 +36,8 @@ namespace GamaEdtech.Backend.Data.Entity
         public int BoardId { get; set; }
         public Board? Board { get; set; }
 
+        public virtual ICollection<Subject>? Subjects { get; set; }
+
         public void Configure([NotNull] EntityTypeBuilder<Grade> builder)
         {
         }
