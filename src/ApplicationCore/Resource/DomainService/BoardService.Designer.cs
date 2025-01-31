@@ -22,14 +22,14 @@ namespace GamaEdtech.Backend.Resource.DomainService {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class SchoolService {
+    public class BoardService {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal SchoolService() {
+        internal BoardService() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace GamaEdtech.Backend.Resource.DomainService {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Backend.Resource.DomainService.SchoolService", typeof(SchoolService).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Backend.Resource.DomainService.BoardService", typeof(BoardService).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,29 @@ namespace GamaEdtech.Backend.Resource.DomainService {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to School was not found..
+        ///   Looks up a localized string similar to Board can&apos;t be removed..
         /// </summary>
-        public static string InvalidSchoolId {
+        public static string BoardCantBeRemoved {
             get {
-                return ResourceManager.GetString("InvalidSchoolId", resourceCulture);
+                return ResourceManager.GetString("BoardCantBeRemoved", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to School can&apos;t be removed..
+        ///   Looks up a localized string similar to Board was not found..
         /// </summary>
-        public static string SchoolCantBeRemoved {
+        public static string BoardNotFound {
             get {
-                return ResourceManager.GetString("SchoolCantBeRemoved", resourceCulture);
+                return ResourceManager.GetString("BoardNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to School was not found..
+        ///   Looks up a localized string similar to Board was not found..
         /// </summary>
-        public static string SchoolNotFound {
+        public static string InvalidBoardId {
             get {
-                return ResourceManager.GetString("SchoolNotFound", resourceCulture);
+                return ResourceManager.GetString("InvalidBoardId", resourceCulture);
             }
         }
     }

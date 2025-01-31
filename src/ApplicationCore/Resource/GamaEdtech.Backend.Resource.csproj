@@ -171,6 +171,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
       </Compile>
+      <Compile Update="DomainService\GradeService.Designer.cs">
+        <DependentUpon>GradeService.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
       <Compile Update="DomainService\LimitService.Designer.cs">
         <DependentUpon>LimitService.resx</DependentUpon>
         <DesignTime>True</DesignTime>
@@ -195,6 +200,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>GroupServiceService.resx</DependentUpon>
+      </Compile>
+      <Compile Update="DomainService\BoardService.Designer.cs">
+        <DependentUpon>BoardService.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
       </Compile>
       <Compile Update="DomainService\SchoolService.Designer.cs">
         <DependentUpon>SchoolService.resx</DependentUpon>
@@ -349,6 +359,10 @@
         <LastGenOutput>LimitsRequestViewModel.Designer.cs</LastGenOutput>
         <Generator>PublicResXFileCodeGenerator</Generator>
       </EmbeddedResource>
+      <EmbeddedResource Update="DomainService\GradeService.resx">
+        <LastGenOutput>GradeService.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
       <EmbeddedResource Update="DomainService\LimitService.resx">
         <LastGenOutput>LimitService.Designer.cs</LastGenOutput>
         <Generator>PublicResXFileCodeGenerator</Generator>
@@ -368,6 +382,10 @@
       <EmbeddedResource Update="DomainService\GroupServiceService.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>GroupServiceService.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="DomainService\BoardService.resx">
+        <LastGenOutput>BoardService.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
       </EmbeddedResource>
       <EmbeddedResource Update="DomainService\SchoolService.resx">
         <LastGenOutput>SchoolService.Designer.cs</LastGenOutput>
