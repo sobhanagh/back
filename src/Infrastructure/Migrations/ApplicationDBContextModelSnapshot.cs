@@ -601,7 +601,6 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar")
                         .HasColumnName("Code");
@@ -622,9 +621,22 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("LastModifyUserId");
 
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float")
+                        .HasColumnName("Latitude");
+
+                    b.Property<string>("LocalTitle")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar")
+                        .HasColumnName("LocalTitle");
+
                     b.Property<byte>("LocationType")
                         .HasColumnType("tinyint")
                         .HasColumnName("Type");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float")
+                        .HasColumnName("Longitude");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("int")
@@ -639,7 +651,8 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Code] IS NOT NULL");
 
                     b.HasIndex("CreationUserId");
 
@@ -648,10 +661,6 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.HasIndex("LocationType");
 
                     b.HasIndex("ParentId");
-
-                    b.HasIndex("Title", "LocationType", "ParentId")
-                        .IsUnique()
-                        .HasFilter("[ParentId] IS NOT NULL");
 
                     b.ToTable("Locations");
                 });
