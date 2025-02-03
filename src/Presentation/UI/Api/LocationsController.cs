@@ -6,6 +6,7 @@ namespace GamaEdtech.Backend.UI.Web.Api
 
     using Farsica.Framework.Core;
     using Farsica.Framework.Data;
+    using Farsica.Framework.DataAccess.Specification;
 
     using GamaEdtech.Backend.Data.Entity;
     using GamaEdtech.Backend.Data.Enumeration;
@@ -52,15 +53,15 @@ namespace GamaEdtech.Backend.UI.Web.Api
             }
         }
 
-        [HttpGet("states"), Produces(typeof(ApiResponse<ListDataSource<LocationsResponseViewModel>>))]
-        public async Task<IActionResult> GetStates([NotNull, FromQuery] LocationsRequestViewModel request)
+        [HttpGet("states/{countryId}"), Produces(typeof(ApiResponse<ListDataSource<LocationsResponseViewModel>>))]
+        public async Task<IActionResult> GetStates([NotNull, FromRoute] int countryId, [NotNull, FromQuery] LocationsRequestViewModel request)
         {
             try
             {
                 var result = await locationService.Value.GetLocationsAsync(new ListRequestDto<Location>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new LocationTypeEqualsSpecification(LocationType.Country),
+                    Specification = new LocationTypeEqualsSpecification(LocationType.State).And(new ParentIdEqualsSpecification(countryId)),
                 });
                 return Ok(new ApiResponse<ListDataSource<LocationsResponseViewModel>>
                 {
@@ -85,15 +86,15 @@ namespace GamaEdtech.Backend.UI.Web.Api
             }
         }
 
-        [HttpGet("cities"), Produces(typeof(ApiResponse<ListDataSource<LocationsResponseViewModel>>))]
-        public async Task<IActionResult> GetCities([NotNull, FromQuery] LocationsRequestViewModel request)
+        [HttpGet("cities{stateId}"), Produces(typeof(ApiResponse<ListDataSource<LocationsResponseViewModel>>))]
+        public async Task<IActionResult> GetCities([NotNull, FromRoute] int stateId, [NotNull, FromQuery] LocationsRequestViewModel request)
         {
             try
             {
                 var result = await locationService.Value.GetLocationsAsync(new ListRequestDto<Location>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new LocationTypeEqualsSpecification(LocationType.Country),
+                    Specification = new LocationTypeEqualsSpecification(LocationType.City).And(new ParentIdEqualsSpecification(stateId)),
                 });
                 return Ok(new ApiResponse<ListDataSource<LocationsResponseViewModel>>
                 {

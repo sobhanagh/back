@@ -180,7 +180,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                 var result = await locationService.Value.GetLocationsAsync(new ListRequestDto<Location>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new LocationTypeEqualsSpecification(LocationType.Country),
+                    Specification = new LocationTypeEqualsSpecification(LocationType.State),
                 });
                 return Ok(new ApiResponse<ListDataSource<LocationsResponseViewModel>>
                 {
@@ -325,7 +325,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                 var result = await locationService.Value.GetLocationsAsync(new ListRequestDto<Location>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new LocationTypeEqualsSpecification(LocationType.Country),
+                    Specification = new LocationTypeEqualsSpecification(LocationType.City),
                 });
                 return Ok(new ApiResponse<ListDataSource<LocationsResponseViewModel>>
                 {
