@@ -7,6 +7,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
     using Farsica.Framework.Core;
     using Farsica.Framework.Data;
     using Farsica.Framework.DataAccess.Specification.Impl;
+    using Farsica.Framework.Identity;
 
     using GamaEdtech.Backend.Data.Dto.Location;
     using GamaEdtech.Backend.Data.Entity;
@@ -20,7 +21,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
     [Farsica.Framework.DataAnnotation.Area(nameof(Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
-    //[Permission(Roles = [nameof(Role.Admin)])]
+    [Permission(Roles = [nameof(Role.Admin)])]
     public class LocationsController(Lazy<ILogger<LocationsController>> logger, Lazy<ILocationService> locationService)
         : ApiControllerBase<LocationsController>(logger)
     {
