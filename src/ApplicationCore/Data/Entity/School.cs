@@ -11,9 +11,8 @@ namespace GamaEdtech.Backend.Data.Entity
     using GamaEdtech.Backend.Data.Entity.Identity;
     using GamaEdtech.Backend.Data.Enumeration;
 
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-    using NetTopologySuite.Geometries;
 
     [Table(nameof(School))]
     public class School : VersionableEntity<ApplicationUser, int, int?>, IEntity<School, int>
@@ -38,25 +37,66 @@ namespace GamaEdtech.Backend.Data.Entity
         [Required]
         public SchoolType? SchoolType { get; set; }
 
+        [Column(nameof(CountryId), DataType.Int)]
+        [Required]
+        public int CountryId { get; set; }
+        public Location? Country { get; set; }
+
         [Column(nameof(StateId), DataType.Int)]
         [Required]
         public int StateId { get; set; }
         public Location? State { get; set; }
 
+        [Column(nameof(CityId), DataType.Int)]
+        [Required]
+        public int CityId { get; set; }
+        public Location? City { get; set; }
+
         [Column(nameof(ZipCode), DataType.String)]
         [StringLength(50)]
-        [Required]
         public string? ZipCode { get; set; }
 
-        [Column(nameof(Address), DataType.UnicodeString)]
-        [StringLength(500)]
-        [Required]
+        [Column(nameof(Address), DataType.UnicodeMaxString)]
         public string? Address { get; set; }
 
-        [Column(nameof(Location), TypeName = "geometry")]
-        [Required]
-        public Point? Location { get; set; }
+        [Column(nameof(LocalAddress), DataType.UnicodeMaxString)]
+        public string? LocalAddress { get; set; }
 
-        public void Configure([NotNull] EntityTypeBuilder<School> builder) => _ = builder.OwnEnumeration<School, SchoolType, byte>(t => t.SchoolType);
+        [Column(nameof(Latitude), TypeName = "float")]
+        public double Latitude { get; set; }
+
+        [Column(nameof(Longitude), TypeName = "float")]
+        public double Longitude { get; set; }
+
+        [Column(nameof(Quarter), DataType.UnicodeString)]
+        [StringLength(50)]
+        public string? Quarter { get; set; }
+
+        [Column(nameof(FaxNumber), DataType.UnicodeString)]
+        [StringLength(50)]
+        public string? FaxNumber { get; set; }
+
+        [Column(nameof(PhoneNumber), DataType.UnicodeString)]
+        [StringLength(50)]
+        public string? PhoneNumber { get; set; }
+
+        [Column(nameof(Email), DataType.UnicodeString)]
+        [StringLength(50)]
+        public string? Email { get; set; }
+
+        [Column(nameof(WebSite), DataType.UnicodeString)]
+        [StringLength(50)]
+        public string? WebSite { get; set; }
+
+        [Column(nameof(Facilities), DataType.UnicodeMaxString)]
+        public string? Facilities { get; set; }
+
+        public void Configure([NotNull] EntityTypeBuilder<School> builder)
+        {
+            _ = builder.OwnEnumeration<School, SchoolType, byte>(t => t.SchoolType);
+            _ = builder.HasOne(t => t.Country).WithMany().HasForeignKey(t => t.CountryId).OnDelete(DeleteBehavior.NoAction);
+            _ = builder.HasOne(t => t.State).WithMany().HasForeignKey(t => t.StateId).OnDelete(DeleteBehavior.NoAction);
+            _ = builder.HasOne(t => t.City).WithMany().HasForeignKey(t => t.CityId).OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }
