@@ -11,7 +11,7 @@ namespace GamaEdtech.Backend.Data.Dto.School
         public required int StateId { get; set; }
         public required string ZipCode { get; set; }
         public required string Address { get; set; }
-        public required double Latitude { get; set; }
-        public required double Longitude { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 }

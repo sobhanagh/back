@@ -60,10 +60,10 @@ namespace GamaEdtech.Backend.Data.Entity
         public string? LocalAddress { get; set; }
 
         [Column(nameof(Latitude), TypeName = "float")]
-        public double Latitude { get; set; }
+        public double? Latitude { get; set; }
 
         [Column(nameof(Longitude), TypeName = "float")]
-        public double Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         [Column(nameof(Quarter), DataType.UnicodeString)]
         [StringLength(50)]
