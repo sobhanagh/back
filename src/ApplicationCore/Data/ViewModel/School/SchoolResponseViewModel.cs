@@ -8,7 +8,7 @@ namespace GamaEdtech.Backend.Data.ViewModel.School
         public string? Name { get; set; }
         public string? LocalName { get; set; }
         public SchoolType? SchoolType { get; set; }
-        public int StateId { get; set; }
+        public int? StateId { get; set; }
         public string? StateTitle { get; set; }
         public string? ZipCode { get; set; }
         public string? Address { get; set; }
