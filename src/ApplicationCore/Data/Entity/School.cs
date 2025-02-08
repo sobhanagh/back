@@ -30,7 +30,6 @@ namespace GamaEdtech.Backend.Data.Entity
 
         [Column(nameof(LocalName), DataType.UnicodeString)]
         [StringLength(100)]
-        [Required]
         public string? LocalName { get; set; }
 
         [Column(nameof(Type), DataType.Byte)]
