@@ -82,7 +82,7 @@ namespace GamaEdtech.Backend.Data.Entity
         public string? Email { get; set; }
 
         [Column(nameof(WebSite), DataType.UnicodeString)]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? WebSite { get; set; }
 
         [Column(nameof(Facilities), DataType.UnicodeMaxString)]
