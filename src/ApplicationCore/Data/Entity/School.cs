@@ -38,18 +38,15 @@ namespace GamaEdtech.Backend.Data.Entity
         public SchoolType? SchoolType { get; set; }
 
         [Column(nameof(CountryId), DataType.Int)]
-        [Required]
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
         public Location? Country { get; set; }
 
         [Column(nameof(StateId), DataType.Int)]
-        [Required]
-        public int StateId { get; set; }
+        public int? StateId { get; set; }
         public Location? State { get; set; }
 
         [Column(nameof(CityId), DataType.Int)]
-        [Required]
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
         public Location? City { get; set; }
 
         [Column(nameof(ZipCode), DataType.String)]
