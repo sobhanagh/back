@@ -59,8 +59,8 @@ namespace GamaEdtech.Backend.DomainService
                     Name = t.Name,
                     LocalName = t.LocalName,
                     Address = t.Address,
-                    Latitude = t.Location!.X,
-                    Longitude = t.Location!.Y,
+                    Latitude = t.Latitude,
+                    Longitude = t.Longitude,
                     SchoolType = t.SchoolType!,
                     StateId = t.StateId,
                     StateTitle = t.State!.Title,
@@ -103,7 +103,8 @@ namespace GamaEdtech.Backend.DomainService
                     school.Name = requestDto.Name;
                     school.LocalName = requestDto.LocalName;
                     school.Address = requestDto.Address;
-                    school.Location = new NetTopologySuite.Geometries.Point(requestDto.Latitude, requestDto.Longitude);
+                    school.Latitude = requestDto.Latitude;
+                    school.Longitude = requestDto.Longitude;
                     school.SchoolType = requestDto.SchoolType;
                     school.StateId = requestDto.StateId;
                     school.ZipCode = requestDto.ZipCode;
@@ -117,7 +118,8 @@ namespace GamaEdtech.Backend.DomainService
                         Name = requestDto.Name,
                         LocalName = requestDto.LocalName,
                         Address = requestDto.Address,
-                        Location = new NetTopologySuite.Geometries.Point(requestDto.Latitude, requestDto.Longitude),
+                        Latitude = requestDto.Latitude,
+                        Longitude = requestDto.Longitude,
                         SchoolType = requestDto.SchoolType,
                         StateId = requestDto.StateId,
                         ZipCode = requestDto.ZipCode,

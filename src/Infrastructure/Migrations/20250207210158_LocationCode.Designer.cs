@@ -4,16 +4,20 @@ using GamaEdtech.Backend.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace GamaEdtech.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250207210158_LocationCode")]
+    partial class LocationCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -674,16 +678,10 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar")
                         .HasColumnName("Address");
-
-                    b.Property<int>("CityId")
-                        .HasColumnType("int")
-                        .HasColumnName("CityId");
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int")
-                        .HasColumnName("CountryId");
 
                     b.Property<DateTimeOffset>("CreationDate")
                         .HasColumnType("datetimeoffset")
@@ -693,20 +691,6 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("CreationUserId");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("Email");
-
-                    b.Property<string>("Facilities")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Facilities");
-
-                    b.Property<string>("FaxNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("FaxNumber");
-
                     b.Property<DateTimeOffset?>("LastModifyDate")
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("LastModifyDate");
@@ -715,39 +699,22 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("LastModifyUserId");
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float")
-                        .HasColumnName("Latitude");
-
-                    b.Property<string>("LocalAddress")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("LocalAddress");
-
                     b.Property<string>("LocalName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar")
                         .HasColumnName("LocalName");
 
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float")
-                        .HasColumnName("Longitude");
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geometry")
+                        .HasColumnName("Location");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar")
                         .HasColumnName("Name");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("PhoneNumber");
-
-                    b.Property<string>("Quarter")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("Quarter");
 
                     b.Property<byte>("SchoolType")
                         .HasColumnType("tinyint")
@@ -757,21 +724,13 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("StateId");
 
-                    b.Property<string>("WebSite")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("WebSite");
-
                     b.Property<string>("ZipCode")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar")
                         .HasColumnName("ZipCode");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CityId");
-
-                    b.HasIndex("CountryId");
 
                     b.HasIndex("CreationUserId");
 
@@ -1077,18 +1036,6 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.School", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Location", "City")
-                        .WithMany()
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Location", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
@@ -1103,12 +1050,8 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.HasOne("GamaEdtech.Backend.Data.Entity.Location", "State")
                         .WithMany()
                         .HasForeignKey("StateId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("City");
-
-                    b.Navigation("Country");
 
                     b.Navigation("CreationUser");
 
