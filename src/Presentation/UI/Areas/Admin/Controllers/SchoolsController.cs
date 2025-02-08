@@ -67,6 +67,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                     {
                         Id = result.Data.Id,
                         Address = result.Data.Address,
+                        LocalAddress = result.Data.LocalAddress,
                         Name = result.Data.Name,
                         LocalName = result.Data.LocalName,
                         SchoolType = result.Data.SchoolType,
@@ -75,6 +76,16 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                         ZipCode = result.Data.ZipCode,
                         Latitude = result.Data.Latitude,
                         Longitude = result.Data.Longitude,
+                        Facilities = result.Data.Facilities,
+                        WebSite = result.Data.WebSite,
+                        Email = result.Data.Email,
+                        CityId = result.Data.CityId,
+                        CityTitle = result.Data.CityTitle,
+                        CountryId = result.Data.CountryId,
+                        CountryTitle = result.Data.CountryTitle,
+                        FaxNumber = result.Data.FaxNumber,
+                        PhoneNumber = result.Data.PhoneNumber,
+                        Quarter = result.Data.Quarter,
                     }
                 });
             }
@@ -93,14 +104,23 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
             {
                 var result = await schoolService.Value.ManageSchoolAsync(new ManageSchoolRequestDto
                 {
-                    Address = request.Address!,
-                    Name = request.Name!,
-                    LocalName = request.LocalName!,
+                    Address = request.Address,
+                    Name = request.Name,
+                    LocalName = request.LocalName,
                     SchoolType = request.SchoolType!,
-                    StateId = request.StateId!.Value,
-                    ZipCode = request.ZipCode!,
-                    Latitude = request.Latitude!.Value,
-                    Longitude = request.Longitude!.Value,
+                    StateId = request.StateId,
+                    ZipCode = request.ZipCode,
+                    Latitude = request.Latitude,
+                    Longitude = request.Longitude,
+                    Quarter = request.Quarter,
+                    PhoneNumber = request.PhoneNumber,
+                    FaxNumber = request.FaxNumber,
+                    Email = request.Email,
+                    CountryId = request.CountryId,
+                    CityId = request.CityId,
+                    Facilities = request.Facilities,
+                    LocalAddress = request.LocalAddress,
+                    WebSite = request.WebSite,
                 });
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {
@@ -124,14 +144,23 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                 var result = await schoolService.Value.ManageSchoolAsync(new ManageSchoolRequestDto
                 {
                     Id = id,
-                    Address = request.Address!,
-                    Name = request.Name!,
-                    LocalName = request.LocalName!,
+                    Address = request.Address,
+                    Name = request.Name,
+                    LocalName = request.LocalName,
                     SchoolType = request.SchoolType!,
-                    StateId = request.StateId!.Value,
-                    ZipCode = request.ZipCode!,
-                    Latitude = request.Latitude!.Value,
-                    Longitude = request.Longitude!.Value,
+                    StateId = request.StateId,
+                    ZipCode = request.ZipCode,
+                    Latitude = request.Latitude,
+                    Longitude = request.Longitude,
+                    WebSite = request.WebSite,
+                    LocalAddress = request.LocalAddress,
+                    Facilities = request.Facilities,
+                    CityId = request.CityId,
+                    CountryId = request.CountryId,
+                    Email = request.Email,
+                    FaxNumber = request.FaxNumber,
+                    PhoneNumber = request.PhoneNumber,
+                    Quarter = request.Quarter,
                 });
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {

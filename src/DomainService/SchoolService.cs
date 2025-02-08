@@ -59,12 +59,23 @@ namespace GamaEdtech.Backend.DomainService
                     Name = t.Name,
                     LocalName = t.LocalName,
                     Address = t.Address,
+                    LocalAddress = t.LocalAddress,
                     Latitude = t.Latitude,
                     Longitude = t.Longitude,
                     SchoolType = t.SchoolType!,
-                    StateId = t.StateId,
-                    StateTitle = t.State!.Title,
                     ZipCode = t.ZipCode,
+                    CityId = t.CityId,
+                    CityTitle = t.City != null ? t.City.Title : "",
+                    CountryId = t.CountryId,
+                    CountryTitle = t.Country != null ? t.Country.Title : "",
+                    StateId = t.StateId,
+                    StateTitle = t.State != null ? t.State.Title : "",
+                    Facilities = t.Facilities,
+                    WebSite = t.WebSite,
+                    FaxNumber = t.FaxNumber,
+                    PhoneNumber = t.PhoneNumber,
+                    Email = t.Email,
+                    Quarter = t.Quarter,
                 }).FirstOrDefaultAsync();
 
                 return school is null
@@ -108,6 +119,15 @@ namespace GamaEdtech.Backend.DomainService
                     school.SchoolType = requestDto.SchoolType;
                     school.StateId = requestDto.StateId;
                     school.ZipCode = requestDto.ZipCode;
+                    school.WebSite = requestDto.WebSite;
+                    school.Quarter = requestDto.Quarter;
+                    school.PhoneNumber = requestDto.PhoneNumber;
+                    school.LocalAddress = requestDto.LocalAddress;
+                    school.FaxNumber = requestDto.FaxNumber;
+                    school.Facilities = requestDto.Facilities;
+                    school.Email = requestDto.Email;
+                    school.CityId = requestDto.CityId;
+                    school.CountryId = requestDto.CountryId;
 
                     _ = repository.Update(school);
                 }
@@ -123,6 +143,15 @@ namespace GamaEdtech.Backend.DomainService
                         SchoolType = requestDto.SchoolType,
                         StateId = requestDto.StateId,
                         ZipCode = requestDto.ZipCode,
+                        WebSite = requestDto.WebSite,
+                        Quarter = requestDto.Quarter,
+                        PhoneNumber = requestDto.PhoneNumber,
+                        LocalAddress = requestDto.LocalAddress,
+                        FaxNumber = requestDto.FaxNumber,
+                        Facilities = requestDto.Facilities,
+                        Email = requestDto.Email,
+                        CityId = requestDto.CityId,
+                        CountryId = requestDto.CountryId,
                     };
                     repository.Add(school);
                 }

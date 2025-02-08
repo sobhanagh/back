@@ -11,7 +11,6 @@ namespace GamaEdtech.Backend.Data.ViewModel.School
         public string? Name { get; set; }
 
         [Display]
-        [Required]
         public string? LocalName { get; set; }
 
         [Display]
@@ -19,23 +18,45 @@ namespace GamaEdtech.Backend.Data.ViewModel.School
         public SchoolType? SchoolType { get; set; }
 
         [Display]
-        [Required]
         public int? StateId { get; set; }
 
         [Display]
-        [Required]
         public string? ZipCode { get; set; }
 
         [Display]
-        [Required]
         public string? Address { get; set; }
 
         [Display]
-        [Required]
         public double? Latitude { get; set; }
 
         [Display]
-        [Required]
         public double? Longitude { get; set; }
+
+        [Display]
+        public string? WebSite { get; set; }
+
+        [Display]
+        public string? LocalAddress { get; set; }
+
+        [Display]
+        public string? Facilities { get; set; }
+
+        [Display]
+        public int? CityId { get; set; }
+
+        [Display]
+        public int? CountryId { get; set; }
+
+        [Display]
+        public string? Email { get; set; }
+
+        [Display]
+        public string? FaxNumber { get; set; }
+
+        [Display]
+        public string? PhoneNumber { get; set; }
+
+        [Display]
+        public string? Quarter { get; set; }
     }
 }
