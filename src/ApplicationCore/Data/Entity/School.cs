@@ -24,12 +24,12 @@ namespace GamaEdtech.Backend.Data.Entity
         public int Id { get; set; }
 
         [Column(nameof(Name), DataType.UnicodeString)]
-        [StringLength(100)]
+        [StringLength(200)]
         [Required]
         public string? Name { get; set; }
 
         [Column(nameof(LocalName), DataType.UnicodeString)]
-        [StringLength(100)]
+        [StringLength(200)]
         public string? LocalName { get; set; }
 
         [Column(nameof(Type), DataType.Byte)]
@@ -69,15 +69,15 @@ namespace GamaEdtech.Backend.Data.Entity
         public string? Quarter { get; set; }
 
         [Column(nameof(FaxNumber), DataType.UnicodeString)]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? FaxNumber { get; set; }
 
         [Column(nameof(PhoneNumber), DataType.UnicodeString)]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? PhoneNumber { get; set; }
 
         [Column(nameof(Email), DataType.UnicodeString)]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? Email { get; set; }
 
         [Column(nameof(WebSite), DataType.UnicodeString)]
