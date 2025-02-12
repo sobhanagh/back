@@ -171,6 +171,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
       </Compile>
+      <Compile Update="DomainService\IdentityService.Designer.cs">
+        <DependentUpon>IdentityService.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
       <Compile Update="DomainService\TopicService.Designer.cs">
         <DependentUpon>TopicService.resx</DependentUpon>
         <DesignTime>True</DesignTime>
@@ -367,6 +372,10 @@
       </EmbeddedResource>
       <EmbeddedResource Update="Data\ViewModel\Limit\LimitsRequestViewModel.resx">
         <LastGenOutput>LimitsRequestViewModel.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="DomainService\IdentityService.resx">
+        <LastGenOutput>IdentityService.Designer.cs</LastGenOutput>
         <Generator>PublicResXFileCodeGenerator</Generator>
       </EmbeddedResource>
       <EmbeddedResource Update="DomainService\TopicService.resx">

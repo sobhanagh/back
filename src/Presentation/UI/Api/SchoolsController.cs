@@ -6,8 +6,10 @@ namespace GamaEdtech.Backend.UI.Web.Api
 
     using Farsica.Framework.Core;
     using Farsica.Framework.Data;
+    using Farsica.Framework.DataAccess.Specification;
 
     using GamaEdtech.Backend.Data.Entity;
+    using GamaEdtech.Backend.Data.Specification.School;
     using GamaEdtech.Backend.Data.ViewModel.School;
     using GamaEdtech.Backend.Shared.Service;
 
@@ -23,9 +25,26 @@ namespace GamaEdtech.Backend.UI.Web.Api
         {
             try
             {
+                ISpecification<School>? specification = null;
+                if (request.CountryIds?.Any() == true)
+                {
+                    specification = new CountryIdsContainsSpecification(request.CountryIds);
+                }
+                if (request.StateIds?.Any() == true)
+                {
+                    var stateSpecification = new StateIdsContainsSpecification(request.StateIds);
+                    specification = specification is null ? stateSpecification : specification.And(stateSpecification);
+                }
+                if (request.CityIds?.Any() == true)
+                {
+                    var citySpecification = new CityIdsContainsSpecification(request.CityIds);
+                    specification = specification is null ? citySpecification : specification.And(citySpecification);
+                }
+
                 var result = await boardService.Value.GetSchoolsAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
+                    Specification = specification,
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolsResponseViewModel>>
                 {

@@ -86,7 +86,7 @@ namespace GamaEdtech.Backend.UI.Web.Api
             }
         }
 
-        [HttpGet("cities{stateId}"), Produces(typeof(ApiResponse<ListDataSource<LocationsResponseViewModel>>))]
+        [HttpGet("cities/{stateId}"), Produces(typeof(ApiResponse<ListDataSource<LocationsResponseViewModel>>))]
         public async Task<IActionResult> GetCities([NotNull, FromRoute] int stateId, [NotNull, FromQuery] LocationsRequestViewModel request)
         {
             try
