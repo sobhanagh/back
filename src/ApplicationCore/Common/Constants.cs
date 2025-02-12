@@ -7,6 +7,8 @@ namespace GamaEdtech.Backend.Common
 
     public static class Constants
     {
+        public const string UtcTimeZoneId = "Coordinated Universal Time";
+
         [JsonConverter(typeof(EnumStringConverter<EntityType>))]
         public enum EntityType
         {
