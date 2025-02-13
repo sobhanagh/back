@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Data
+namespace GamaEdtech.Backend.Data
 {
     public interface IUserId<TKey>
     where TKey : IEquatable<TKey>
