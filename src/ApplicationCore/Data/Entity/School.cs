@@ -23,16 +23,19 @@ namespace GamaEdtech.Backend.Data.Entity
         [Required]
         public int Id { get; set; }
 
+        [Column(nameof(OsmId), DataType.Long)]
+        public long? OsmId { get; set; }
+
         [Column(nameof(Name), DataType.UnicodeString)]
-        [StringLength(200)]
+        [StringLength(300)]
         [Required]
         public string? Name { get; set; }
 
         [Column(nameof(LocalName), DataType.UnicodeString)]
-        [StringLength(200)]
+        [StringLength(300)]
         public string? LocalName { get; set; }
 
-        [Column(nameof(Type), DataType.Byte)]
+        [Column(nameof(SchoolType), DataType.Byte)]
         [Required]
         public SchoolType? SchoolType { get; set; }
 
@@ -49,7 +52,7 @@ namespace GamaEdtech.Backend.Data.Entity
         public Location? City { get; set; }
 
         [Column(nameof(ZipCode), DataType.String)]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? ZipCode { get; set; }
 
         [Column(nameof(Address), DataType.UnicodeMaxString)]
@@ -65,23 +68,23 @@ namespace GamaEdtech.Backend.Data.Entity
         public double? Longitude { get; set; }
 
         [Column(nameof(Quarter), DataType.UnicodeString)]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? Quarter { get; set; }
 
         [Column(nameof(FaxNumber), DataType.UnicodeString)]
-        [StringLength(100)]
+        [StringLength(200)]
         public string? FaxNumber { get; set; }
 
         [Column(nameof(PhoneNumber), DataType.UnicodeString)]
-        [StringLength(100)]
+        [StringLength(200)]
         public string? PhoneNumber { get; set; }
 
         [Column(nameof(Email), DataType.UnicodeString)]
-        [StringLength(100)]
+        [StringLength(200)]
         public string? Email { get; set; }
 
         [Column(nameof(WebSite), DataType.UnicodeString)]
-        [StringLength(100)]
+        [StringLength(300)]
         public string? WebSite { get; set; }
 
         [Column(nameof(Facilities), DataType.UnicodeMaxString)]
