@@ -35,7 +35,7 @@ namespace GamaEdtech.Backend.Data.Entity
         [StringLength(300)]
         public string? LocalName { get; set; }
 
-        [Column(nameof(Type), DataType.Byte)]
+        [Column(nameof(SchoolType), DataType.Byte)]
         [Required]
         public SchoolType? SchoolType { get; set; }
 
