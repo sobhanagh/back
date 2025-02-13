@@ -1,4 +1,3 @@
-#pragma warning disable IDE0040 // Add accessibility modifiers
 namespace GamaEdtech.Backend.Data
 {
     public interface IUserId<TKey>
@@ -7,4 +6,3 @@ namespace GamaEdtech.Backend.Data
         TKey UserId { get; set; }
     }
 }
-#pragma warning restore IDE0040 // Add accessibility modifiers
