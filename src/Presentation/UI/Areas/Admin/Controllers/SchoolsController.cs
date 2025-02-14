@@ -7,9 +7,11 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
     using Farsica.Framework.Core;
     using Farsica.Framework.Data;
     using Farsica.Framework.DataAccess.Specification.Impl;
+    using Farsica.Framework.Identity;
 
     using GamaEdtech.Backend.Data.Dto.School;
     using GamaEdtech.Backend.Data.Entity;
+    using GamaEdtech.Backend.Data.Enumeration;
     using GamaEdtech.Backend.Data.ViewModel.School;
     using GamaEdtech.Backend.Shared.Service;
 
@@ -18,7 +20,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
     [Farsica.Framework.DataAnnotation.Area(nameof(Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
-    //[Permission(Roles = [nameof(Role.Admin)])]
+    [Permission(Roles = [nameof(Role.Admin)])]
     public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
         : ApiControllerBase<SchoolsController>(logger)
     {
@@ -86,6 +88,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                         FaxNumber = result.Data.FaxNumber,
                         PhoneNumber = result.Data.PhoneNumber,
                         Quarter = result.Data.Quarter,
+                        OsmId = result.Data.OsmId,
                     }
                 });
             }
@@ -121,6 +124,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                     Facilities = request.Facilities,
                     LocalAddress = request.LocalAddress,
                     WebSite = request.WebSite,
+                    OsmId = request.OsmId,
                 });
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {
@@ -161,6 +165,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
                     FaxNumber = request.FaxNumber,
                     PhoneNumber = request.PhoneNumber,
                     Quarter = request.Quarter,
+                    OsmId = request.OsmId,
                 });
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {

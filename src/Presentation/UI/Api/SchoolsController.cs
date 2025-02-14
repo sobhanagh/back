@@ -7,6 +7,7 @@ namespace GamaEdtech.Backend.UI.Web.Api
     using Farsica.Framework.Core;
     using Farsica.Framework.Data;
     using Farsica.Framework.DataAccess.Specification;
+    using Farsica.Framework.DataAccess.Specification.Impl;
 
     using GamaEdtech.Backend.Data.Entity;
     using GamaEdtech.Backend.Data.Specification.School;
@@ -17,7 +18,7 @@ namespace GamaEdtech.Backend.UI.Web.Api
 
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> boardService)
+    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
         : ApiControllerBase<SchoolsController>(logger)
     {
         [HttpGet, Produces<ApiResponse<ListDataSource<SchoolsResponseViewModel>>>()]
@@ -41,7 +42,7 @@ namespace GamaEdtech.Backend.UI.Web.Api
                     specification = specification is null ? citySpecification : specification.And(citySpecification);
                 }
 
-                var result = await boardService.Value.GetSchoolsAsync(new ListRequestDto<School>
+                var result = await schoolService.Value.GetSchoolsAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
                     Specification = specification,
@@ -66,6 +67,50 @@ namespace GamaEdtech.Backend.UI.Web.Api
                 Logger.Value.LogException(exc);
 
                 return Ok(new ApiResponse<ListDataSource<SchoolsResponseViewModel>> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpGet("{id:int}"), Produces<ApiResponse<SchoolResponseViewModel>>()]
+        public async Task<IActionResult> GetSchool([FromRoute] int id)
+        {
+            try
+            {
+                var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, int>(id));
+                return Ok(new ApiResponse<SchoolResponseViewModel>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data is null ? null : new()
+                    {
+                        Id = result.Data.Id,
+                        Address = result.Data.Address,
+                        LocalAddress = result.Data.LocalAddress,
+                        Name = result.Data.Name,
+                        LocalName = result.Data.LocalName,
+                        SchoolType = result.Data.SchoolType,
+                        StateId = result.Data.StateId,
+                        StateTitle = result.Data.StateTitle,
+                        ZipCode = result.Data.ZipCode,
+                        Latitude = result.Data.Latitude,
+                        Longitude = result.Data.Longitude,
+                        Facilities = result.Data.Facilities,
+                        WebSite = result.Data.WebSite,
+                        Email = result.Data.Email,
+                        CityId = result.Data.CityId,
+                        CityTitle = result.Data.CityTitle,
+                        CountryId = result.Data.CountryId,
+                        CountryTitle = result.Data.CountryTitle,
+                        FaxNumber = result.Data.FaxNumber,
+                        PhoneNumber = result.Data.PhoneNumber,
+                        Quarter = result.Data.Quarter,
+                        OsmId = result.Data.OsmId,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<SchoolResponseViewModel> { Errors = [new() { Message = exc.Message }] });
             }
         }
     }

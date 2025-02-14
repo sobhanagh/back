@@ -58,5 +58,8 @@ namespace GamaEdtech.Backend.Data.ViewModel.School
 
         [Display]
         public string? Quarter { get; set; }
+
+        [Display]
+        public long? OsmId { get; set; }
     }
 }

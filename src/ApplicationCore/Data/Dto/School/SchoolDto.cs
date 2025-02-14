@@ -25,5 +25,6 @@ namespace GamaEdtech.Backend.Data.Dto.School
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Quarter { get; set; }
+        public long? OsmId { get; set; }
     }
 }
