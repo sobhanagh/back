@@ -8,7 +8,6 @@ namespace GamaEdtech.Backend.Data.Dto.School
         public string? Name { get; set; }
         public string? LocalName { get; set; }
         public required SchoolType SchoolType { get; set; }
-        public int? StateId { get; set; }
         public string? ZipCode { get; set; }
         public string? Address { get; set; }
         public string? LocalAddress { get; set; }
@@ -22,5 +21,7 @@ namespace GamaEdtech.Backend.Data.Dto.School
         public string? Email { get; set; }
         public int? CityId { get; set; }
         public int? CountryId { get; set; }
+        public int? StateId { get; set; }
+        public long? OsmId { get; set; }
     }
 }

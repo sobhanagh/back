@@ -51,7 +51,7 @@ namespace GamaEdtech.Backend.Data.Entity
         public int? CityId { get; set; }
         public Location? City { get; set; }
 
-        [Column(nameof(ZipCode), DataType.String)]
+        [Column(nameof(ZipCode), DataType.UnicodeString)]
         [StringLength(100)]
         public string? ZipCode { get; set; }
 

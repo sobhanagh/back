@@ -76,6 +76,7 @@ namespace GamaEdtech.Backend.DomainService
                     PhoneNumber = t.PhoneNumber,
                     Email = t.Email,
                     Quarter = t.Quarter,
+                    OsmId = t.OsmId,
                 }).FirstOrDefaultAsync();
 
                 return school is null
@@ -128,6 +129,7 @@ namespace GamaEdtech.Backend.DomainService
                     school.Email = requestDto.Email;
                     school.CityId = requestDto.CityId;
                     school.CountryId = requestDto.CountryId;
+                    school.OsmId = requestDto.OsmId;
 
                     _ = repository.Update(school);
                 }
@@ -152,6 +154,7 @@ namespace GamaEdtech.Backend.DomainService
                         Email = requestDto.Email,
                         CityId = requestDto.CityId,
                         CountryId = requestDto.CountryId,
+                        OsmId = requestDto.OsmId,
                     };
                     repository.Add(school);
                 }
