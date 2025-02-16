@@ -1,6 +1,6 @@
 namespace GamaEdtech.Backend.Data.ViewModel.File
 {
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Http;
 

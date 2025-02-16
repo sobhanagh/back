@@ -1,30 +1,29 @@
 namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
 {
+    using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
+    using System.Linq.Dynamic.Core;
+
+    using Asp.Versioning;
+
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Specification.Impl;
+    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Backend.Common.Identity;
+    using GamaEdtech.Backend.Common.Mvc.Routing;
     using GamaEdtech.Backend.Data.Dto.Identity;
     using GamaEdtech.Backend.Data.Entity.Identity;
     using GamaEdtech.Backend.Data.Enumeration;
     using GamaEdtech.Backend.Data.ViewModel.Identity;
     using GamaEdtech.Backend.Shared.Service;
 
-    using Asp.Versioning;
-
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Specification.Impl;
-    using Farsica.Framework.DataAnnotation;
-    using Farsica.Framework.Identity;
-    using Farsica.Framework.Mvc.Routing;
-
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
 
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Linq.Dynamic.Core;
+    using static GamaEdtech.Backend.Common.Core.Constants;
 
-    using static Farsica.Framework.Core.Constants;
-
-    [Farsica.Framework.DataAnnotation.Area(nameof(Role.Admin), "Admin")]
+    [Common.DataAnnotation.Area(nameof(Role.Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
     [Permission(Roles = [nameof(Role.Admin)])]

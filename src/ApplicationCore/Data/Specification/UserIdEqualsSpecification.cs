@@ -1,6 +1,6 @@
 ﻿namespace GamaEdtech.Backend.Data.Specification
 {
-    using Farsica.Framework.DataAccess.Specification;
+    using GamaEdtech.Backend.Common.DataAccess.Specification;
 
     using System.Linq.Expressions;
 

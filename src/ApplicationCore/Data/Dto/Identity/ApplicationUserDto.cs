@@ -1,10 +1,10 @@
 namespace GamaEdtech.Backend.Data.Dto.Identity
 {
-    using Farsica.Framework.DataAccess.Entities;
-
     using System.Diagnostics.CodeAnalysis;
 
-    public class ApplicationUserDto : Farsica.Framework.Mapping.IRegister, IEnablable<ApplicationUserDto>
+    using GamaEdtech.Backend.Common.DataAccess.Entities;
+
+    public class ApplicationUserDto : Common.Mapping.IRegister, IEnablable<ApplicationUserDto>
     {
         public int Id { get; set; }
 
@@ -24,6 +24,6 @@ namespace GamaEdtech.Backend.Data.Dto.Identity
 
         public bool Enabled { get; set; }
 
-        public void Register([NotNull] Farsica.Framework.Mapping.TypeAdapterConfig config) => _ = config.ForType<ApplicationUserDto, Entity.Identity.ApplicationUser>();
+        public void Register([NotNull] Common.Mapping.TypeAdapterConfig config) => _ = config.ForType<ApplicationUserDto, Entity.Identity.ApplicationUser>();
     }
 }

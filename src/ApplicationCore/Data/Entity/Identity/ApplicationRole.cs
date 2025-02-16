@@ -1,14 +1,14 @@
-﻿namespace GamaEdtech.Backend.Data.Entity.Identity
+namespace GamaEdtech.Backend.Data.Entity.Identity
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
     using GamaEdtech.Backend.Data.Enumeration;
 
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Entities;
-    using Farsica.Framework.DataAnnotation;
-    using Farsica.Framework.DataAnnotation.Schema;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;

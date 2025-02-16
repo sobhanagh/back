@@ -1,9 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationCore\Common\GamaEdtech.Backend.Common.csproj">
-      <Private>false</Private>
-    </ProjectReference>
     <ProjectReference Include="..\ApplicationCore\Data\GamaEdtech.Backend.Data.csproj">
       <Private>false</Private>
     </ProjectReference>

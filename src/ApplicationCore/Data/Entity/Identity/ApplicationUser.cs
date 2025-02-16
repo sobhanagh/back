@@ -1,9 +1,9 @@
 namespace GamaEdtech.Backend.Data.Entity.Identity
 {
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Entities;
-    using Farsica.Framework.DataAnnotation;
-    using Farsica.Framework.DataAnnotation.Schema;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace GamaEdtech.Backend.Data.Entity.Identity
     using System.Diagnostics.CodeAnalysis;
 
     [Table(nameof(ApplicationUser))]
-    [Audit((int)Common.Constants.EntityType.ApplicationUser)]
+    [Audit((int)Common.Core.Constants.EntityType.ApplicationUser)]
     public class ApplicationUser : IdentityUser<int>, IEntity<ApplicationUser, int>, IEnablable<ApplicationUser>
     {
         public ApplicationUser()

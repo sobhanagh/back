@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Data.Specification.Identity
+namespace GamaEdtech.Backend.Data.Specification.Identity
 {
     using GamaEdtech.Backend.Data.Entity.Identity;
 
-    using Farsica.Framework.DataAccess.Specification;
+    using GamaEdtech.Backend.Common.DataAccess.Specification;
 
     using System.Linq.Expressions;
 

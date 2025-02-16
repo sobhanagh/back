@@ -6,11 +6,10 @@ namespace GamaEdtech.Backend.DomainService
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
 
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.UnitOfWork;
-    using Farsica.Framework.Service;
-
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Backend.Common.Service;
+    using GamaEdtech.Backend.Common.Core;
     using GamaEdtech.Backend.Data.Dto.File;
     using GamaEdtech.Backend.Shared.Service;
 
@@ -19,7 +18,7 @@ namespace GamaEdtech.Backend.DomainService
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
-    using static Farsica.Framework.Core.Constants;
+    using static GamaEdtech.Backend.Common.Core.Constants;
 
 #pragma warning disable CA1416 // Validate platform compatibility
     public class FileService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer

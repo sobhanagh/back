@@ -1,11 +1,9 @@
-﻿namespace GamaEdtech.Backend.Data.Entity.Identity
+namespace GamaEdtech.Backend.Data.Entity.Identity
 {
-    using GamaEdtech.Backend.Common;
-
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Entities;
-    using Farsica.Framework.DataAnnotation;
-    using Farsica.Framework.DataAnnotation.Schema;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
@@ -14,7 +12,7 @@
     using System.Diagnostics.CodeAnalysis;
 
     [Table(nameof(ApplicationUserClaim))]
-    [Audit((int)Constants.EntityType.ApplicationUserClaim)]
+    [Audit((int)Common.Core.Constants.EntityType.ApplicationUserClaim)]
     public class ApplicationUserClaim : IdentityUserClaim<int>, IEntity<ApplicationUserClaim, int>, IUserId<int>
     {
         [System.ComponentModel.DataAnnotations.Key]

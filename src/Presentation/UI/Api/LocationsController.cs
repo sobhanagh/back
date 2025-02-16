@@ -4,9 +4,9 @@ namespace GamaEdtech.Backend.UI.Web.Api
 
     using Asp.Versioning;
 
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Specification;
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Specification;
 
     using GamaEdtech.Backend.Data.Entity;
     using GamaEdtech.Backend.Data.Enumeration;

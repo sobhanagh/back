@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Data.Dto.Identity
+namespace GamaEdtech.Backend.Data.Dto.Identity
 {
     using GamaEdtech.Backend.Data.Enumeration;
 

@@ -5,11 +5,10 @@ namespace GamaEdtech.Backend.UI.Web.Api
 
     using Asp.Versioning;
 
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Data;
-    using Farsica.Framework.Data.Enumeration;
-    using Farsica.Framework.Identity;
-
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Backend.Common.Identity;
     using GamaEdtech.Backend.Data.Dto.Identity;
     using GamaEdtech.Backend.Data.Enumeration;
     using GamaEdtech.Backend.Data.ViewModel.Identity;
@@ -19,9 +18,9 @@ namespace GamaEdtech.Backend.UI.Web.Api
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    using static Farsica.Framework.Core.Constants;
+    using static GamaEdtech.Backend.Common.Core.Constants;
 
-    using Void = Farsica.Framework.Data.Void;
+    using Void = Common.Data.Void;
 
     [Route("api/v{version:apiVersion}/auth")]
     [ApiVersion("1.0")]

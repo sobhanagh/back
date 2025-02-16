@@ -1,16 +1,15 @@
 namespace GamaEdtech.Backend.Data.Entity
 {
-    using GamaEdtech.Backend.Common;
     using GamaEdtech.Backend.Data.Entity.Identity;
-
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Entities;
-    using Farsica.Framework.DataAnnotation;
-    using Farsica.Framework.DataAnnotation.Schema;
+    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     using System.Diagnostics.CodeAnalysis;
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Data;
 
     [Table(nameof(ApplicationSettings))]
     [Audit((int)Constants.EntityType.ApplicationSetting)]

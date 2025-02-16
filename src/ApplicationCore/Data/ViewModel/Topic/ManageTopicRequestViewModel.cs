@@ -1,6 +1,6 @@
 namespace GamaEdtech.Backend.Data.ViewModel.Topic
 {
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation;
 
     public sealed class ManageTopicRequestViewModel
     {

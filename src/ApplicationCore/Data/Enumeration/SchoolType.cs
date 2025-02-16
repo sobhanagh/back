@@ -1,7 +1,7 @@
 namespace GamaEdtech.Backend.Data.Enumeration
 {
-    using Farsica.Framework.Data.Enumeration;
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Backend.Common.DataAnnotation;
 
     public sealed class SchoolType : Enumeration<byte>
     {

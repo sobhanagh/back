@@ -1,6 +1,6 @@
 namespace GamaEdtech.Backend.Data.ViewModel.School
 {
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation;
 
     using GamaEdtech.Backend.Data.Enumeration;
 

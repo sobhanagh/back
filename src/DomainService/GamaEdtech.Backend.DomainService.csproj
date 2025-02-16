@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <AssemblyAttribute Include="Farsica.Framework.DataAnnotation.InjectableAttribute">
+    <AssemblyAttribute Include="GamaEdtech.Backend.Common.DataAnnotation.InjectableAttribute">
     </AssemblyAttribute>
   </ItemGroup>
 
@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationCore\Common\GamaEdtech.Backend.Common.csproj" />
     <ProjectReference Include="..\ApplicationCore\Data\GamaEdtech.Backend.Data.csproj" />
     <ProjectReference Include="..\ApplicationCore\Shared\GamaEdtech.Backend.Shared.csproj" />
   </ItemGroup>

@@ -1,10 +1,10 @@
 namespace GamaEdtech.Backend.Shared.Service
 {
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Specification;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Specification;
     using System.Diagnostics.CodeAnalysis;
 
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation;
 
     using GamaEdtech.Backend.Data.Dto.Subject;
     using GamaEdtech.Backend.Data.Entity;

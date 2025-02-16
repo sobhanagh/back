@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <AssemblyAttribute Include="Farsica.Framework.DataAnnotation.InjectableAttribute">
+    <AssemblyAttribute Include="GamaEdtech.Backend.Common.DataAnnotation.InjectableAttribute">
     </AssemblyAttribute>
   </ItemGroup>
 

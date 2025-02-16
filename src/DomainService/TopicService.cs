@@ -5,12 +5,12 @@ namespace GamaEdtech.Backend.DomainService
 
     using EntityFramework.Exceptions.Common;
 
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Core.Extensions.Linq;
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Specification;
-    using Farsica.Framework.DataAccess.UnitOfWork;
-    using Farsica.Framework.Service;
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Core.Extensions.Linq;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Backend.Common.Service;
 
     using GamaEdtech.Backend.Data.Dto.Topic;
     using GamaEdtech.Backend.Data.Entity;
@@ -21,7 +21,7 @@ namespace GamaEdtech.Backend.DomainService
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
-    using static Farsica.Framework.Core.Constants;
+    using static GamaEdtech.Backend.Common.Core.Constants;
 
     public class TopicService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger)

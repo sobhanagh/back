@@ -26,7 +26,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.Audit", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.Audit", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("char(26)")
@@ -61,7 +61,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("Audits");
                 });
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.AuditEntry", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.AuditEntry", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("char(26)")
@@ -92,7 +92,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("AuditEntries");
                 });
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.AuditEntryProperty", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.AuditEntryProperty", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("char(26)")
@@ -124,7 +124,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("AuditEntryProperties");
                 });
 
-            modelBuilder.Entity("Farsica.Framework.Identity.DataProtection.DataProtectionKey", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Identity.DataProtection.DataProtectionKey", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,7 +145,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("DataProtectionKeys");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.ApplicationSettings", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.ApplicationSettings", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(50)
@@ -182,7 +182,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("ApplicationSettings");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Board", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Board", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,7 +231,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("Boards");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Grade", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Grade", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +286,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("Grades");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationRole", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,7 +332,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationRoleClaim", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -363,7 +363,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("ApplicationRoleClaims");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -482,7 +482,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserClaim", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -514,7 +514,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("ApplicationUserClaims");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserLogin", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -543,7 +543,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("ApplicationUserLogins");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserRole", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserRole", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int")
@@ -568,7 +568,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserToken", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserToken", b =>
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("int")
@@ -594,7 +594,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("ApplicationUserTokens");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Location", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -659,7 +659,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.School", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.School", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -732,7 +732,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("Schools");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Subject", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Subject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -776,7 +776,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("Subjects");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Topic", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Topic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -854,9 +854,9 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.ToTable("SubjectTopics");
                 });
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.AuditEntry", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.AuditEntry", b =>
                 {
-                    b.HasOne("Farsica.Framework.DataAccess.Audit.Audit", "Audit")
+                    b.HasOne("GamaEdtech.Backend.Common.DataAccess.Audit.Audit", "Audit")
                         .WithMany("AuditEntries")
                         .HasForeignKey("AuditId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -865,9 +865,9 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("Audit");
                 });
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.AuditEntryProperty", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.AuditEntryProperty", b =>
                 {
-                    b.HasOne("Farsica.Framework.DataAccess.Audit.AuditEntry", "AuditEntry")
+                    b.HasOne("GamaEdtech.Backend.Common.DataAccess.Audit.AuditEntry", "AuditEntry")
                         .WithMany("AuditEntryProperties")
                         .HasForeignKey("AuditEntryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -876,15 +876,15 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("AuditEntry");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.ApplicationSettings", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.ApplicationSettings", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -894,15 +894,15 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("LastModifyUser");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Board", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Board", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -912,21 +912,21 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("LastModifyUser");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Grade", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Grade", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Board", "Board")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Board", "Board")
                         .WithMany()
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -938,9 +938,9 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("LastModifyUser");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationRoleClaim", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationRoleClaim", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationRole", "Role")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationRole", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -949,9 +949,9 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserClaim", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserClaim", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "User")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "User")
                         .WithMany("UserClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -960,9 +960,9 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserLogin", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserLogin", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "User")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "User")
                         .WithMany("UserLogins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -971,15 +971,15 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserRole", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserRole", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationRole", "Role")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationRole", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "User")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -990,9 +990,9 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUserToken", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUserToken", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "User")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "User")
                         .WithMany("UserTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1001,20 +1001,20 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Location", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Location", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Location", "Parent")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Location", "Parent")
                         .WithMany()
                         .HasForeignKey("ParentId");
 
@@ -1025,20 +1025,20 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.School", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.School", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Location", "State")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Location", "State")
                         .WithMany()
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1051,15 +1051,15 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("State");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Subject", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Subject", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -1069,15 +1069,15 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                     b.Navigation("LastModifyUser");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Topic", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Topic", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "CreationUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()
                         .HasForeignKey("CreationUserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -1089,13 +1089,13 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("SubjectGrades", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Grade", null)
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Grade", null)
                         .WithMany()
                         .HasForeignKey("GradesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Subject", null)
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Subject", null)
                         .WithMany()
                         .HasForeignKey("SubjectsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1104,37 +1104,37 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("SubjectTopics", b =>
                 {
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Subject", null)
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Subject", null)
                         .WithMany()
                         .HasForeignKey("SubjectsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GamaEdtech.Backend.Data.Entity.Topic", null)
+                    b.HasOne("GamaEdtech.Backend.Common.Data.Entity.Topic", null)
                         .WithMany()
                         .HasForeignKey("TopicsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.Audit", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.Audit", b =>
                 {
                     b.Navigation("AuditEntries");
                 });
 
-            modelBuilder.Entity("Farsica.Framework.DataAccess.Audit.AuditEntry", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.DataAccess.Audit.AuditEntry", b =>
                 {
                     b.Navigation("AuditEntryProperties");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationRole", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationRole", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("GamaEdtech.Backend.Data.Entity.Identity.ApplicationUser", b =>
+            modelBuilder.Entity("GamaEdtech.Backend.Common.Data.Entity.Identity.ApplicationUser", b =>
                 {
                     b.Navigation("UserClaims");
 

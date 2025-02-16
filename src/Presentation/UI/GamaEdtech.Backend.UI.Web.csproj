@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ApplicationCore\Common\GamaEdtech.Backend.Common.csproj" />
     <ProjectReference Include="..\..\ApplicationCore\Data\GamaEdtech.Backend.Data.csproj" />
     <ProjectReference Include="..\..\ApplicationCore\Resource\GamaEdtech.Backend.Resource.csproj" />
     <ProjectReference Include="..\..\ApplicationCore\Shared\GamaEdtech.Backend.Shared.csproj" />

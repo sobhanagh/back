@@ -4,8 +4,8 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
 
     using Asp.Versioning;
 
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Data;
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Data;
 
     using GamaEdtech.Backend.Data.Dto.File;
     using GamaEdtech.Backend.Data.ViewModel.File;
@@ -13,7 +13,7 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
 
     using Microsoft.AspNetCore.Mvc;
 
-    [Farsica.Framework.DataAnnotation.Area(nameof(Admin), "Admin")]
+    [Common.DataAnnotation.Area(nameof(Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
     //[Permission(Roles = [nameof(Role.Admin)])]

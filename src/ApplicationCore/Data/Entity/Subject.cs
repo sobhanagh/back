@@ -2,12 +2,10 @@ namespace GamaEdtech.Backend.Data.Entity
 {
     using System.Diagnostics.CodeAnalysis;
 
-    using DocumentFormat.OpenXml.Spreadsheet;
-
-    using Farsica.Framework.Data;
-    using Farsica.Framework.DataAccess.Entities;
-    using Farsica.Framework.DataAnnotation;
-    using Farsica.Framework.DataAnnotation.Schema;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
 
     using GamaEdtech.Backend.Data.Entity.Identity;
 

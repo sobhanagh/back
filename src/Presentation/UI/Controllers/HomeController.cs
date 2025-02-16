@@ -5,7 +5,7 @@ namespace GamaEdtech.Backend.UI.Web.Controllers
 
     using System;
 
-    public class HomeController(Lazy<ILogger<HomeController>> logger) : Farsica.Framework.Core.ControllerBase<HomeController>(logger)
+    public class HomeController(Lazy<ILogger<HomeController>> logger) : Common.Core.ControllerBase<HomeController>(logger)
     {
         public IActionResult Index() => Redirect("/swagger");
     }

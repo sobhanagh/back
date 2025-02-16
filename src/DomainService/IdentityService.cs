@@ -8,19 +8,18 @@ namespace GamaEdtech.Backend.DomainService
 
     using EntityFramework.Exceptions.Common;
 
-    using Farsica.Framework.Caching;
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Core.Extensions.Collections.Generic;
-    using Farsica.Framework.Core.Extensions.Linq;
-    using Farsica.Framework.Data;
-    using Farsica.Framework.Data.Enumeration;
-    using Farsica.Framework.DataAccess.Specification;
-    using Farsica.Framework.DataAccess.Specification.Impl;
-    using Farsica.Framework.DataAccess.UnitOfWork;
-    using Farsica.Framework.Identity;
-    using Farsica.Framework.Mapping;
-    using Farsica.Framework.Service;
-
+    using GamaEdtech.Backend.Common.Caching;
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic;
+    using GamaEdtech.Backend.Common.Core.Extensions.Linq;
+    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Backend.Common.DataAccess.Specification.Impl;
+    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Backend.Common.Identity;
+    using GamaEdtech.Backend.Common.Mapping;
+    using GamaEdtech.Backend.Common.Service;
     using GamaEdtech.Backend.Data.Dto.Identity;
     using GamaEdtech.Backend.Data.Entity.Identity;
     using GamaEdtech.Backend.Data.Enumeration;
@@ -37,10 +36,10 @@ namespace GamaEdtech.Backend.DomainService
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
-    using static Farsica.Framework.Core.Constants;
+    using static GamaEdtech.Backend.Common.Core.Constants;
 
-    using Error = Farsica.Framework.Data.Error;
-    using Void = Farsica.Framework.Data.Void;
+    using Error = Common.Data.Error;
+    using Void = Common.Data.Void;
 
     public class IdentityService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<IdentityService>> localizer, Lazy<ILogger<IdentityService>> logger
             , Lazy<UserManager<ApplicationUser>> userManager
@@ -792,11 +791,11 @@ namespace GamaEdtech.Backend.DomainService
                 var timeZoneId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == TimeZoneIdClaim)
                     .Select(t => t.ClaimValue).FirstOrDefaultAsync();
 
-                return !string.IsNullOrEmpty(timeZoneId) ? timeZoneId : Common.Constants.UtcTimeZoneId;
+                return !string.IsNullOrEmpty(timeZoneId) ? timeZoneId : UtcTimeZoneId;
             }
             catch
             {
-                return Common.Constants.UtcTimeZoneId;
+                return UtcTimeZoneId;
             }
         }
 

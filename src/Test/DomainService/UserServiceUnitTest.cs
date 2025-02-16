@@ -14,7 +14,7 @@ namespace GamaEdtech.Backend.Test.DomainService
                 {
                     var response = await identityService.GetUsersAsync();
 
-                    Assert.Equal(Farsica.Framework.Core.Constants.OperationResult.Succeeded, response.OperationResult);
+                    Assert.Equal(GamaEdtech.Backend.Core.Constants.OperationResult.Succeeded, response.OperationResult);
                 }
                 */
     }

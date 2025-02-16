@@ -6,9 +6,9 @@ namespace GamaEdtech.Backend.UI.Web
     using Asp.Versioning;
     using Asp.Versioning.ApiExplorer;
 
-    using Farsica.Framework.Core;
-    using Farsica.Framework.Identity;
-    using Farsica.Framework.Startup;
+    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Backend.Common.Identity;
+    using GamaEdtech.Backend.Common.Startup;
 
     using GamaEdtech.Backend.Data.Entity.Identity;
     using GamaEdtech.Backend.Shared.Service;
@@ -22,7 +22,6 @@ namespace GamaEdtech.Backend.UI.Web
             DefaultNamespace = DefaultNamespace,
             Localization = true,
             Authentication = true,
-            Antiforgery = true,
             Https = true,
             ErrorCodePrefix = "GAMA",
             Identity = true,
@@ -30,7 +29,7 @@ namespace GamaEdtech.Backend.UI.Web
     {
         public const string DefaultNamespace = "GamaEdtech.Backend";
 
-        private static readonly Lazy<IServiceProvider?> ServicesList = new(Farsica.Framework.Hosting.Host.CreateHost<Startup>([])?.Services);
+        private static readonly Lazy<IServiceProvider?> ServicesList = new(Common.Hosting.Host.CreateHost<Startup>([])?.Services);
         private const string AllowCorsPolicy = "allowCorsPolicy";
 
         public static Lazy<IServiceProvider?> Services

@@ -1,6 +1,6 @@
 namespace GamaEdtech.Backend.Data.ViewModel.Location
 {
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Backend.Common.DataAnnotation;
 
     public sealed class ManageLocationRequestViewModel
     {
