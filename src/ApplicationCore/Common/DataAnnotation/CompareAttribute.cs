@@ -5,17 +5,14 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
-    using System.Reflection;
-    using System.Text;
 
     using GamaEdtech.Backend.Common.Core;
     using GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic;
     using GamaEdtech.Backend.Common.Resources;
-    using GamaEdtech.Backend.Common.Validation;
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-    public sealed class CompareAttribute : System.ComponentModel.DataAnnotations.CompareAttribute, IClientModelValidator, IClientPropertyValidator
+    public sealed class CompareAttribute : System.ComponentModel.DataAnnotations.CompareAttribute, IClientModelValidator
     {
         public CompareAttribute(string otherProperty)
             : base(otherProperty)
@@ -83,13 +80,6 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType.GetProperty(context.ModelMetadata.Name)), Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType.GetProperty(OtherProperty)));
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>($"data-val-{key}", Data.Error.FormatMessage(msg)));
         }
-
-        public string? GetJsonMetaData(PropertyInfo? property) => new StringBuilder()
-                .Append('{')
-                .Append($"\"{nameof(OtherProperty)}\":\"{OtherProperty}\"")
-                .Append($"\"{nameof(OperandType)}\":\"{OperandType}\"")
-                .Append($"\"Message\":\"{FormatErrorMessage(Globals.GetLocalizedDisplayName(property), OtherPropertyDisplayName)}\"")
-                .Append('}').ToString();
 
         protected override ValidationResult? IsValid(object? value, [NotNull] ValidationContext validationContext)
         {

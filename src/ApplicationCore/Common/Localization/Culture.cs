@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.Localization
+namespace GamaEdtech.Backend.Common.Localization
 {
     public enum Culture
     {
-        Fa,
         En,
+        Fa,
     }
 }

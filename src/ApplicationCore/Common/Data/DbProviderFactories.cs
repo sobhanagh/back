@@ -18,8 +18,6 @@ namespace GamaEdtech.Backend.Common.Data
                 factory = Globals.ProviderType switch
                 {
                     DbProviderType.SqlServer => new SqlServerProvider(),
-                    DbProviderType.DevartOracle => new DevartOracleProvider(),
-                    DbProviderType.MySql => new MySqlProvider(),
                     _ => throw new NotSupportedException(Globals.ProviderType.ToString()),
                 };
                 return factory;

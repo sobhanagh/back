@@ -316,40 +316,32 @@ namespace GamaEdtech.Backend.Common.Core
                 switch (typeCode)
                 {
                     case TypeCode.Boolean:
-                        bool boolTmp;
-                        return bool.TryParse(value, out boolTmp) ? boolTmp : defaultValue;
+                        return bool.TryParse(value, out var boolTmp) ? boolTmp : defaultValue;
 
                     case TypeCode.SByte:
                     case TypeCode.Byte:
-                        byte byteTmp;
-                        return byte.TryParse(value, out byteTmp) ? byteTmp : defaultValue;
+                        return byte.TryParse(value, out var byteTmp) ? byteTmp : defaultValue;
 
                     case TypeCode.Int16:
                     case TypeCode.UInt16:
-                        short shortTmp;
-                        return short.TryParse(value, out shortTmp) ? shortTmp : defaultValue;
+                        return short.TryParse(value, out var shortTmp) ? shortTmp : defaultValue;
 
                     case TypeCode.Int32:
                     case TypeCode.UInt32:
-                        int intTmp;
-                        return int.TryParse(value, out intTmp) ? intTmp : defaultValue;
+                        return int.TryParse(value, out var intTmp) ? intTmp : defaultValue;
 
                     case TypeCode.Int64:
                     case TypeCode.UInt64:
-                        long longTmp;
-                        return long.TryParse(value, out longTmp) ? longTmp : defaultValue;
+                        return long.TryParse(value, out var longTmp) ? longTmp : defaultValue;
 
                     case TypeCode.Single:
-                        float floatTmp;
-                        return float.TryParse(value, out floatTmp) ? floatTmp : defaultValue;
+                        return float.TryParse(value, out var floatTmp) ? floatTmp : defaultValue;
 
                     case TypeCode.Double:
-                        double doubleTmp;
-                        return double.TryParse(value, out doubleTmp) ? doubleTmp : defaultValue;
+                        return double.TryParse(value, out var doubleTmp) ? doubleTmp : defaultValue;
 
                     case TypeCode.Decimal:
-                        decimal decimalTmp;
-                        return decimal.TryParse(value, out decimalTmp) ? decimalTmp : defaultValue;
+                        return decimal.TryParse(value, out var decimalTmp) ? decimalTmp : defaultValue;
 
                     case TypeCode.DateTime:
                     {

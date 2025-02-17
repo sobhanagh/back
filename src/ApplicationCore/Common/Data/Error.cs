@@ -5,7 +5,9 @@ namespace GamaEdtech.Backend.Common.Data
 
     using GamaEdtech.Backend.Common.Core;
 
+#pragma warning disable CA1815 // Override equals and operator equals on value types
     public partial struct Error(Exception? exception)
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public static readonly Regex CodeRegex = CodeRegexPartial();
 

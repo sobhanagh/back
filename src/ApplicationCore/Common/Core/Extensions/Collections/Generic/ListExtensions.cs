@@ -134,24 +134,6 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic
             }
         }
 
-        public static void MoveItem<T>([NotNull] this List<T> source, Predicate<T> selector, int targetIndex)
-        {
-            if (!targetIndex.IsBetween(0, source.Count - 1))
-            {
-                throw new IndexOutOfRangeException("targetIndex should be between 0 and " + (source.Count - 1));
-            }
-
-            var currentIndex = source.FindIndex(0, selector);
-            if (currentIndex == targetIndex)
-            {
-                return;
-            }
-
-            var item = source[currentIndex];
-            source.RemoveAt(currentIndex);
-            source.Insert(targetIndex, item);
-        }
-
         public static T GetOrAdd<T>([NotNull] this IList<T> source, Func<T, bool> selector, [NotNull] Func<T> factory)
         {
             var item = source.FirstOrDefault(selector);

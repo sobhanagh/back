@@ -22,8 +22,8 @@ namespace GamaEdtech.Backend.Common.Localization
 
         public ResourceManagerStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory)
         {
-            ArgumentNullException.ThrowIfNull(localizationOptions, nameof(localizationOptions));
-            ArgumentNullException.ThrowIfNull(loggerFactory, nameof(loggerFactory));
+            ArgumentNullException.ThrowIfNull(localizationOptions);
+            ArgumentNullException.ThrowIfNull(loggerFactory);
 
             resourcesRelativePath = localizationOptions.Value.ResourcesPath ?? string.Empty;
             this.loggerFactory = loggerFactory;

@@ -7,8 +7,6 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
     using System.Linq.Expressions;
     using System.Reflection;
 
-    using GamaEdtech.Backend.Common.Core.Extensions;
-
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     public static class EnumerationExtensions
@@ -22,7 +20,7 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
                 BindingFlags.Static |
                 BindingFlags.DeclaredOnly);
 
-            return fields.Select(t => t.GetValue(null).As<TEnum>());
+            return fields.Select(t => t.GetValue(null) as TEnum);
         }
 
         public static IEnumerable<object?>? GetAll([NotNull] Type type)

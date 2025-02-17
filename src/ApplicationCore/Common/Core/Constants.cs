@@ -23,10 +23,7 @@ namespace GamaEdtech.Backend.Common.Core
         public const string ValidImageExtensions = "png,jpg,jpeg,gif";
         public const string ValidDocumentExtensions = "pdf,doc,docx";
         public const string ValidVideoExtensions = "mpeg,avi";
-        public const string ValidAndroidExtensions = "apk";
         public const string ValidWebExtensions = "zip";
-        public const string ValidIosExtensions = "ipa";
-        public const string ValidWindowsExtensions = "xap";
         public const string ValidImageMimeTypes = "image/png,image/jpeg,image/gif";
         public const string ValidDocumentMimeTypes = "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
         public const string ValidVideoMimeTypes = "audio/mpeg,video/x-msvideo";
@@ -34,7 +31,7 @@ namespace GamaEdtech.Backend.Common.Core
         public const string ValidAndroidMimeTypes = "application/vnd.android.package-archive,application/zip,application/x-zip-compressed";
         public const string ValidIosMimeTypes = "application/octet-stream,application/zip,application/x-zip-compressed";
         public const string ValidWindowsMimeTypes = "application/x-silverlight-app,application/zip,application/x-zip-compressed";
-        public const string DefaultLanguageCode = "fa";
+        public const string DefaultLanguageCode = "en";
         public const string LanguageIdentifier = "culture";
         public const string AreaIdentifier = "area";
         public const int TotalRecords = 500000;
@@ -397,7 +394,7 @@ namespace GamaEdtech.Backend.Common.Core
             GroupName,
         }
 
-        public static Tenant DefaultTenant => new() { Name = DefaultTenantIdentifier, Code = "FRBZIR", Schema = "Farsica", ArchiveSchema = "Farsica_ARCHIVE" };
+        public static Tenant DefaultTenant => new() { Name = DefaultTenantIdentifier, Code = "FRBZIR", Schema = "GamaEdtech", ArchiveSchema = "GamaEdtech_ARCHIVE" };
     }
 }
 #pragma warning restore CA1720 // Identifier contains type name

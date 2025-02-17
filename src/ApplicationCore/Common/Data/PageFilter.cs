@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+namespace GamaEdtech.Backend.Common.Data
 {
     using GamaEdtech.Backend.Common.DataAnnotation;
 
@@ -11,8 +11,6 @@
         [Required]
         [Range(1, int.MaxValue)]
         public int Size { get; set; } = 1;
-
-        public ExportType? ExportType { get; set; }
 
         public bool ReturnTotalRecordsCount { get; set; }
     }
