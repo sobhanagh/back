@@ -25,12 +25,12 @@ namespace GamaEdtech.Backend.Common.Hosting
     public static class Host
     {
         public static async Task RunAsync<TStartup>(string[] args)
-            where TStartup : class => await RunInternal<TStartup>(args, false);
+            where TStartup : class => await RunInternalAsync<TStartup>(args, false);
 
         public static async Task RunAsync<TStartup, TUser, TRole>(string[] args)
             where TStartup : Startup<TUser, TRole>
             where TUser : class
-            where TRole : class => await RunInternal<TStartup>(args, true);
+            where TRole : class => await RunInternalAsync<TStartup>(args, true);
 
         public static IHost? CreateHost<TStartup>(string[] args)
             where TStartup : class
@@ -62,7 +62,7 @@ namespace GamaEdtech.Backend.Common.Hosting
                     .UseIIS()).Build();
         }
 
-        private static async Task RunInternal<TStartup>(string[] args, bool checkMigration)
+        private static async Task RunInternalAsync<TStartup>(string[] args, bool checkMigration)
             where TStartup : class
         {
 #pragma warning disable CA2000 // Dispose objects before losing scope

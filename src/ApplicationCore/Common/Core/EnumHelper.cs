@@ -82,7 +82,7 @@ namespace GamaEdtech.Backend.Common.Core
         public static IEnumerable<T>? FlagsEnumToList<T>(this T value)
             where T : struct => !typeof(T).IsSubclassOf(typeof(Enum))
                 ? throw new ArgumentException("typeof(T)")
-                : (value.ToString()?.Split(',').Select(flag => (T)Enum.Parse(typeof(T), flag)));
+                : (value.ToString()?.Split(',').Select(Enum.Parse<T>));
 
         public static T ListToFlagsEnum<T>(this IEnumerable<T> value)
             where T : struct, IConvertible

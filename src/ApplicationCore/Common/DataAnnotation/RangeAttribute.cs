@@ -29,7 +29,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             ErrorMessageResourceName = nameof(Resources.GlobalResource.Validation_Range);
         }
 
-        public RangeAttribute(Type type, string? minimum, string? maximum)
+        public RangeAttribute(Type type, string minimum, string maximum)
             : base(type, minimum, maximum)
         {
             ErrorMessageResourceType = typeof(Resources.GlobalResource);
@@ -58,7 +58,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             internal set => base.ErrorMessage = value;
         }
 
-        public Type Type { get; }
+        public Type? Type { get; }
 
         public override bool IsValid(object? value) => string.IsNullOrEmpty(value?.ToString())
 || (value is IEnumerable<string> lst ? lst.All(t => string.IsNullOrEmpty(t) || base.IsValid(t)) : base.IsValid(value));
@@ -66,13 +66,13 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
         public void AddValidation([NotNull] ClientModelValidationContext context)
         {
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
-            _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-max", Maximum.ToString()));
-            _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-min", Minimum.ToString()));
+            _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-max", Maximum.ToString()!));
+            _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-min", Minimum!.ToString()!));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name!)));
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-range", Data.Error.FormatMessage(msg)));
         }
 
-        private string? FormatErrorMessage(string? modelDisplayName) => string.Format(CultureInfo.CurrentCulture, ErrorMessageString, modelDisplayName, Minimum, Maximum);
+        private string? FormatMessage(string? modelDisplayName) => string.Format(CultureInfo.CurrentCulture, ErrorMessageString, modelDisplayName, Minimum, Maximum);
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+namespace GamaEdtech.Backend.Common.Data
 {
     public class ParameterDto<T>
     {
-        public T Id { get; set; }
+        public required T Id { get; set; }
 
         public string? Name { get; set; }
 

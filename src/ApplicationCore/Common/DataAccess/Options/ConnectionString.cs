@@ -20,7 +20,7 @@ namespace GamaEdtech.Backend.Common.DataAccess.Options
 
         public string? Password { get; set; } = password;
 
-        public Dictionary<string, string> Parameters { get; set; } = parameters;
+        public Dictionary<string, string>? Parameters { get; set; } = parameters;
 
         public override string? ToString()
         {
@@ -46,10 +46,10 @@ namespace GamaEdtech.Backend.Common.DataAccess.Options
 
                     break;
                 default:
-                    return null;
+                    return string.Empty;
             }
 
-            if (Parameters?.Any() == true)
+            if (Parameters?.Count > 0)
             {
                 _ = sb.AppendJoin(";", Parameters.Keys.Select(t => $"{t}={Parameters[t]}"));
             }

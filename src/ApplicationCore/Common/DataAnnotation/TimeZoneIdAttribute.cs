@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Backend.Common.DataAnnotation
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -8,6 +8,7 @@
 
     using Microsoft.Extensions.DependencyInjection;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class TimeZoneIdAttribute : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)

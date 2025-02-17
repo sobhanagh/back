@@ -80,7 +80,7 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
         public static PropertyBuilder<TEnum?> OwnFlagsEnumeration<TEntity, TEnum>([NotNull] this EntityTypeBuilder<TEntity> builder, Expression<Func<TEntity, TEnum?>> property)
             where TEntity : class
-            where TEnum : FlagsEnumeration<TEnum>, new() => builder.Property(property).HasConversion(t => t.ToUniqueId(), t => t.FromUniqueId<TEnum>());
+            where TEnum : FlagsEnumeration<TEnum>, new() => builder.Property(property).HasConversion(t => t!.ToUniqueId(), t => t.FromUniqueId<TEnum>());
 
         public static TEnum? ListToFlagsEnum<TEnum>([NotNull] this IEnumerable<string> names)
             where TEnum : FlagsEnumeration<TEnum>, new()

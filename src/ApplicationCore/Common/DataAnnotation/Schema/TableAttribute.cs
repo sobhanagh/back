@@ -1,7 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
+namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
 {
     using GamaEdtech.Backend.Common.Data;
 
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class TableAttribute(string name, string? prefix = null, bool pluralize = true) : System.ComponentModel.DataAnnotations.Schema.TableAttribute(DbProviderFactories.GetFactory.GetObjectName(name, prefix, pluralize))
     {
         public string? Prefix { get; } = prefix;

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Backend.Common.DataAnnotation
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -39,12 +39,7 @@
             internal set => base.ErrorMessageResourceName = value;
         }
 
-        public new string? ErrorMessage
-        {
-            get => base.ErrorMessage;
-
-            private set => base.ErrorMessage = value;
-        }
+        public new string? ErrorMessage => base.ErrorMessage;
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) => string.IsNullOrEmpty(value?.ToString()) ? ValidationResult.Success : base.IsValid(value, validationContext);
     }

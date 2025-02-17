@@ -80,7 +80,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Linq
                 if (!sort)
                 {
                     var id = properties.FirstOrDefault(t => t.Name.Equals("Id", StringComparison.OrdinalIgnoreCase))?.Name ?? properties.FirstOrDefault()?.Name;
-                    lst = lst.OrderBy(id);
+                    lst = lst.OrderBy(id!);
                 }
 
                 lst = lst.Skip(pagingDto.PageFilter.Skip).Take(pagingDto.PageFilter.Size);
@@ -111,13 +111,17 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Linq
                 {
                     var fields = type.GetFields();
                     var match = false;
-                    foreach (var info in fields)
+                    if (fields is not null)
                     {
-                        if (info.Name.Equals(searchFilter.Phrase, StringComparison.OrdinalIgnoreCase))
+                        for (var i = 0; i < fields.Length; i++)
                         {
-                            lst = lst.Where($"{property.Name} == (@0)", info.GetValue(info));
-                            match = true;
-                            break;
+                            var info = fields[i];
+                            if (info.Name.Equals(searchFilter.Phrase, StringComparison.OrdinalIgnoreCase))
+                            {
+                                lst = lst.Where($"{property.Name} == (@0)", info.GetValue(info));
+                                match = true;
+                                break;
+                            }
                         }
                     }
 

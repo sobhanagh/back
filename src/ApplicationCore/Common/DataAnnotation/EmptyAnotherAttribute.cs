@@ -6,12 +6,13 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using GamaEdtech.Backend.Common.Core;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class EmptyAnotherAttribute : ValidationAttribute
     {
         public EmptyAnotherAttribute([NotNull] string otherProperty)
             : base(() => "ValidationError")
         {
-            ArgumentNullException.ThrowIfNull(otherProperty, nameof(otherProperty));
+            ArgumentNullException.ThrowIfNull(otherProperty);
 
             OtherProperty = otherProperty;
 
@@ -32,7 +33,8 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             if (otherValue is not null)
             {
                 var otherDisplayName = Globals.GetLocalizedDisplayName(otherPropertyInfo);
-                return new ValidationResult(string.Format(Resources.GlobalResource.Validation_EmptyAnother, otherDisplayName));
+                var emptyAnother = Resources.GlobalResource.Validation_EmptyAnother;
+                return new ValidationResult(string.Format(emptyAnother, otherDisplayName));
             }
 
             return null;

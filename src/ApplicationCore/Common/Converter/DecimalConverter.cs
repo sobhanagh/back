@@ -7,11 +7,18 @@ namespace GamaEdtech.Backend.Common.Converter
 
     public class DecimalConverter : JsonConverter<decimal>
     {
-        public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => reader.TokenType == JsonTokenType.String && decimal.TryParse(reader.GetString(), out var number)
-                ? number
-                : reader.TokenType == JsonTokenType.Number && reader.TryGetDecimal(out number)
+        public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String && decimal.TryParse(reader.GetString(), out var number))
+            {
+                return number;
+            }
+
+            var numberToken = reader.TokenType == JsonTokenType.Number;
+            return numberToken && reader.TryGetDecimal(out number)
                 ? number
                 : throw new ArgumentException("TokenType");
+        }
 
         public override void Write([NotNull] Utf8JsonWriter writer, decimal value, JsonSerializerOptions options) => writer.WriteNumberValue(value);
 

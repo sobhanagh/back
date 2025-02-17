@@ -11,11 +11,19 @@ namespace GamaEdtech.Backend.Common.Converter
 
     public class UlidJsonConverter : JsonConverter<Ulid>
     {
-        public override Ulid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => reader.TokenType != JsonTokenType.String
-                ? throw new ArgumentException("TokenType")
-                : Ulid.TryParse(reader.GetString() ?? string.Empty, out var ulid)
+        public override Ulid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType is not JsonTokenType.String)
+            {
+                throw new ArgumentException("TokenType");
+            }
+
+            var val = reader.GetString() ?? string.Empty;
+            var txt = GlobalResource.Validation_ValueIsInvalidAccessor;
+            return Ulid.TryParse(val, out var ulid)
                 ? ulid
-                : throw new ArgumentException(string.Format(GlobalResource.Validation_ValueIsInvalidAccessor, reader.GetString()));
+                : throw new ArgumentException(string.Format(txt, val));
+        }
 
         public override void Write([NotNull] Utf8JsonWriter writer, Ulid value, JsonSerializerOptions options) => writer.WriteStringValue(value.ToString());
 

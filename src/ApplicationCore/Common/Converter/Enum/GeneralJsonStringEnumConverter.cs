@@ -29,22 +29,22 @@ namespace GamaEdtech.Backend.Common.Converter.Enum
         {
         }
 
-        public GeneralJsonStringEnumConverter(JsonNamingPolicy? namingPolicy = default, bool allowIntegerValues = true) => (this.namingPolicy, this.allowIntegerValues) = (namingPolicy, allowIntegerValues);
+        public GeneralJsonStringEnumConverter(JsonNamingPolicy? namingPolicy, bool allowIntegerValues) => (this.namingPolicy, this.allowIntegerValues) = (namingPolicy, allowIntegerValues);
 
         public override bool CanConvert([NotNull] Type typeToConvert) => typeToConvert.IsEnum || Nullable.GetUnderlyingType(typeToConvert)?.IsEnum == true;
 
-        public sealed override JsonConverter CreateConverter([NotNull] Type typeToConvert, JsonSerializerOptions options)
+        public sealed override JsonConverter? CreateConverter([NotNull] Type typeToConvert, JsonSerializerOptions options)
         {
             var enumType = Nullable.GetUnderlyingType(typeToConvert) ?? typeToConvert;
             var flagged = enumType.IsDefined(typeof(FlagsAttribute), true);
             JsonConverter enumConverter;
             TryOverrideName tryOverrideName = TryOverrideName;
-            var converterType = (flagged ? typeof(FlaggedJsonEnumConverter<>) : typeof(UnflaggedJsonEnumConverter<>)).MakeGenericType([enumType]);
+            var converterType = (flagged ? typeof(FlaggedJsonEnumConverter<>) : typeof(UnflaggedJsonEnumConverter<>)).MakeGenericType(enumType);
             enumConverter = (JsonConverter)Activator.CreateInstance(
                 converterType,
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                 binder: null,
-                args: new object[] { namingPolicy!, allowIntegerValues, tryOverrideName },
+                args: [namingPolicy!, allowIntegerValues, tryOverrideName],
                 culture: null)!;
             if (enumType == typeToConvert)
             {
@@ -53,10 +53,10 @@ namespace GamaEdtech.Backend.Common.Converter.Enum
             else
             {
                 var nullableConverter = (JsonConverter)Activator.CreateInstance(
-                    typeof(NullableConverterDecorator<>).MakeGenericType([enumType]),
+                    typeof(NullableConverterDecorator<>).MakeGenericType(enumType),
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                     binder: null,
-                    args: new object[] { enumConverter },
+                    args: [enumConverter],
                     culture: null)!;
                 return nullableConverter;
             }
@@ -182,7 +182,6 @@ namespace GamaEdtech.Backend.Common.Converter.Enum
 
             public sealed override void Write([NotNull] Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options)
             {
-                // Todo: consider caching a small number of JsonEncodedText values for the first N enums encountered, as is done in
                 // https://github.com/dotnet/runtime/blob/main/src/libraries/System.Text.Json/src/System/Text/Json/Serialization/Converters/Value/EnumConverter.cs
                 if (TryFormatAsString(EnumData, value, out var name))
                 {

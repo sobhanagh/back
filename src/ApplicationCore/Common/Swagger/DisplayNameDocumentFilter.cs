@@ -42,7 +42,7 @@ namespace GamaEdtech.Backend.Common.Swagger
                 });
             }
 
-            swaggerDoc.Tags = swaggerDoc.Tags.OrderBy(t => t.Name).ToList();
+            swaggerDoc.Tags = [.. swaggerDoc.Tags.OrderBy(t => t.Name)];
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Converter.Enum
+namespace GamaEdtech.Backend.Common.Converter.Enum
 {
     using System;
     using System.Text.Json;
@@ -9,11 +9,11 @@
     public class JsonPropertyNameStringEnumConverter : GeneralJsonStringEnumConverter
     {
         public JsonPropertyNameStringEnumConverter()
-            : base()
+            : base(default, true)
         {
         }
 
-        public JsonPropertyNameStringEnumConverter(JsonNamingPolicy? namingPolicy = default, bool allowIntegerValues = true)
+        public JsonPropertyNameStringEnumConverter(JsonNamingPolicy? namingPolicy, bool allowIntegerValues)
             : base(namingPolicy, allowIntegerValues)
         {
         }

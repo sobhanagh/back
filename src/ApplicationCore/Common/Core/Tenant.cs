@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Core
+namespace GamaEdtech.Backend.Common.Core
 {
     using System.Collections.Generic;
 
@@ -12,6 +12,6 @@
 
         public string? ArchiveSchema { get; set; }
 
-        public IReadOnlyList<string?> Domains { get; set; }
+        public IReadOnlyList<string?>? Domains { get; set; }
     }
 }

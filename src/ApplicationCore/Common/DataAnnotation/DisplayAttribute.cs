@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Backend.Common.DataAnnotation
 {
     using System;
 
@@ -15,7 +15,7 @@
 
         /// <summary>
         /// Gets or sets a value that is used for display in the UI for label.
-        /// if EnumType & ResourceType are provided: 1- localized EnumName_PropertyName_Description, 2- Static Description
+        /// if EnumType and ResourceType are provided: 1- localized EnumName_PropertyName_Description, 2- Static Description
         /// if just ResourceType provided: 1- localized PropertyName_Name, 2- Static Description
         /// else Name.
         /// </summary>
@@ -23,7 +23,7 @@
 
         /// <summary>
         /// Gets or sets a value that is used to group fields in the UI.
-        /// if EnumType & ResourceType are provided: 1- localized EnumName_PropertyName_GroupName, 2- Static GroupName
+        /// if EnumType and ResourceType are provided: 1- localized EnumName_PropertyName_GroupName, 2- Static GroupName
         /// if just ResourceType provided: 1- localized PropertyName_GroupName, 2- Static GroupName
         /// else Name.
         /// </summary>
@@ -31,7 +31,7 @@
 
         /// <summary>
         /// Gets or sets a value that is used for display in the UI.
-        /// if EnumType & ResourceType are provided: 1- localized EnumName_PropertyName_Name, 2- localized EnumName_PropertyName, 3- Static Name
+        /// if EnumType and ResourceType are provided: 1- localized EnumName_PropertyName_Name, 2- localized EnumName_PropertyName, 3- Static Name
         /// if just ResourceType provided: 1- localized PropertyName_Name, 2- Static Name
         /// else Name.
         /// </summary>
@@ -44,7 +44,7 @@
 
         /// <summary>
         /// Gets or sets a value that will be used to display a watermark in the UI.
-        /// if EnumType & ResourceType are provided: 1- localized EnumName_PropertyName_Prompt, 2- Static Prompt
+        /// if EnumType and ResourceType are provided: 1- localized EnumName_PropertyName_Prompt, 2- Static Prompt
         /// if just ResourceType provided: 1- localized PropertyName_Prompt, 2- Static Prompt
         /// else Name.
         /// </summary>
@@ -52,7 +52,7 @@
 
         /// <summary>
         /// Gets or sets a value that is for the grid column label.
-        /// if EnumType & ResourceType are provided: 1- localized EnumName_PropertyName_ShortName, 2- Static ShortName
+        /// if EnumType and ResourceType are provided: 1- localized EnumName_PropertyName_ShortName, 2- Static ShortName
         /// if just ResourceType provided: 1- localized PropertyName_ShortName, 2- Static ShortName
         /// else Name.
         /// </summary>

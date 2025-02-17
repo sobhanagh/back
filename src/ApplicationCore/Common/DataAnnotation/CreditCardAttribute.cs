@@ -11,13 +11,14 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CreditCardAttribute : ValidationAttribute, IClientModelValidator
     {
         public void AddValidation([NotNull] ClientModelValidationContext context)
         {
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata!.ContainerType?.GetProperty(context.ModelMetadata!.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-creditcard", Data.Error.FormatMessage(msg)));
         }
 
@@ -29,9 +30,13 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             }
 
             var attribute = new System.ComponentModel.DataAnnotations.CreditCardAttribute();
-            return value is List<string> lst
-                ? lst.All(t => string.IsNullOrEmpty(t) || attribute.IsValid(t)) ? ValidationResult.Success : new ValidationResult(ErrorMessage)
-                : attribute.IsValid(value) ? ValidationResult.Success : new ValidationResult(ErrorMessage);
+            if (value is List<string> lst)
+            {
+                return lst.All(t => string.IsNullOrEmpty(t) || attribute.IsValid(t)) ? ValidationResult.Success : new ValidationResult(ErrorMessage);
+            }
+
+            var valid = attribute.IsValid(value);
+            return valid ? ValidationResult.Success : new ValidationResult(ErrorMessage);
         }
     }
 }

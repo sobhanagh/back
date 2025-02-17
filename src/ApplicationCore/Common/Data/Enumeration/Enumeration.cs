@@ -5,15 +5,19 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
     using GamaEdtech.Backend.Common.Core;
 
+#pragma warning disable S4035 // Classes implementing "IEquatable<T>" should be sealed
     public abstract class Enumeration<T> : IComparable, IEquatable<Enumeration<T>>, IComparable<Enumeration<T>>
+#pragma warning restore S4035 // Classes implementing "IEquatable<T>" should be sealed
         where T : IEquatable<T>, IComparable<T>
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         [ExcludeFromCodeCoverage]
         protected Enumeration()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
         }
 
-        protected Enumeration(string name, T value)
+        protected Enumeration([NotNull] string name, T value)
         {
             Value = value;
             Name = name;
@@ -39,8 +43,6 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
         public override string? ToString() => Name;
 
-        public override bool Equals(object? obj) => obj is Enumeration<T> && Equals(obj as Enumeration<T>);
-
         public override int GetHashCode() => Value.GetHashCode();
 
         public static bool operator <(Enumeration<T> left, Enumeration<T> right) => left is null ? right is not null : left.CompareTo(right) < 0;
@@ -51,12 +53,14 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
         public static bool operator >=(Enumeration<T> left, Enumeration<T> right) => left is null ? right is null : left.CompareTo(right) >= 0;
 
+        public override bool Equals(object? obj) => obj is Enumeration<T> && Equals(obj as Enumeration<T>);
+
         public bool Equals(Enumeration<T>? other) => other is not null && (ReferenceEquals(this, other) || Value.Equals(other.Value));
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-        public int CompareTo(Enumeration<T>? other) => Value.CompareTo(other.Value);
+        public int CompareTo(Enumeration<T>? other) => Value.CompareTo(other!.Value);
 
-        public int CompareTo(object? other) => Value.CompareTo((other as Enumeration<T>).Value);
+        public int CompareTo(object? obj) => Value.CompareTo((obj as Enumeration<T>)!.Value);
 #pragma warning restore CA1062 // Validate arguments of public methods
     }
 }

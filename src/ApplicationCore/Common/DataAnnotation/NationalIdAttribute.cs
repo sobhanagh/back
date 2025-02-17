@@ -5,6 +5,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using GamaEdtech.Backend.Common.Core;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class NationalIdAttribute : ValidationAttribute
     {
         public override bool IsValid(object? value) => string.IsNullOrEmpty(value?.ToString())

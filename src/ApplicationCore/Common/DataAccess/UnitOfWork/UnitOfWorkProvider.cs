@@ -13,14 +13,14 @@
     [ServiceLifetime(ServiceLifetime.Scoped)]
     public class UnitOfWorkProvider : IUnitOfWorkProvider
     {
-        private readonly ILogger<DataAccess> logger;
+        private readonly ILogger<IDataAccess> logger;
         private readonly IServiceProvider serviceProvider;
 
         public UnitOfWorkProvider()
         {
         }
 
-        public UnitOfWorkProvider(ILogger<DataAccess> logger, IServiceProvider serviceProvider)
+        public UnitOfWorkProvider(ILogger<IDataAccess> logger, IServiceProvider serviceProvider)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;

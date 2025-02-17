@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Specification.Impl
+namespace GamaEdtech.Backend.Common.DataAccess.Specification.Impl
 {
     using System;
     using System.Linq.Expressions;
@@ -7,7 +7,7 @@
     using GamaEdtech.Backend.Common.DataAccess.Specification;
 
     public sealed class DeletedSpecification<TClass>(bool deleted) : SpecificationBase<TClass>
-        where TClass : class, IDeletable<TClass>
+        where TClass : class, IDeletable
     {
         private readonly bool deleted = deleted;
 

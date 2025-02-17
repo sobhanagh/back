@@ -12,6 +12,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class FileSizeAttribute : ValidationAttribute, IClientModelValidator
     {
         public FileSizeAttribute(long maximumLength)
@@ -35,7 +36,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-filesize-maxsize", MaximumLength.ToString()));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-filesize", Data.Error.FormatMessage(msg)));
 
             if (MaximumTotalLength.HasValue)

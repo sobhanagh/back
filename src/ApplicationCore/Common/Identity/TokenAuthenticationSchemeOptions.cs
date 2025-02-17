@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Identity
+namespace GamaEdtech.Backend.Common.Identity
 {
     using Microsoft.AspNetCore.Authentication;
 

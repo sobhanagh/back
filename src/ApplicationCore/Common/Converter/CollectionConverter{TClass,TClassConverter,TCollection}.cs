@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Converter
+namespace GamaEdtech.Backend.Common.Converter
 {
     using System;
     using System.Collections.Generic;
@@ -32,7 +32,7 @@
             while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
             {
                 var item = itemConverter.Read(ref reader, typeof(TClass), options);
-                if (item != null)
+                if (item is not null)
                 {
                     list.Add(item);
                 }

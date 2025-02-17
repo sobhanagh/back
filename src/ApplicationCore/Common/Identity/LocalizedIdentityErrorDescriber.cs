@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Identity
+namespace GamaEdtech.Backend.Common.Identity
 {
     using GamaEdtech.Backend.Common.Resources;
 
@@ -6,53 +6,85 @@
 
     public class LocalizedIdentityErrorDescriber : IdentityErrorDescriber
     {
-        public override IdentityError DuplicateEmail(string? email) => new()
+        public override IdentityError DuplicateEmail(string? email)
         {
-            Code = nameof(DuplicateEmail),
-            Description = string.Format(GlobalResource.IdentityError_DuplicateEmail, email),
-        };
+            var msg = GlobalResource.IdentityError_DuplicateEmail;
+            return new()
+            {
+                Code = nameof(DuplicateEmail),
+                Description = string.Format(msg, email),
+            };
+        }
 
-        public override IdentityError DuplicateUserName(string? userName) => new()
+        public override IdentityError DuplicateUserName(string? userName)
         {
-            Code = nameof(DuplicateUserName),
-            Description = string.Format(GlobalResource.IdentityError_DuplicateUserName, userName),
-        };
+            var msg = GlobalResource.IdentityError_DuplicateUserName;
+            return new()
+            {
+                Code = nameof(DuplicateUserName),
+                Description = string.Format(msg, userName),
+            };
+        }
 
-        public override IdentityError InvalidEmail(string? email) => new()
+        public override IdentityError InvalidEmail(string? email)
         {
-            Code = nameof(InvalidEmail),
-            Description = string.Format(GlobalResource.IdentityError_InvalidEmail, email),
-        };
+            var msg = GlobalResource.IdentityError_InvalidEmail;
+            return new()
+            {
+                Code = nameof(InvalidEmail),
+                Description = string.Format(msg, email),
+            };
+        }
 
-        public override IdentityError DuplicateRoleName(string? role) => new()
+        public override IdentityError DuplicateRoleName(string? role)
         {
-            Code = nameof(DuplicateRoleName),
-            Description = string.Format(GlobalResource.IdentityError_DuplicateRoleName, role),
-        };
+            var msg = GlobalResource.IdentityError_DuplicateRoleName;
+            return new()
+            {
+                Code = nameof(DuplicateRoleName),
+                Description = string.Format(msg, role),
+            };
+        }
 
-        public override IdentityError InvalidRoleName(string? role) => new()
+        public override IdentityError InvalidRoleName(string? role)
         {
-            Code = nameof(InvalidRoleName),
-            Description = string.Format(GlobalResource.IdentityError_InvalidRoleName, role),
-        };
+            var msg = GlobalResource.IdentityError_InvalidRoleName;
+            return new()
+            {
+                Code = nameof(InvalidRoleName),
+                Description = string.Format(msg, role),
+            };
+        }
 
-        public override IdentityError InvalidToken() => new()
+        public override IdentityError InvalidToken()
         {
-            Code = nameof(InvalidToken),
-            Description = GlobalResource.IdentityError_InvalidToken,
-        };
+            var msg = GlobalResource.IdentityError_InvalidToken;
+            return new()
+            {
+                Code = nameof(InvalidToken),
+                Description = msg,
+            };
+        }
 
-        public override IdentityError InvalidUserName(string? userName) => new()
+        public override IdentityError InvalidUserName(string? userName)
         {
-            Code = nameof(InvalidUserName),
-            Description = string.Format(GlobalResource.IdentityError_InvalidUserName, userName),
-        };
+            var msg = GlobalResource.IdentityError_InvalidUserName;
+            return new()
+            {
+                Code = nameof(InvalidUserName),
+                Description = string.Format(msg, userName),
+            };
+        }
 
-        public override IdentityError LoginAlreadyAssociated() => new()
+        public override IdentityError LoginAlreadyAssociated()
         {
-            Code = nameof(LoginAlreadyAssociated),
-            Description = GlobalResource.IdentityError_LoginAlreadyAssociated,
-        };
+            var msg = GlobalResource.IdentityError_LoginAlreadyAssociated;
+            return new()
+            {
+                Code = nameof(LoginAlreadyAssociated),
+                Description = msg,
+            };
+        }
 
         public override IdentityError PasswordMismatch() => new()
         {
@@ -78,11 +110,15 @@
             Description = GlobalResource.IdentityError_PasswordRequiresNonAlphanumeric,
         };
 
-        public override IdentityError PasswordRequiresUniqueChars(int uniqueChars) => new()
+        public override IdentityError PasswordRequiresUniqueChars(int uniqueChars)
         {
-            Code = nameof(PasswordRequiresUniqueChars),
-            Description = string.Format(GlobalResource.IdentityError_PasswordRequiresUniqueChars, uniqueChars),
-        };
+            var msg = GlobalResource.IdentityError_PasswordRequiresUniqueChars;
+            return new()
+            {
+                Code = nameof(PasswordRequiresUniqueChars),
+                Description = string.Format(msg, uniqueChars),
+            };
+        }
 
         public override IdentityError PasswordRequiresUpper() => new()
         {
@@ -90,29 +126,45 @@
             Description = GlobalResource.IdentityError_PasswordRequiresUpper,
         };
 
-        public override IdentityError PasswordTooShort(int length) => new()
+        public override IdentityError PasswordTooShort(int length)
         {
-            Code = nameof(PasswordTooShort),
-            Description = string.Format(GlobalResource.IdentityError_PasswordTooShort, length),
-        };
+            var msg = GlobalResource.IdentityError_PasswordTooShort;
+            return new()
+            {
+                Code = nameof(PasswordTooShort),
+                Description = string.Format(msg, length),
+            };
+        }
 
-        public override IdentityError UserAlreadyHasPassword() => new()
+        public override IdentityError UserAlreadyHasPassword()
         {
-            Code = nameof(UserAlreadyHasPassword),
-            Description = GlobalResource.IdentityError_UserAlreadyHasPassword,
-        };
+            var msg = GlobalResource.IdentityError_UserAlreadyHasPassword;
+            return new()
+            {
+                Code = nameof(UserAlreadyHasPassword),
+                Description = msg,
+            };
+        }
 
-        public override IdentityError UserAlreadyInRole(string? role) => new()
+        public override IdentityError UserAlreadyInRole(string? role)
         {
-            Code = nameof(UserAlreadyInRole),
-            Description = string.Format(GlobalResource.IdentityError_UserAlreadyInRole, role),
-        };
+            var msg = GlobalResource.IdentityError_UserAlreadyInRole;
+            return new()
+            {
+                Code = nameof(UserAlreadyInRole),
+                Description = string.Format(msg, role),
+            };
+        }
 
-        public override IdentityError UserNotInRole(string? role) => new()
+        public override IdentityError UserNotInRole(string? role)
         {
-            Code = nameof(UserNotInRole),
-            Description = string.Format(GlobalResource.IdentityError_UserNotInRole, role),
-        };
+            var msg = GlobalResource.IdentityError_UserNotInRole;
+            return new()
+            {
+                Code = nameof(UserNotInRole),
+                Description = string.Format(msg, role),
+            };
+        }
 
         public override IdentityError UserLockoutNotEnabled() => new()
         {

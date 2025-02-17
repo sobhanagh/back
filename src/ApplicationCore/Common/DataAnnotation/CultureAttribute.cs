@@ -11,6 +11,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CultureAttribute : ValidationAttribute, IClientModelValidator
     {
         public CultureAttribute() => ErrorMessageResourceName = nameof(Resources.GlobalResource.Validation_Culture);
@@ -33,7 +34,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-regex-pattern", "^[a-z]{2}(-[A-Z]{2})*"));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata!.ContainerType?.GetProperty(context.ModelMetadata!.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-regex", Data.Error.FormatMessage(msg)));
         }
     }

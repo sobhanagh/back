@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Entities
+namespace GamaEdtech.Backend.Common.DataAccess.Entities
 {
     using System;
 
@@ -19,9 +19,11 @@
 
         [Column(nameof(CreationUserId))]
         [Required]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         public virtual TCreationKey CreationUserId { get; set; }
 
         public TUser CreationUser { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
         [Column(nameof(LastModifyDate), Data.DataType.DateTimeOffset)]
         public virtual DateTimeOffset? LastModifyDate { get; set; }

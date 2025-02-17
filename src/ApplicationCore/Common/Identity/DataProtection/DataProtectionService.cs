@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Identity.DataProtection
+namespace GamaEdtech.Backend.Common.Identity.DataProtection
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -13,7 +13,8 @@
         public IEnumerable<XElement>? GetDataProtections()
         {
             var uow = unitOfWorkProvider.CreateUnitOfWork();
-            return uow.GetRepository<DataProtectionKey, Ulid>().GetManyQueryable().Select(t => t.Xml).ToList().Select(XElement.Parse);
+            var lst = uow.GetRepository<DataProtectionKey, Ulid>().GetManyQueryable().Select(t => t.Xml).ToList();
+            return lst.Select(t => XElement.Parse(t!));
         }
 
         public void AddDataProtection(DataProtectionKey dataProtectionKey)

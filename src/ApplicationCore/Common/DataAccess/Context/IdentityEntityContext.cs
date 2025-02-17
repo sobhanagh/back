@@ -103,10 +103,10 @@ namespace GamaEdtech.Backend.Common.DataAccess.Context
             }
 
             ConfigureProperties(EntityAssembly.GetTypes());
-            ConfigureProperties(typeof(DataAccess).Assembly.GetTypes());
+            ConfigureProperties(typeof(IDataAccess).Assembly.GetTypes());
 
             _ = builder.ApplyConfigurationsFromAssembly(EntityAssembly);
-            _ = builder.ApplyConfigurationsFromAssembly(typeof(DataAccess).Assembly);
+            _ = builder.ApplyConfigurationsFromAssembly(typeof(IDataAccess).Assembly);
 
             void ConfigureProperties(Type[] types)
             {

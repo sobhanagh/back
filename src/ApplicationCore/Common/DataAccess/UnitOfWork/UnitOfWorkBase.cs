@@ -5,8 +5,6 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
     using System.Collections.Generic;
     using System.Data;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -14,22 +12,14 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
     using GamaEdtech.Backend.Common.DataAccess.Entities;
     using GamaEdtech.Backend.Common.DataAccess.Exceptions;
     using GamaEdtech.Backend.Common.DataAccess.Repositories;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
 
-    public abstract class UnitOfWorkBase<TContext> : IUnitOfWorkBase
+    public abstract class UnitOfWorkBase<TContext>(TContext context, IServiceProvider serviceProvider, ILogger<IDataAccess> logger) : IUnitOfWorkBase
         where TContext : DbContext
     {
-        protected internal UnitOfWorkBase(TContext context, IServiceProvider serviceProvider, ILogger<DataAccess> logger)
-        {
-            Context = context;
-            ServiceProvider = serviceProvider;
-            Logger = logger;
-        }
-
         ~UnitOfWorkBase()
         {
             Dispose(false);
@@ -37,24 +27,21 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
 
         protected bool IsDisposed { get; set; }
 
-        protected IServiceProvider ServiceProvider { get; }
+        protected IServiceProvider ServiceProvider { get; } = serviceProvider;
 
-        protected ILogger<DataAccess> Logger { get; }
+        protected ILogger<IDataAccess> Logger { get; } = logger;
 
-        protected TContext Context { get; set; }
+        protected TContext Context { get; set; } = context;
 
         public int SaveChanges()
         {
             CheckDisposed();
-            Prepare();
             return Context.SaveChanges();
         }
 
         public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             CheckDisposed();
-            await PrepareAsync();
-
             return await Context.SaveChangesAsync(cancellationToken);
         }
 
@@ -171,34 +158,6 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
             }
         }
 
-        public async Task<int> GetSequenceValueAsync(string sequence)
-        {
-            var connection = Context.Database.GetDbConnection();
-            using var command = connection.CreateCommand();
-            command.CommandText = GetSequenceCommand(sequence, Context.Model.GetDefaultSchema());
-            if (connection.State != ConnectionState.Open)
-            {
-                await connection.OpenAsync();
-            }
-
-            var value = (decimal)await command.ExecuteScalarAsync();
-            return Convert.ToInt32(value);
-        }
-
-        public int GetSequenceValue(string sequence)
-        {
-            var connection = Context.Database.GetDbConnection();
-            using var command = connection.CreateCommand();
-            command.CommandText = GetSequenceCommand(sequence, Context.Model.GetDefaultSchema());
-            if (connection.State != ConnectionState.Open)
-            {
-                connection.Open();
-            }
-
-            var value = (decimal)command.ExecuteScalar();
-            return Convert.ToInt32(value);
-        }
-
         #region IDisposable Implementation
 
         public void Dispose()
@@ -207,120 +166,16 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
             GC.SuppressFinalize(this);
         }
 
-        protected void CheckDisposed()
-        {
-            if (IsDisposed)
-            {
-                throw new ObjectDisposedException("The UnitOfWork is already disposed and cannot be used anymore.");
-            }
-        }
+        protected void CheckDisposed() => ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed && disposing && Context is not null)
             {
                 Context.Dispose();
-                Context = null;
             }
 
             IsDisposed = true;
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private static string? GetSequenceCommand(string sequence, string? schema) => $"SELECT {(!string.IsNullOrEmpty(schema) ? $"{schema}." : string.Empty)}{sequence}.NEXTVAL FROM DUAL";
-
-        private void Prepare()
-        {
-            var changedEntities = Context.ChangeTracker.Entries().Where(x => x.State is EntityState.Added or EntityState.Modified);
-            foreach (var item in changedEntities)
-            {
-                if (item.Entity is null)
-                {
-                    continue;
-                }
-
-                var properties = item.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(p => p.CanRead && p.CanWrite);
-
-                foreach (var property in properties)
-                {
-                    if (property.PropertyType == typeof(string))
-                    {
-                        var val = property.GetValue(item.Entity, null) as string;
-                        if (!string.IsNullOrEmpty(val))
-                        {
-                            var newVal = val.NormalizePersian();
-                            if (newVal != val)
-                            {
-                                property.SetValue(item.Entity, newVal, null);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (item.State == EntityState.Added)
-                        {
-                            if (property.GetCustomAttributes(typeof(DatabaseGeneratedAttribute), false).FirstOrDefault() is DatabaseGeneratedAttribute attribute && attribute.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity && !string.IsNullOrEmpty(attribute.SequenceName))
-                            {
-                                var val = GetSequenceValue(attribute.SequenceName);
-                                property.SetValue(item.Entity, val, null);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private async Task PrepareAsync()
-        {
-            var changedEntities = Context.ChangeTracker.Entries().Where(x => x.State is EntityState.Added or EntityState.Modified);
-            foreach (var item in changedEntities)
-            {
-                if (item.Entity is null)
-                {
-                    continue;
-                }
-
-                var properties = item.Entity.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(p => p.CanRead && p.CanWrite);
-
-                foreach (var property in properties)
-                {
-                    if (property.Name == nameof(Concurrency.IRowVersion.RowVersion) && property.PropertyType == typeof(long))
-                    {
-                        if (property.GetValue(item.Entity, null) is long val)
-                        {
-                            property.SetValue(item.Entity, val++, null);
-                        }
-                    }
-                    else if (property.PropertyType == typeof(string))
-                    {
-                        var val = property.GetValue(item.Entity, null) as string;
-                        if (!string.IsNullOrEmpty(val))
-                        {
-                            var newVal = val.NormalizePersian();
-                            if (newVal != val)
-                            {
-                                property.SetValue(item.Entity, newVal, null);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (item.State == EntityState.Added)
-                        {
-                            if (property.GetCustomAttributes(typeof(DatabaseGeneratedAttribute), false).FirstOrDefault() is DatabaseGeneratedAttribute attribute && attribute.DatabaseGeneratedOption == DatabaseGeneratedOption.Identity && !string.IsNullOrEmpty(attribute.SequenceName))
-                            {
-                                var val = await GetSequenceValueAsync(attribute.SequenceName);
-                                property.SetValue(item.Entity, val, null);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         #endregion

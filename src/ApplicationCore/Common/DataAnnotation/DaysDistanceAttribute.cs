@@ -10,6 +10,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using GamaEdtech.Backend.Common.Core;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class DaysDistanceAttribute : ValidationAttribute
     {
         public DaysDistanceAttribute(string otherProperty, int maxDistance, string? expression = null)
@@ -48,18 +49,18 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
                                                                  new Parameter(info.Name, info.PropertyType, info.GetValue(validationContext.ObjectInstance, null))).ToArray());
             }
 
-            var otherPropertyInfo = validationContext.ObjectType.GetProperty(OtherProperty);
+            var otherPropertyInfo = validationContext.ObjectType.GetProperty(OtherProperty!);
             var otherValue = otherPropertyInfo?.GetValue(validationContext.ObjectInstance, null) as DateTime?;
             if (otherValue is null)
             {
                 return null;
             }
 
-            var displayName = Globals.GetLocalizedDisplayName(validationContext.ObjectType.GetProperty(validationContext.MemberName));
+            var displayName = Globals.GetLocalizedDisplayName(validationContext.ObjectType.GetProperty(validationContext.MemberName!));
             var otherDisplayName = Globals.GetLocalizedDisplayName(otherPropertyInfo);
 
             return (castValue.Value - otherValue.Value).TotalDays > MaxDistance
-                ? new ValidationResult(FormatErrorMessage(displayName, otherDisplayName))
+                ? new ValidationResult(FormatErrorMessage(displayName!, otherDisplayName))
                 : null;
         }
     }

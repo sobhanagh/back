@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
+namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
 {
     using System;
     using System.Collections.Generic;
@@ -27,9 +27,5 @@
         Task<int> ExecuteSqlCommandAsync(string sql, IEnumerable<(string ParameterName, object Value)>? param = null);
 
         Task<DataSet> SqlQueryAsync(string sql, IList<(string ParameterName, object Value)>? param = null);
-
-        Task<int> GetSequenceValueAsync(string sequence);
-
-        int GetSequenceValue(string sequence);
     }
 }

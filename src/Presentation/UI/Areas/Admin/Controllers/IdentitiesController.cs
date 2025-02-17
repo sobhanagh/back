@@ -2,7 +2,6 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Linq.Dynamic.Core;
 
     using Asp.Versioning;
 
@@ -28,7 +27,8 @@ namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
     [ApiVersion("1.0")]
     [Permission(Roles = [nameof(Role.Admin)])]
     [Display(Name = "Users")]
-    public class IdentitiesController(Lazy<ILogger<IdentitiesController>> logger, Lazy<IIdentityService> identityService, Lazy<IEndpointDataSource> endpointDataSource, Lazy<IStringLocalizer<IdentitiesController>> localizer) : LocalizableApiControllerBase<IdentitiesController>(logger, localizer)
+    public class IdentitiesController(Lazy<ILogger<IdentitiesController>> logger, Lazy<IIdentityService> identityService, Lazy<IEndpointDataSource> endpointDataSource, Lazy<IStringLocalizer<IdentitiesController>> localizer)
+        : LocalizableApiControllerBase<IdentitiesController>(logger, localizer)
     {
         [HttpGet, Produces(typeof(ApiResponse<ListDataSource<UserListResponseViewModel>>))]
         [Display(Name = "Users List")]

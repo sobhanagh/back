@@ -1,5 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
+namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class NotMappedAttribute : System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute
     {
     }

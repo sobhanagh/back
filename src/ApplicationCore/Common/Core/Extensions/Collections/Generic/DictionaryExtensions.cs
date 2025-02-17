@@ -58,7 +58,9 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic
         /// <typeparam name="TKey">Type of the key.</typeparam>
         /// <typeparam name="TValue">Type of the value.</typeparam>
         /// <returns>Value if found, default if can not found.</returns>
-        public static TValue GetOrAdd<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dictionary, TKey key, [NotNull] Func<TKey, TValue> factory) => dictionary.TryGetValue(key, out var obj) ? obj : (dictionary[key] = factory(key));
+#pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
+        public static TValue GetOrAdd<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dictionary, [NotNull] TKey key, [NotNull] Func<TKey, TValue> factory) => dictionary.TryGetValue(key, out var obj) ? obj : (dictionary[key] = factory(key));
+#pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
 
         /// <summary>
         /// Gets a value from the dictionary with given key. Returns default value if can not find.

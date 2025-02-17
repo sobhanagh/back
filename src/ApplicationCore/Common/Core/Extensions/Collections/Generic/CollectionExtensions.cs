@@ -64,7 +64,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic
 
         public static T? Find<T>([NotNull] this ReadOnlyCollection<T> list, Predicate<T> match)
         {
-            ArgumentNullException.ThrowIfNull(match, nameof(match));
+            ArgumentNullException.ThrowIfNull(match);
 
             for (var i = 0; i < list.Count; i++)
             {
@@ -79,7 +79,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic
 
         public static bool Exists<T>([NotNull] this ReadOnlyCollection<T> list, Predicate<T> match)
         {
-            ArgumentNullException.ThrowIfNull(match, nameof(match));
+            ArgumentNullException.ThrowIfNull(match);
 
             for (var i = 0; i < list.Count; i++)
             {
@@ -94,7 +94,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic
 
         public static bool Exists<T>([NotNull] this Collection<T> list, Predicate<T> match)
         {
-            ArgumentNullException.ThrowIfNull(match, nameof(match));
+            ArgumentNullException.ThrowIfNull(match);
 
             for (var i = 0; i < list.Count; i++)
             {

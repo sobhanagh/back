@@ -11,7 +11,7 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
     public static class EnumerationExtensions
     {
-        public static IEnumerable<TEnum>? GetAll<TEnum, TKey>()
+        public static IEnumerable<TEnum?>? GetAll<TEnum, TKey>()
             where TEnum : Enumeration<TKey>
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
@@ -57,13 +57,13 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
         public static PropertyBuilder<TEnum?> OwnEnumeration<TEntity, TEnum, TKey>([NotNull] this EntityTypeBuilder<TEntity> builder, Expression<Func<TEntity, TEnum?>> property)
             where TEntity : class
             where TEnum : Enumeration<TKey>
-            where TKey : IEquatable<TKey>, IComparable<TKey> => builder.Property(property).HasConversion(t => t.Value, t => t.ToEnumeration<TEnum, TKey>());
+            where TKey : IEquatable<TKey>, IComparable<TKey> => builder.Property(property).HasConversion(t => t!.Value, t => t.ToEnumeration<TEnum, TKey>());
 
-        private static bool TryParse<TEnum, TKey>(Func<TEnum, bool> predicate, out TEnum? enumeration)
+        private static bool TryParse<TEnum, TKey>([NotNull] Func<TEnum, bool> predicate, out TEnum? enumeration)
             where TEnum : Enumeration<TKey>
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            enumeration = GetAll<TEnum, TKey>()?.FirstOrDefault(predicate);
+            enumeration = GetAll<TEnum, TKey>()?.FirstOrDefault(predicate!);
             return enumeration is not null;
         }
     }

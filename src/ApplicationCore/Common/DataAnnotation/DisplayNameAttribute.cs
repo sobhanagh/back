@@ -1,5 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Backend.Common.DataAnnotation
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public sealed class DisplayNameAttribute : System.ComponentModel.DisplayNameAttribute
     {
         public DisplayNameAttribute()

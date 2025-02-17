@@ -12,7 +12,7 @@
     {
         public TProvider? GetProvider(TProviderType providerType, bool returnFirstItemIfNotMatch = false)
         {
-            ArgumentNullException.ThrowIfNull(providers, nameof(providers));
+            ArgumentNullException.ThrowIfNull(providers);
 
             var provider = providers.FirstOrDefault(t => t.ProviderType.Equals(providerType));
             if (provider is null && returnFirstItemIfNotMatch)

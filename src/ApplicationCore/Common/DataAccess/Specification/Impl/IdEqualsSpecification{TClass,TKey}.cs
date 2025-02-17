@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Specification.Impl
+namespace GamaEdtech.Backend.Common.DataAccess.Specification.Impl
 {
     using System;
     using System.Linq.Expressions;
@@ -7,7 +7,7 @@
     using GamaEdtech.Backend.Common.DataAccess.Specification;
 
     public sealed class IdEqualsSpecification<TClass, TKey>(TKey id) : SpecificationBase<TClass>
-        where TClass : class, IIdentifiable<TClass, TKey>
+        where TClass : class, IIdentifiable<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly TKey id = id;

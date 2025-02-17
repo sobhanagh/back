@@ -38,7 +38,7 @@
 
                 if (list.Count > 0)
                 {
-                    enumerationName = new ValueProviderResult(new Microsoft.Extensions.Primitives.StringValues(list.ToArray()));
+                    enumerationName = new ValueProviderResult(new Microsoft.Extensions.Primitives.StringValues([.. list]));
                 }
             }
 

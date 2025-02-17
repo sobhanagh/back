@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Identity.DataProtection
+namespace GamaEdtech.Backend.Common.Identity.DataProtection
 {
     using System.Collections.Generic;
     using System.Xml.Linq;

@@ -12,6 +12,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class CompareAttribute : System.ComponentModel.DataAnnotations.CompareAttribute, IClientModelValidator
     {
         public CompareAttribute(string otherProperty)
@@ -77,7 +78,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
                     break;
             }
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType.GetProperty(context.ModelMetadata.Name)), Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType.GetProperty(OtherProperty)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata!.ContainerType!.GetProperty(context.ModelMetadata!.Name!)), Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType.GetProperty(OtherProperty)));
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>($"data-val-{key}", Data.Error.FormatMessage(msg)));
         }
 
@@ -86,7 +87,8 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             var otherPropertyInfo = validationContext.ObjectType.GetProperty(OtherProperty);
             if (otherPropertyInfo is null)
             {
-                return new ValidationResult(string.Format(CultureInfo.CurrentCulture, GlobalResource.Validation_Compare_UnknownProperty, OtherProperty));
+                var unknownProperty = GlobalResource.Validation_Compare_UnknownProperty;
+                return new ValidationResult(string.Format(CultureInfo.CurrentCulture, unknownProperty, OtherProperty));
             }
 
             ValidationResult? result = null;
@@ -97,7 +99,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
                 OtherPropertyDisplayName = Globals.GetLocalizedDisplayName(otherPropertyInfo);
 
-                var error = FormatErrorMessage(Globals.GetLocalizedDisplayName(validationContext.ObjectType.GetProperty(validationContext.MemberName)), OtherPropertyDisplayName);
+                var error = FormatErrorMessage(Globals.GetLocalizedDisplayName(validationContext.ObjectType.GetProperty(validationContext.MemberName!)), OtherPropertyDisplayName);
                 switch (OperandType)
                 {
                     case Constants.OperandType.GreaterThan:

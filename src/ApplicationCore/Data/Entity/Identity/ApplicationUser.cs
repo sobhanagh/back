@@ -14,7 +14,7 @@ namespace GamaEdtech.Backend.Data.Entity.Identity
 
     [Table(nameof(ApplicationUser))]
     [Audit((int)Common.Core.Constants.EntityType.ApplicationUser)]
-    public class ApplicationUser : IdentityUser<int>, IEntity<ApplicationUser, int>, IEnablable<ApplicationUser>
+    public class ApplicationUser : IdentityUser<int>, IEntity<ApplicationUser, int>, IEnablable
     {
         public ApplicationUser()
         {

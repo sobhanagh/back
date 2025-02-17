@@ -1,9 +1,10 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
+namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
 {
     using System.Diagnostics.CodeAnalysis;
 
     using GamaEdtech.Backend.Common.Data;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class ColumnAttribute : System.ComponentModel.DataAnnotations.Schema.ColumnAttribute
     {
         public ColumnAttribute([NotNull] string name)

@@ -28,8 +28,8 @@ namespace GamaEdtech.Backend.Common.DataAccess.Query
             foreach (var propertyName in properties)
             {
                 var propertyInfo = entityType.GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-                expression = System.Linq.Expressions.Expression.Property(expression, propertyInfo);
-                entityType = propertyInfo.PropertyType;
+                expression = System.Linq.Expressions.Expression.Property(expression, propertyInfo!);
+                entityType = propertyInfo!.PropertyType;
             }
 
             var lambda = System.Linq.Expressions.Expression.Lambda(expression, arg);

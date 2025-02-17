@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Data.Entity.Identity
+namespace GamaEdtech.Backend.Data.Entity.Identity
 {
     using GamaEdtech.Backend.Common.Data;
     using GamaEdtech.Backend.Common.DataAccess.Entities;
@@ -38,7 +38,7 @@
 
         public required ApplicationUser User { get; set; }
 
-        int IIdentifiable<ApplicationUserLogin, int>.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int IIdentifiable<int>.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void Configure([NotNull] EntityTypeBuilder<ApplicationUserLogin> builder)
         {

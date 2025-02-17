@@ -10,6 +10,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed partial class MobileAttribute : ValidationAttribute, IClientModelValidator
     {
         private const string Pattern = "^(09)[0-9]{2}[0-9]{7}$";
@@ -23,7 +24,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-regex-pattern", Pattern));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-regex", Data.Error.FormatMessage(msg)));
         }
 

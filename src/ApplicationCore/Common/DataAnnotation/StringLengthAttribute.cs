@@ -12,6 +12,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class StringLengthAttribute : System.ComponentModel.DataAnnotations.StringLengthAttribute, IClientModelValidator
     {
         public StringLengthAttribute(int maximumLength)
@@ -57,7 +58,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
         {
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-length", Data.Error.FormatMessage(msg)));
 
             if (MaximumLength != int.MaxValue)

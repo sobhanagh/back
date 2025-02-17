@@ -1,8 +1,9 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Backend.Common.DataAnnotation
 {
     using System.Collections.Generic;
     using System.Linq;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class IpAddressAttribute : ValidationAttribute
     {
         public override bool IsValid(object? value) => string.IsNullOrEmpty(value?.ToString())
@@ -16,7 +17,7 @@
             }
 
             var splitValues = value.Split('.');
-            return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out var tmp));
+            return splitValues.Length == 4 && splitValues.All(r => byte.TryParse(r, out var _));
         }
     }
 }

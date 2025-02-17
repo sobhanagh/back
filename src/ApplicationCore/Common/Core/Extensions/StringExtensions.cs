@@ -15,9 +15,9 @@ namespace GamaEdtech.Backend.Common.Core.Extensions
                 ? throw new ArgumentException("len argument can not be bigger than given string's length!")
                 : str.Substring(str.Length - len, len);
 
-        public static string[]? Split(this string? str, string separator) => str?.Split(new[] { separator }, StringSplitOptions.None);
+        public static string[]? Split(this string? str, string separator) => str?.Split([separator], StringSplitOptions.None);
 
-        public static string[]? Split(this string? str, string separator, StringSplitOptions options) => str?.Split(new[] { separator }, options);
+        public static string[]? Split(this string? str, string separator, StringSplitOptions options) => str?.Split([separator], options);
 
         public static IEnumerable<ReadOnlyMemory<char>> Split(this ReadOnlyMemory<char> chars, char separator, StringSplitOptions options = StringSplitOptions.None)
         {
@@ -54,10 +54,10 @@ namespace GamaEdtech.Backend.Common.Core.Extensions
         public static string[]? SplitToLines(this string? str, StringSplitOptions options) => str?.Split(Environment.NewLine, options);
 
         public static T? ToEnum<T>(this string? value)
-            where T : struct => string.IsNullOrEmpty(value) ? null : (T)Enum.Parse(typeof(T), value);
+            where T : struct => string.IsNullOrEmpty(value) ? null : Enum.Parse<T>(value);
 
         public static T? ToEnum<T>(this string? value, bool ignoreCase)
-            where T : struct => string.IsNullOrEmpty(value) ? null : (T)Enum.Parse(typeof(T), value, ignoreCase);
+            where T : struct => string.IsNullOrEmpty(value) ? null : Enum.Parse<T>(value, ignoreCase);
 
         public static byte[] GetBytes(this string str) => str.GetBytes(Encoding.UTF8);
 

@@ -20,7 +20,7 @@ namespace GamaEdtech.Backend.Common.DataAccess.Query
             var rightVisitor = new ReplaceExpressionVisitor(Expression.Parameters[0], parameter);
             var right = rightVisitor.Visit(Expression.Body);
 
-            Expression = System.Linq.Expressions.Expression.Lambda<Func<TEntity, bool>>(System.Linq.Expressions.Expression.AndAlso(left, right), parameter);
+            Expression = System.Linq.Expressions.Expression.Lambda<Func<TEntity, bool>>(System.Linq.Expressions.Expression.AndAlso(left!, right!), parameter);
         }
     }
 }

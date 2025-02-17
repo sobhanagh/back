@@ -1,7 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
+namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
 {
     using System;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class DatabaseGeneratedAttribute(DatabaseGeneratedOption databaseGeneratedOption, string? sequenceName = null) : System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute(Convert(databaseGeneratedOption))
     {
         public string? SequenceName { get; } = sequenceName;

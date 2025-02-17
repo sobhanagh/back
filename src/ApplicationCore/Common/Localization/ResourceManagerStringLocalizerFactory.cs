@@ -35,26 +35,26 @@ namespace GamaEdtech.Backend.Common.Localization
             }
         }
 
-        public IStringLocalizer Create(Type resourceSource)
+        public IStringLocalizer Create(Type? resourceSource)
         {
-            ArgumentNullException.ThrowIfNull(nameof(resourceSource));
+            ArgumentNullException.ThrowIfNull(resourceSource);
 
             var typeInfo = resourceSource.GetTypeInfo();
-            var baseName = GetResourcePrefix(typeInfo).PrepareResourcePath();
+            var baseName = GetResourcePrefix(typeInfo).PrepareResourcePath()!;
 
-            var assemblyName = typeInfo.Assembly.FullName.PrepareResourcePath();
+            var assemblyName = typeInfo.Assembly.FullName.PrepareResourcePath()!;
             var assembly = Assembly.Load(assemblyName!);
 
             return localizerCache.GetOrAdd(baseName!, _ => CreateResourceManagerStringLocalizer(assembly, baseName));
         }
 
-        public IStringLocalizer Create(string baseName, string? location)
+        public IStringLocalizer Create(string baseName, string location)
         {
-            ArgumentNullException.ThrowIfNull(baseName, nameof(baseName));
-            ArgumentNullException.ThrowIfNull(location, nameof(location));
+            ArgumentNullException.ThrowIfNull(baseName);
+            ArgumentNullException.ThrowIfNull(location);
 
-            baseName = GetResourcePrefix(baseName, location).PrepareResourcePath();
-            location = location.PrepareResourcePath();
+            baseName = GetResourcePrefix(baseName, location).PrepareResourcePath()!;
+            location = location.PrepareResourcePath()!;
 
             return localizerCache.GetOrAdd($"B={baseName},L={location}", _ =>
             {
@@ -65,18 +65,25 @@ namespace GamaEdtech.Backend.Common.Localization
             });
         }
 
+        protected virtual ResourceManagerStringLocalizer CreateResourceManagerStringLocalizer(Assembly assembly, [NotNull] string baseName) => new(
+                new ResourceManager(baseName, assembly),
+                assembly,
+                baseName,
+                resourceNamesCache,
+                loggerFactory.CreateLogger<ResourceManagerStringLocalizer>());
+
         protected virtual string? GetResourcePrefix(TypeInfo typeInfo)
         {
-            ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
+            ArgumentNullException.ThrowIfNull(typeInfo);
 
             return GetResourcePrefix(typeInfo, GetRootNamespace(typeInfo.Assembly), GetResourcePath(typeInfo.Assembly));
         }
 
         protected virtual string? GetResourcePrefix(TypeInfo typeInfo, string? baseNamespace, string? resourcesRelativePath)
         {
-            ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
-            ArgumentNullException.ThrowIfNull(baseNamespace, nameof(baseNamespace));
-            ArgumentException.ThrowIfNullOrEmpty(typeInfo.FullName, nameof(typeInfo.FullName));
+            ArgumentNullException.ThrowIfNull(typeInfo);
+            ArgumentNullException.ThrowIfNull(baseNamespace);
+            ArgumentException.ThrowIfNullOrEmpty(typeInfo.FullName);
 
             if (string.IsNullOrEmpty(resourcesRelativePath))
             {
@@ -92,8 +99,8 @@ namespace GamaEdtech.Backend.Common.Localization
 
         protected virtual string? GetResourcePrefix(string baseResourceName, string? baseNamespace)
         {
-            ArgumentNullException.ThrowIfNull(baseResourceName, nameof(baseResourceName));
-            ArgumentNullException.ThrowIfNull(baseNamespace, nameof(baseNamespace));
+            ArgumentNullException.ThrowIfNull(baseResourceName);
+            ArgumentNullException.ThrowIfNull(baseNamespace);
 
             var assemblyName = new AssemblyName(baseNamespace);
             var assembly = Assembly.Load(assemblyName);
@@ -106,22 +113,15 @@ namespace GamaEdtech.Backend.Common.Localization
             return baseResourceName;
         }
 
-        protected virtual ResourceManagerStringLocalizer CreateResourceManagerStringLocalizer(Assembly assembly, string? baseName) => new(
-                new ResourceManager(baseName, assembly),
-                assembly,
-                baseName,
-                resourceNamesCache,
-                loggerFactory.CreateLogger<ResourceManagerStringLocalizer>());
-
         protected virtual string? GetResourcePrefix(string location, [NotNull] string baseName, string? resourceLocation) =>
             // Re-root the base name if a resources path is set
             location + "." + resourceLocation + TrimPrefix(baseName, location + ".");
 
-        protected virtual ResourceLocationAttribute GetResourceLocationAttribute(Assembly assembly) => assembly.GetCustomAttribute<ResourceLocationAttribute>();
+        protected virtual ResourceLocationAttribute? GetResourceLocationAttribute([NotNull] Assembly assembly) => assembly.GetCustomAttribute<ResourceLocationAttribute>();
 
-        protected virtual RootNamespaceAttribute GetRootNamespaceAttribute(Assembly assembly) => assembly.GetCustomAttribute<RootNamespaceAttribute>();
+        protected virtual RootNamespaceAttribute? GetRootNamespaceAttribute([NotNull] Assembly assembly) => assembly.GetCustomAttribute<RootNamespaceAttribute>();
 
-        private static string? TrimPrefix(string name, string? prefix) => name.StartsWith(prefix, StringComparison.Ordinal) ? name[prefix.Length..] : name;
+        private static string? TrimPrefix(string name, string prefix) => name.StartsWith(prefix, StringComparison.Ordinal) ? name[prefix.Length..] : name;
 
         private string? GetRootNamespace(Assembly assembly)
         {
@@ -137,7 +137,7 @@ namespace GamaEdtech.Backend.Common.Localization
             var resourceLocation = resourceLocationAttribute is null
                 ? resourcesRelativePath
                 : resourceLocationAttribute.ResourceLocation + ".";
-            resourceLocation = resourceLocation
+            resourceLocation = resourceLocation!
                 .Replace(Path.DirectorySeparatorChar, '.')
                 .Replace(Path.AltDirectorySeparatorChar, '.');
 

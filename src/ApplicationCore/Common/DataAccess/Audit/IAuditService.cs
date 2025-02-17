@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Audit
+namespace GamaEdtech.Backend.Common.DataAccess.Audit
 {
     using System.Threading.Tasks;
 
@@ -11,6 +11,6 @@
     {
         Task<ResultData<ListDataSource<AuditListDto>>> GetAuditsAsync(ListRequestDto<Audit>? requestDto = null);
 
-        Task<ResultData<AuditDto>> Get(ISpecification<Audit> specification);
+        Task<ResultData<AuditDto>> GetAsync(ISpecification<Audit> specification);
     }
 }

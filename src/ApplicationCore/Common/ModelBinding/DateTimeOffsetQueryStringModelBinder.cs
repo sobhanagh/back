@@ -17,7 +17,7 @@ namespace GamaEdtech.Backend.Common.ModelBinding
     {
         public Task BindModelAsync([NotNull] ModelBindingContext bindingContext)
         {
-            ArgumentNullException.ThrowIfNull(bindingContext, nameof(bindingContext));
+            ArgumentNullException.ThrowIfNull(bindingContext);
 
             var values = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
             List<DateTimeOffset> lst = new(values.Length);
@@ -26,8 +26,9 @@ namespace GamaEdtech.Backend.Common.ModelBinding
                 var dateTime = item.ValueOf<DateTime?>();
                 if (!dateTime.HasValue)
                 {
+                    var msg = Resources.GlobalResource.Validation_AttemptedValueIsInvalidAccessor;
                     bindingContext.Result = ModelBindingResult.Failed();
-                    bindingContext.ModelState.AddModelError(bindingContext.FieldName, string.Format(Resources.GlobalResource.Validation_AttemptedValueIsInvalidAccessor, item, bindingContext.ModelName));
+                    bindingContext.ModelState.AddModelError(bindingContext.FieldName, string.Format(msg, item, bindingContext.ModelName));
                     return Task.CompletedTask;
                 }
 

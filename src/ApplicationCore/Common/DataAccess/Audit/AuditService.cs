@@ -48,7 +48,7 @@ namespace GamaEdtech.Backend.Common.DataAccess.Audit
             }
         }
 
-        public async Task<ResultData<AuditDto>> Get(ISpecification<Audit> specification)
+        public async Task<ResultData<AuditDto>> GetAsync(ISpecification<Audit> specification)
         {
             try
             {

@@ -19,10 +19,7 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
         protected FlagsEnumeration(int index)
         {
-            if (index < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
 
             // None
             if (index == 0)
@@ -132,12 +129,20 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
 
         public override bool Equals(object? obj)
         {
-            return obj is TEnum item
-&& (item.Bits.Length > Bits.Length
-                ? SequenceEqual(item, this)
-                : item.Bits.Length < Bits.Length
+            if (obj is not TEnum item)
+            {
+                return false;
+            }
+
+            if (item.Bits.Length > Bits.Length)
+            {
+                return SequenceEqual(item, this);
+            }
+
+            var small = item.Bits.Length < Bits.Length;
+            return small
                 ? SequenceEqual(this, item)
-                : item.Bits.Length == Bits.Length && ((BitArray)item.Bits.Clone()).Xor(Bits).OfType<bool>().All(e => !e));
+                : item.Bits.Length == Bits.Length && ((BitArray)item.Bits.Clone()).Xor(Bits).OfType<bool>().All(e => !e);
 
             static bool SequenceEqual(FlagsEnumeration<TEnum> bigger, FlagsEnumeration<TEnum> smaller)
             {

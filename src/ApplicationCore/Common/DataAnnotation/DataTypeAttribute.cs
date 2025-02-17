@@ -2,6 +2,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 {
     using System;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class DataTypeAttribute : System.ComponentModel.DataAnnotations.DataTypeAttribute
     {
         private DisplayFormatAttribute? displayFormat;
@@ -55,19 +56,14 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             private set => base.ErrorMessageResourceName = value;
         }
 
-        public new DisplayFormatAttribute DisplayFormat
+        public new DisplayFormatAttribute? DisplayFormat
         {
             get => displayFormat;
 
             private set => base.DisplayFormat = displayFormat = value;
         }
 
-        public new string? ErrorMessage
-        {
-            get => base.ErrorMessage;
-
-            private set => base.ErrorMessage = value;
-        }
+        public new string? ErrorMessage => base.ErrorMessage;
 
         public override string GetDataTypeName() => ElementDataType.ToString();
     }

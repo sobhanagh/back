@@ -10,13 +10,10 @@ namespace GamaEdtech.Backend.Common.Core
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net.Http;
-    using System.Numerics;
     using System.Reflection;
     using System.Resources;
     using System.Runtime.CompilerServices;
     using System.Security.Claims;
-    using System.Security.Cryptography;
-    using System.Text;
     using System.Text.Json.Serialization;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -35,42 +32,11 @@ namespace GamaEdtech.Backend.Common.Core
 
     public static partial class Globals
     {
-        private static readonly char[] Chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-        private static readonly Regex MatchIranianPostalCode = new(@"\b(?!(\d)\1{3})[13-9]{4}[1346-9][013-9]{5}\b", RegexOptions.Compiled | RegexOptions.IgnoreCase, TimeSpan.FromMinutes(1));
-
         public static CultureInfo CurrentCulture => Thread.CurrentThread.CurrentUICulture;
 
         public static bool IsRtl => CurrentCulture.TextInfo.IsRightToLeft;
 
         public static DbProviderType ProviderType { get; set; }
-
-#pragma warning disable CA1307 // Specify StringComparison for clarity
-        public static string? NormalizePersian(this string? str) => str?.Trim()
-                .Replace("ﮎ", "ک")
-                .Replace("ﮏ", "ک")
-                .Replace("ﮐ", "ک")
-                .Replace("ﮑ", "ک")
-                .Replace("ك", "ک")
-                .Replace("ي", "ی")
-                .Replace("ھ", "ه")
-                .Replace("ؤ", "و")
-                .Replace("ة", "ه")
-                .Replace("أ", "ا")
-                .Replace("إ", "ا")
-                .Replace("ٸ", "ی")
-                .Replace(" ", " ")
-                .Replace("‌", " ")
-                .Replace("۰", "0")
-                .Replace("۱", "1")
-                .Replace("۲", "2")
-                .Replace("۳", "3")
-                .Replace("۴", "4")
-                .Replace("۵", "5")
-                .Replace("۶", "6")
-                .Replace("۷", "7")
-                .Replace("۸", "8")
-                .Replace("۹", "9");
-#pragma warning restore CA1307 // Specify StringComparison for clarity
 
         public static string? GetClientIpAddress(this HttpContext? httpContext)
         {
@@ -78,7 +44,7 @@ namespace GamaEdtech.Backend.Common.Core
             var xForwardedFor = httpContext?.Request.Headers["X-Forwarded-For"];
             if (xForwardedFor.HasValue)
             {
-                ip = xForwardedFor.Value.ToString().Split(',').Last();
+                ip = xForwardedFor.Value.ToString().Split(',')[^1];
             }
 
             return ip?.AsSpan().Contains('.') == true && ip.AsSpan().Contains(':') ? ip.AsSpan(0, ip.AsSpan().IndexOf(':')).ToString() : ip;
@@ -120,8 +86,6 @@ namespace GamaEdtech.Backend.Common.Core
             }
         }
 
-        public static bool ValidatePostalCode(string? postalCode) => !string.IsNullOrEmpty(postalCode) && MatchIranianPostalCode.IsMatch(postalCode);
-
         public static bool ValidateNationalId(string? nationalId)
         {
             try
@@ -131,7 +95,6 @@ namespace GamaEdtech.Backend.Common.Core
                     return false;
                 }
 
-                nationalId = nationalId.NormalizePersian()!;
                 const int initialZeros = 3;
                 const int nationalIdLength = 11;
 
@@ -375,16 +338,24 @@ namespace GamaEdtech.Backend.Common.Core
 
                         if (type.Name == nameof(TimeOnly))
                         {
-                            return TimeOnly.TryParse(value, CultureInfo.InvariantCulture, out var timeOnlyTmp)
-                                ? timeOnlyTmp
-                                : DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeTmp) ? TimeOnly.FromDateTime(dateTimeTmp) : defaultValue;
+                            if (TimeOnly.TryParse(value, CultureInfo.InvariantCulture, out var timeOnlyTmp))
+                            {
+                                return timeOnlyTmp;
+                            }
+
+                            var parse = DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeTmp);
+                            return parse ? TimeOnly.FromDateTime(dateTimeTmp) : defaultValue;
                         }
 
                         if (type.Name == nameof(DateOnly))
                         {
-                            return DateOnly.TryParse(value, CultureInfo.InvariantCulture, out var dateOnlyTmp)
-                                ? dateOnlyTmp
-                                : DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeTmp) ? DateOnly.FromDateTime(dateTimeTmp) : defaultValue;
+                            if (TimeOnly.TryParse(value, CultureInfo.InvariantCulture, out var dateOnlyTmp))
+                            {
+                                return dateOnlyTmp;
+                            }
+
+                            var parse = DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTimeTmp);
+                            return parse ? DateOnly.FromDateTime(dateTimeTmp) : defaultValue;
                         }
 
                         throw new ArgumentException(typeCode.ToString());
@@ -426,81 +397,6 @@ namespace GamaEdtech.Backend.Common.Core
             }
 
             return dictionary;
-        }
-
-        public static string? GenerateRandomCode(int size = 32)
-        {
-            using var cryptoProvider = RandomNumberGenerator.Create();
-            var secretKeyByteArray = new byte[4 * size];
-            cryptoProvider.GetBytes(secretKeyByteArray);
-            var result = new StringBuilder(size);
-            for (var i = 0; i < size; i++)
-            {
-                var rnd = BitConverter.ToUInt32(secretKeyByteArray, i * 4);
-                var idx = rnd % Chars.Length;
-
-                _ = result.Append(Chars[idx]);
-            }
-
-            return result.ToString();
-        }
-
-        public static int WeekOfYear(this DateTime date, [NotNull] string cultureCode)
-        {
-            if (cultureCode.StartsWith("fa", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return new PersianCalendar().GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, System.DayOfWeek.Saturday);
-            }
-
-            var day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(date);
-            if (day is >= System.DayOfWeek.Monday and <= System.DayOfWeek.Wednesday)
-            {
-                date = date.AddDays(3);
-            }
-
-            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, System.DayOfWeek.Monday);
-        }
-
-        public static DateTime FirstDateOfMonth(this DateTime dt, [NotNull] string cultureCode) => cultureCode.StartsWith("fa", StringComparison.InvariantCultureIgnoreCase)
-                ? new MyPersianCalendar().ToDateTime(int.Parse(dt.ToString("yyyy")), int.Parse(dt.ToString("MM")), 1, 0, 0, 0, 0)
-                : new DateTime(dt.Year, dt.Month, 1);
-
-        public static DateTime[] GetPriodOfYear(this DateTime dt, [NotNull] string cultureCode)
-        {
-            if (cultureCode.StartsWith("fa", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var cal = new MyPersianCalendar();
-                return
-                [
-                    cal.ToDateTime(int.Parse(dt.ToString("yyyy")), 1, 1, 0, 0, 0, 0),
-                    cal.ToDateTime(int.Parse(dt.ToString("yyyy")) + 1, 1, 1, 0, 0, 0, 0).AddMilliseconds(-1),
-                ];
-            }
-
-            return
-                [
-                    new DateTime(dt.Year, 1, 1),
-                    new DateTime(dt.Year + 1, 1, 1).AddMilliseconds(-1),
-                ];
-        }
-
-        public static DateTime[] GetPriodOfMonth(this DateTime dt, [NotNull] string cultureCode)
-        {
-            if (cultureCode.StartsWith("fa", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var cal = new MyPersianCalendar();
-                return
-                [
-                    cal.ToDateTime(int.Parse(dt.ToString("yyyy")), int.Parse(dt.ToString("MM")), 1, 0, 0, 0, 0),
-                    cal.ToDateTime(int.Parse(dt.ToString("yyyy")), int.Parse(dt.ToString("MM")), 1, 0, 0, 0, 0).AddMonths(1).AddDays(-1),
-                ];
-            }
-
-            return
-                [
-                    new DateTime(dt.Year, dt.Month, 1),
-                    new DateTime(dt.Year, dt.Month, 1).AddMonths(1).AddDays(-1),
-                ];
         }
 
         public static CultureInfo GetCulture(string name)
@@ -562,45 +458,23 @@ namespace GamaEdtech.Backend.Common.Core
             return persianCalture;
         }
 
-        public static string? Sentencise(this string? str, bool titlecase = false)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return null;
-            }
-
-            var retVal = new StringBuilder(32);
-
-            _ = retVal.Append(char.ToUpper(str[0]));
-            for (var i = 1; i < str.Length; i++)
-            {
-                if (char.IsLower(str[i]))
-                {
-                    _ = retVal.Append(str[i]);
-                }
-                else
-                {
-                    _ = retVal.Append(' ');
-                    _ = titlecase ? retVal.Append(str[i]) : retVal.Append(char.ToLower(str[i]));
-                }
-            }
-
-            return retVal.ToString();
-        }
-
         public static IEnumerable<Type>? GetAllTypesImplementingType([NotNull] this Type mainType, IEnumerable<Type> scanTypes)
         {
-            var types = mainType.IsGenericType
-                ? (from t1 in scanTypes
-                   from t2 in t1.GetInterfaces()
-                   let baseType = t1.BaseType
-                   where !t1.IsAbstract &&
-                   ((baseType is not null && baseType.IsGenericType && mainType.IsAssignableFrom(baseType.GetGenericTypeDefinition())) ||
-                   (t2.IsGenericType && mainType.IsAssignableFrom(t2.GetGenericTypeDefinition())))
-                   select t1)
-                : mainType.IsInterface
-                    ? scanTypes.Where(t => !t.IsAbstract && t.GetInterfaces().Contains(mainType))
-                    : scanTypes.Where(t => !t.IsAbstract && t.IsSubclassOf(mainType));
+            IEnumerable<Type>? types = null;
+            if (mainType.IsGenericType)
+            {
+                types = (from t1 in scanTypes
+                         from t2 in t1.GetInterfaces()
+                         let baseType = t1.BaseType
+                         where !t1.IsAbstract &&
+                         ((baseType is not null && baseType.IsGenericType && mainType.IsAssignableFrom(baseType.GetGenericTypeDefinition())) ||
+                         (t2.IsGenericType && mainType.IsAssignableFrom(t2.GetGenericTypeDefinition())))
+                         select t1);
+            }
+
+            types ??= mainType.IsInterface
+                        ? scanTypes.Where(t => !t.IsAbstract && t.GetInterfaces().Contains(mainType))
+                        : scanTypes.Where(t => !t.IsAbstract && t.IsSubclassOf(mainType));
 
             if (!types?.Any() == true && mainType.IsClass && !mainType.IsAbstract)
             {
@@ -652,20 +526,6 @@ namespace GamaEdtech.Backend.Common.Core
             changediban = changediban.Insert(26, iban.Substring(2, 2));
             return decimal.Parse(changediban) % 97 == 1;
         }
-
-        public static string? NormalizeMobile(this string? mobile) => string.IsNullOrEmpty(mobile)
-                ? string.Empty
-                : mobile.StartsWith("09", StringComparison.OrdinalIgnoreCase)
-                ? $"+98{mobile.TrimStart('0')}"
-                : mobile.StartsWith("009", StringComparison.OrdinalIgnoreCase) ? $"+{mobile.TrimStart('0')}" : mobile.StartsWith("9", StringComparison.OrdinalIgnoreCase) ? $"+98{mobile}" : mobile;
-
-        public static string? NormalizeIranianMobile(this string? mobile) => string.IsNullOrEmpty(mobile)
-                ? string.Empty
-                : mobile.StartsWith("0098", StringComparison.OrdinalIgnoreCase)
-                ? mobile[4..].PadLeft(11, '0')
-                : mobile.StartsWith("+98", StringComparison.OrdinalIgnoreCase)
-                ? mobile[3..].PadLeft(11, '0')
-                : mobile.StartsWith("989", StringComparison.OrdinalIgnoreCase) ? mobile[2..].PadLeft(11, '0') : mobile.PadLeft(11, '0');
 
         public static HttpClient CreateHttpClient([NotNull] this IHttpClientFactory httpClientFactory, bool forceTls13 = false) => httpClientFactory.CreateClient(forceTls13 ? Constants.HttpClientIgnoreSslAndAutoRedirectTls13 : Constants.HttpClientIgnoreSslAndAutoRedirect);
 
@@ -733,7 +593,7 @@ namespace GamaEdtech.Backend.Common.Core
             expando.Data = dataList;
 
             Dictionary<string, object?> coreList = [];
-            var resourceSet = Common.Resources.GlobalResource.ResourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
+            var resourceSet = Resources.GlobalResource.ResourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
             if (resourceSet is not null)
             {
                 foreach (DictionaryEntry item in resourceSet)
@@ -768,122 +628,10 @@ namespace GamaEdtech.Backend.Common.Core
             return expando;
         }
 
-        public static dynamic ToPowerOf<T>(this int number, int powerOf)
-            where T : INumber<T>
-        {
-            if (powerOf < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(powerOf));
-            }
-
-            if (powerOf == 0)
-            {
-                return number == 0 ? throw new ArgumentException("Parameters number and powerOf cannot be 0 at the same time") : (dynamic)1;
-            }
-
-            dynamic result = number;
-            for (var i = 2; i <= powerOf; i++)
-            {
-                result = result * number;
-            }
-
-            return result;
-        }
-
         public static void LogException(this ILogger logger, Exception exc, [CallerMemberName] string? methodName = "") =>
 #pragma warning disable CA2254 // Template should be a static expression
             logger.LogError(exc, methodName);
 #pragma warning restore CA2254 // Template should be a static expression
-
-
-        public static void LogMessage(this ILogger logger, LogLevel logLevel, string? message, [CallerMemberName] string? methodName = "") =>
-#pragma warning disable CA2254 // Template should be a static expression
-            logger.Log(logLevel, message + " " + methodName);
-#pragma warning restore CA2254 // Template should be a static expression
-
-
-        public static string GenerateRandomString(int length)
-        {
-            var numberOfNonAlphanumericCharacters = GenerateRandomNumber(0, length);
-            var punctuations = "!@#$%^&*()_-+=[{]};:>|./?".ToCharArray();
-
-            if (length is < 1 or > 128)
-            {
-                throw new ArgumentException($"{nameof(length)} parameter should be between 1 and 128");
-            }
-
-            if (numberOfNonAlphanumericCharacters > length || numberOfNonAlphanumericCharacters < 0)
-            {
-                throw new ArgumentException(nameof(numberOfNonAlphanumericCharacters));
-            }
-
-            using var rng = RandomNumberGenerator.Create();
-            var byteBuffer = new byte[length];
-            rng.GetBytes(byteBuffer);
-            var count = 0;
-            var characterBuffer = new char[length];
-
-            for (var iter = 0; iter < length; iter++)
-            {
-                var i = byteBuffer[iter] % 87;
-
-                if (i < 10)
-                {
-                    characterBuffer[iter] = (char)('0' + i);
-                }
-                else if (i < 36)
-                {
-                    characterBuffer[iter] = (char)('A' + i - 10);
-                }
-                else if (i < 62)
-                {
-                    characterBuffer[iter] = (char)('a' + i - 36);
-                }
-                else
-                {
-                    characterBuffer[iter] = punctuations[i - 62];
-                    count = count + 1;
-                }
-            }
-
-            if (count >= numberOfNonAlphanumericCharacters)
-            {
-                return new string(characterBuffer);
-            }
-
-            int j;
-
-            for (j = 0; j < numberOfNonAlphanumericCharacters - count; j++)
-            {
-                int k;
-                do
-                {
-                    k = GenerateRandomNumber(0, length - 1);
-                }
-                while (!char.IsLetterOrDigit(characterBuffer[k]));
-
-                characterBuffer[k] = punctuations[GenerateRandomNumber(0, punctuations.Length - 1)];
-            }
-
-            return new string(characterBuffer);
-
-            static int GenerateRandomNumber(int minValue, int maxValue)
-            {
-                using var rng = RandomNumberGenerator.Create();
-                var randomNumber = new byte[1];
-                rng.GetBytes(randomNumber);
-
-                var doubleRandomNumber = Convert.ToDouble(randomNumber[0]);
-
-                var multiplier = Math.Max(0, (doubleRandomNumber / 255d) - 0.00000000001d);
-
-                var range = maxValue - minValue + 1;
-
-                var randomValueInRange = Math.Floor(multiplier * range);
-
-                return (int)(minValue + randomValueInRange);
-            }
-        }
 
         internal static string? PrepareResourcePath(this string? path)
         {
@@ -967,27 +715,6 @@ namespace GamaEdtech.Backend.Common.Core
                     }
                 }
             }
-
-            /*else if (displayAttribute.ResourceTypeName.IsNullOrEmpty() is false)
-            {
-                if (cachedResourceManager is null)
-                {
-                    cachedResourceManager = new ResourceManager(Type.GetType(displayAttribute.ResourceTypeName));
-                }
-
-                if (displayAttribute.EnumType is null)
-                {
-                    result = cachedResourceManager.GetString($"{propertyName}_{resourceKey}");
-                }
-                else
-                {
-                    result = cachedResourceManager.GetString($"{displayAttribute.EnumType.Name}_{propertyName}_{resourceKey}");
-                    if (resourceKey == Constants.ResourceKey.Name && string.IsNullOrEmpty(result))
-                    {
-                        result = cachedResourceManager.GetString($"{displayAttribute.EnumType.Name}_{propertyName}");
-                    }
-                }
-            }*/
 
             return result;
         }

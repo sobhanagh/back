@@ -57,16 +57,9 @@ namespace GamaEdtech.Backend.Common.Core
         public const string TimeZoneIdClaim = "TimeZoneId";
         public static readonly TimeSpan IranBaseUtcOffset = new(3, 30, 0);
 
-#pragma warning disable CA2211 // Non-constant fields should not be visible
-#pragma warning disable SA1401 // Fields should be private
-#pragma warning disable IDE1006 // Naming Styles
-        public static string? ErrorCodePrefix;
-#pragma warning restore IDE1006 // Naming Styles
-#pragma warning restore SA1401 // Fields should be private
-#pragma warning restore CA2211 // Non-constant fields should not be visible
-
         internal const string HttpClientIgnoreSslAndAutoRedirect = "HttpClientIgnoreSslAndAutoRedirect";
         internal const string HttpClientIgnoreSslAndAutoRedirectTls13 = "HttpClientIgnoreSslAndAutoRedirectTls13";
+        public static string? ErrorCodePrefix { get; set; }
 
         [JsonConverter(typeof(EnumStringConverter<EntityType>))]
         public enum EntityType

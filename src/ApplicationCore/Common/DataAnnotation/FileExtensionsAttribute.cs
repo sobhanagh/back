@@ -18,6 +18,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
     using MimeDetective;
     using MimeDetective.Storage;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class FileExtensionsAttribute : ValidationAttribute, IClientModelValidator
     {
         private readonly Lazy<(IContentInspector ContentInspector, FileExtensionContentTypeProvider ContentTypeProvider)> inspector;
@@ -91,12 +92,12 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
         public void AddValidation([NotNull] ClientModelValidationContext context)
         {
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
-            _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-extensions-extension", string.Join(",", Extensions)));
+            _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-extensions-extension", string.Join(",", Extensions!)));
 
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-extensions", Data.Error.FormatMessage(msg)));
         }
 
-        public override string FormatErrorMessage(string name) => string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, string.Join(",", Extensions));
+        public override string FormatErrorMessage(string name) => string.Format(CultureInfo.CurrentCulture, ErrorMessageString, name, string.Join(",", Extensions!));
     }
 }

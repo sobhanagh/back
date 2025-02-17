@@ -26,10 +26,8 @@ namespace GamaEdtech.Backend.Common.ModelBinding
             var displayNameAttribute = attributes.OfType<DisplayNameAttribute>().FirstOrDefault();
             var hiddenInputAttribute = attributes.OfType<Microsoft.AspNetCore.Mvc.HiddenInputAttribute>().FirstOrDefault();
             var scaffoldColumnAttribute = attributes.OfType<ScaffoldColumnAttribute>().FirstOrDefault();
-            var uiHintAttribute = attributes.OfType<UIHintAttribute>().FirstOrDefault();
 
             var elementName = context.Key.Name;
-            var containerType = context.Key.ContainerType;
 
             // Special case the [DisplayFormat] attribute hanging off an applied [DataType] attribute. This property is
             // non-null for DataType.Currency, DataType.Date, DataType.Time, and potentially custom [DataType]
@@ -87,7 +85,7 @@ namespace GamaEdtech.Backend.Common.ModelBinding
             // Description
             if (displayAttribute is not null)
             {
-                displayMetadata.Description = () => Globals.GetLocalizedValueInternal(displayAttribute, elementName, Constants.ResourceKey.Description, manager) ?? elementName;
+                displayMetadata.Description = () => Globals.GetLocalizedValueInternal(displayAttribute, elementName!, Constants.ResourceKey.Description, manager) ?? elementName;
             }
 
             // DisplayFormatString
@@ -100,7 +98,7 @@ namespace GamaEdtech.Backend.Common.ModelBinding
             // DisplayAttribute has precedence over DisplayNameAttribute.
             if (displayAttribute is not null)
             {
-                displayMetadata.DisplayName = () => Globals.GetLocalizedValueInternal(displayAttribute, elementName, Constants.ResourceKey.Name, manager) ?? elementName;
+                displayMetadata.DisplayName = () => Globals.GetLocalizedValueInternal(displayAttribute, elementName!, Constants.ResourceKey.Name, manager) ?? elementName;
             }
             else if (displayNameAttribute is not null)
             {
@@ -141,12 +139,12 @@ namespace GamaEdtech.Backend.Common.ModelBinding
                     }
 
                     var groupName = Globals.GetLocalizedGroupName(field) ?? string.Empty;
-                    var value = (field.GetValue(null) as Enum)?.ToString("d");
+                    var value = (field.GetValue(null) as Enum)?.ToString("d")!;
 
                     groupedDisplayNamesAndValues.Add(new KeyValuePair<EnumGroupAndName, string>(
                         new EnumGroupAndName(
                             groupName,
-                            () => Globals.GetLocalizedDisplayName(field)),
+                            () => Globals.GetLocalizedDisplayName(field)!),
                         value));
                     namesAndValues.Add(field.Name, value);
                 }
@@ -159,22 +157,12 @@ namespace GamaEdtech.Backend.Common.ModelBinding
             if (!string.IsNullOrEmpty(displayFormatAttribute?.DataFormatString) &&
                 displayFormatAttribute?.ApplyFormatInEditMode == true)
             {
+                var displayFormat = dataTypeAttribute is null || dataTypeAttribute.DisplayFormat != displayFormatAttribute;
+
                 // Have a non-empty EditFormatString based on [DisplayFormat] from our cache.
-                if (dataTypeAttribute is null)
+                if (displayFormat || dataTypeAttribute is null)
                 {
                     // Attributes include no [DataType]; [DisplayFormat] was applied directly.
-                    displayMetadata.HasNonDefaultEditFormat = true;
-                }
-                else if (dataTypeAttribute.DisplayFormat != displayFormatAttribute)
-                {
-                    // Attributes include separate [DataType] and [DisplayFormat]; [DisplayFormat] provided override.
-                    displayMetadata.HasNonDefaultEditFormat = true;
-                }
-                else if (dataTypeAttribute.GetType() != typeof(DataTypeAttribute))
-                {
-                    // Attributes include [DisplayFormat] copied from [DataType] and [DataType] was of a subclass.
-                    // Assume the [DataType] constructor used the protected DisplayFormat setter to override its
-                    // default.  That is derived [DataType] provided override.
                     displayMetadata.HasNonDefaultEditFormat = true;
                 }
             }
@@ -206,7 +194,7 @@ namespace GamaEdtech.Backend.Common.ModelBinding
             // Placeholder
             if (displayAttribute is not null)
             {
-                displayMetadata.Placeholder = () => Globals.GetLocalizedValueInternal(displayAttribute, elementName, Constants.ResourceKey.Prompt, manager) ?? elementName;
+                displayMetadata.Placeholder = () => Globals.GetLocalizedValueInternal(displayAttribute, elementName!, Constants.ResourceKey.Prompt, manager) ?? elementName;
             }
 
             // ShowForDisplay
@@ -228,11 +216,7 @@ namespace GamaEdtech.Backend.Common.ModelBinding
             }
 
             // TemplateHint
-            if (uiHintAttribute is not null)
-            {
-                displayMetadata.TemplateHint = uiHintAttribute.UIHint;
-            }
-            else if (hiddenInputAttribute is not null)
+            if (hiddenInputAttribute is not null)
             {
                 displayMetadata.TemplateHint = "HiddenInput";
             }

@@ -10,6 +10,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class RequiredAttribute : System.ComponentModel.DataAnnotations.RequiredAttribute, IClientModelValidator
     {
         public RequiredAttribute()
@@ -25,12 +26,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             private set => base.ErrorMessageResourceName = value;
         }
 
-        public new string? ErrorMessage
-        {
-            get => base.ErrorMessage;
-
-            private set => base.ErrorMessage = value;
-        }
+        public new string? ErrorMessage => base.ErrorMessage;
 
         public new Type? ErrorMessageResourceType
         {
@@ -43,20 +39,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
         {
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val", "true"));
 
-            if (context.ModelMetadata.ContainerType is not null)
-            {
-                // var name = context.ModelMetadata.ContainerType.AssemblyQualifiedName.PrepareResourcePath();
-                // if (string.IsNullOrEmpty(name) is false)
-                // {
-                //    var type = Type.GetType(name);
-                //    if (type is not null)
-                //    {
-                //        manager = new System.Resources.ResourceManager(type);
-                //    }
-                // }
-            }
-
-            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name)));
+            var msg = FormatErrorMessage(Globals.GetLocalizedDisplayName(context.ModelMetadata.ContainerType?.GetProperty(context.ModelMetadata.Name!))!);
             _ = context.Attributes.AddIfNotContains(new KeyValuePair<string, string>("data-val-required", Data.Error.FormatMessage(msg)));
         }
     }

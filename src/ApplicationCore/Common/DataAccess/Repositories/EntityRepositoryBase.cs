@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Repositories
+namespace GamaEdtech.Backend.Common.DataAccess.Repositories
 {
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@
     using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1005 // Avoid excessive parameters on generic types
-    public abstract class EntityRepositoryBase<TContext, TEntity, TKey>(ILogger<DataAccess> logger, TContext context)
+    public abstract class EntityRepositoryBase<TContext, TEntity, TKey>(ILogger<IDataAccess> logger, TContext context)
 #pragma warning restore CA1005 // Avoid excessive parameters on generic types
         : RepositoryBase<TContext>(logger, context), IRepository<TEntity, TKey>
         where TContext : DbContext
@@ -37,14 +37,14 @@
             return query;
         }
 
-        public ICollection<TEntity>? GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => QueryDb(null, orderBy, includes, tracking).ToList();
+        public ICollection<TEntity>? GetAll(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => [.. QueryDb(null, orderBy, includes, tracking)];
 
         public async Task<ICollection<TEntity>?> GetAllAsync(Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => await QueryDb(null, orderBy, includes, tracking).ToListAsync();
 
         public ICollection<TEntity>? GetPage(int startRow, int pageLength, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false)
         {
             orderBy ??= defaultOrderBy.Expression;
-            return QueryDb(null, orderBy, includes, tracking).Skip(startRow).Take(pageLength).ToList();
+            return [.. QueryDb(null, orderBy, includes, tracking).Skip(startRow).Take(pageLength)];
         }
 
         public async Task<ICollection<TEntity>?> GetPageAsync(int startRow, int pageLength, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false)
@@ -61,7 +61,7 @@
 
         public async Task<TEntity?> GetAsync(ISpecification<TEntity>? specification, bool tracking = true) => await QueryDb(specification?.Expression(), specification?.Order, null, tracking).FirstOrDefaultAsync();
 
-        public ICollection<TEntity>? Query(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => QueryDb(predicate, orderBy, includes, tracking).ToList();
+        public ICollection<TEntity>? Query(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => [.. QueryDb(predicate, orderBy, includes, tracking)];
 
         public ICollection<TEntity>? Query(ISpecification<TEntity>? specification, bool tracking = false)
         {
@@ -71,7 +71,7 @@
                 query = query.Skip(specification.PageFilter.Skip).Take(specification.PageFilter.Size);
             }
 
-            return query.ToList();
+            return [.. query];
         }
 
         public async Task<ICollection<TEntity>?> QueryAsync(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => await QueryDb(predicate, orderBy, includes, tracking).ToListAsync();
@@ -90,7 +90,7 @@
         public ICollection<TEntity>? QueryPage(int startRow, int pageLength, Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false)
         {
             orderBy ??= defaultOrderBy.Expression;
-            return QueryDb(predicate, orderBy, includes, tracking).Skip(startRow).Take(pageLength).ToList();
+            return [.. QueryDb(predicate, orderBy, includes, tracking).Skip(startRow).Take(pageLength)];
         }
 
         public async Task<ICollection<TEntity>?> QueryPageAsync(int startRow, int pageLength, Expression<Func<TEntity, bool>>? predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false)
@@ -101,14 +101,14 @@
 
         public void Add(TEntity entity)
         {
-            ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+            ArgumentNullException.ThrowIfNull(entity);
 
             _ = Context.Set<TEntity>().Add(entity);
         }
 
         public TEntity? Update(TEntity entity)
         {
-            ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+            ArgumentNullException.ThrowIfNull(entity);
 
             return Context.Set<TEntity>().Update(entity).Entity;
         }
@@ -121,7 +121,7 @@
 
         public void Remove(TEntity entity)
         {
-            ArgumentNullException.ThrowIfNull(entity, nameof(entity));
+            ArgumentNullException.ThrowIfNull(entity);
 
             _ = Context.Set<TEntity>().Attach(entity);
             Context.Entry(entity).State = EntityState.Deleted;

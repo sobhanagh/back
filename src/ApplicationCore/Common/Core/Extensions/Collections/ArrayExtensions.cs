@@ -7,8 +7,8 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections
     {
         public static int BinarySearch<TValue, TKey>(this TValue[] list, TKey key, Func<TValue, TKey, int> comparer)
         {
-            ArgumentNullException.ThrowIfNull(list, nameof(list));
-            ArgumentNullException.ThrowIfNull(comparer, nameof(comparer));
+            ArgumentNullException.ThrowIfNull(list);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var low = 0;
             var high = list.Length - 1;
@@ -38,6 +38,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections
             var index = list.BinarySearch(key, comparer);
             for (; index > 0 && comparer(list[index - 1], key) == 0; index--)
             {
+                //empty
             }
 
             return index;
@@ -45,7 +46,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections
 
         public static T? Find<T>([NotNull] this T[] list, Predicate<T> match)
         {
-            ArgumentNullException.ThrowIfNull(match, nameof(match));
+            ArgumentNullException.ThrowIfNull(match);
 
             for (var i = 0; i < list.Length; i++)
             {
@@ -60,7 +61,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Collections
 
         public static bool Exists<T>([NotNull] this T[] list, Predicate<T> match)
         {
-            ArgumentNullException.ThrowIfNull(match, nameof(match));
+            ArgumentNullException.ThrowIfNull(match);
 
             for (var i = 0; i < list.Length; i++)
             {

@@ -26,7 +26,7 @@ namespace GamaEdtech.Backend.Common.Converter
                 var s = new Span<byte>(new byte[maxLength]);
                 if (!BrotliEncoder.TryCompress(ros, s, out var bytesWritten, 11, 24))
                 {
-                    throw new Exception("Cannot compress!");
+                    throw new ArgumentException("Cannot compress!");
                 }
 
                 B = s[..bytesWritten].ToArray();
@@ -54,7 +54,7 @@ namespace GamaEdtech.Backend.Common.Converter
 
                 if (!BrotliDecoder.TryDecompress(ros, s, out var bytesWritten))
                 {
-                    throw new Exception("Unable to decompress.");
+                    throw new ArgumentException("Unable to decompress.");
                 }
 
                 bytes = s[..bytesWritten].ToArray();

@@ -74,19 +74,15 @@ namespace GamaEdtech.Backend.Common.Startup
         {
             if (startupOption.Localization)
             {
-                // app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
                 _ = app.UseRequestLocalization(LocalizationExtensions.RequestLocalizationOptions);
             }
 
             _ = app.UseExceptionHandler(_ => { });
 
-            if (!env.IsDevelopment())
+            if (!env.IsDevelopment() && startupOption.Https)
             {
-                if (startupOption.Https)
-                {
-                    _ = app.UseHsts();
-                    _ = app.UseHttpsRedirection();
-                }
+                _ = app.UseHsts();
+                _ = app.UseHttpsRedirection();
             }
 
             _ = app.UseRouting();
@@ -212,14 +208,14 @@ namespace GamaEdtech.Backend.Common.Startup
 
             _ = mvcBuilder.AddJsonOptions(options =>
             {
-                // options.JsonSerializerOptions.Converters.Add(new DictionaryEnumerationConverter<int>());
-                // options.JsonSerializerOptions.Converters.Add(new DictionaryEnumerationConverter<byte>());
+                // options.JsonSerializerOptions.Converters.Add(new DictionaryEnumerationConverter<int>())
+                // options.JsonSerializerOptions.Converters.Add(new DictionaryEnumerationConverter<byte>())
                 options.JsonSerializerOptions.Converters.Add(new EnumerationConverterFactory());
                 options.JsonSerializerOptions.Converters.Add(new FlagsEnumerationConverterFactory());
                 options.JsonSerializerOptions.Converters.Add(new BitArrayConverter());
                 options.JsonSerializerOptions.Converters.Add(new UlidJsonConverter());
 
-                // options.JsonSerializerOptions.Converters.Add(new DateTimeConverterFactory());
+                // options.JsonSerializerOptions.Converters.Add(new DateTimeConverterFactory())
             });
 
             _ = mvcBuilder.AddDataAnnotationsLocalization(options => options.DataAnnotationLocalizerProvider = (type, factory) => factory.Create(typeof(GlobalResource)));
