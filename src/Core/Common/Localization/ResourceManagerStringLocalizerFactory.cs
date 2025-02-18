@@ -113,9 +113,7 @@ namespace GamaEdtech.Common.Localization
             return baseResourceName;
         }
 
-        protected virtual string? GetResourcePrefix(string location, [NotNull] string baseName, string? resourceLocation) =>
-            // Re-root the base name if a resources path is set
-            location + "." + resourceLocation + TrimPrefix(baseName, location + ".");
+        protected virtual string? GetResourcePrefix(string location, [NotNull] string baseName, string? resourceLocation) => location + "." + resourceLocation + TrimPrefix(baseName, location + ".");
 
         protected virtual ResourceLocationAttribute? GetResourceLocationAttribute([NotNull] Assembly assembly) => assembly.GetCustomAttribute<ResourceLocationAttribute>();
 

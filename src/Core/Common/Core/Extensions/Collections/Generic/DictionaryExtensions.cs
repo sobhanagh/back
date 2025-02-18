@@ -46,8 +46,7 @@ namespace GamaEdtech.Common.Core.Extensions.Collections.Generic
         /// <typeparam name="TKey">Type of the key.</typeparam>
         /// <typeparam name="TValue">Type of the value.</typeparam>
         /// <returns>Value if found, default if can not found.</returns>
-        public static TValue? GetOrDefault<TKey, TValue>([NotNull] this ConcurrentDictionary<TKey, TValue?> dictionary, TKey key)
-            where TKey : notnull => dictionary.TryGetValue(key, out var obj) ? obj : default;
+        public static TValue? GetOrDefault<TKey, TValue>([NotNull] this ConcurrentDictionary<TKey, TValue?> dictionary, TKey key) where TKey : notnull => dictionary.TryGetValue(key, out var obj) ? obj : default;
 
         /// <summary>
         /// Gets a value from the dictionary with given key. Returns default value if can not find.

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Common.DataAccess.Audit
+namespace GamaEdtech.Common.DataAccess.Audit
 {
     using System.Collections.Generic;
 
@@ -37,8 +37,6 @@
 
         public IList<AuditEntryProperty>? AuditEntryProperties { get; set; }
 
-        public void Configure(EntityTypeBuilder<AuditEntry> builder) =>
-            // not working, go to IdentityEntityContext
-            _ = builder.OwnEnumeration<AuditEntry, AuditType, byte>(t => t.AuditType);
+        public void Configure(EntityTypeBuilder<AuditEntry> builder) => builder.OwnEnumeration<AuditEntry, AuditType, byte>(t => t.AuditType);
     }
 }
