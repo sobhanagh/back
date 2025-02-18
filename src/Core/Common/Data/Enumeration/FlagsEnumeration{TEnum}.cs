@@ -13,9 +13,7 @@ namespace GamaEdtech.Common.Data.Enumeration
     public abstract class FlagsEnumeration<TEnum>
         where TEnum : FlagsEnumeration<TEnum>, new()
     {
-        protected FlagsEnumeration() =>
-            // None
-            Bits = new BitArray(0, false);
+        protected FlagsEnumeration() => Bits = new BitArray(0, false);
 
         protected FlagsEnumeration(int index)
         {
