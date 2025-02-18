@@ -24,7 +24,8 @@ namespace GamaEdtech.Backend.Common.ModelBinding
                 if (!ulid.HasValue)
                 {
                     bindingContext.Result = ModelBindingResult.Failed();
-                    bindingContext.ModelState.AddModelError(bindingContext.FieldName, string.Format(Resources.GlobalResource.Validation_AttemptedValueIsInvalidAccessor, item, bindingContext.ModelName));
+                    var msg = Resources.GlobalResource.Validation_AttemptedValueIsInvalidAccessor;
+                    bindingContext.ModelState.AddModelError(bindingContext.FieldName, string.Format(msg, item, bindingContext.ModelName));
                     return Task.CompletedTask;
                 }
 

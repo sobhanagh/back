@@ -1252,6 +1252,9 @@ dotnet_diagnostic.S3011.severity = suggestion
 dotnet_diagnostic.S1121.severity = suggestion
 dotnet_diagnostic.S3875.severity = suggestion
 dotnet_diagnostic.S2094.severity = suggestion
+dotnet_diagnostic.S2326.severity = suggestion
+dotnet_diagnostic.S3416.severity = suggestion
+dotnet_diagnostic.S6672.severity = suggestion
 
 [*.{cs,vb}]
 dotnet_diagnostic.CA1308.severity = none

@@ -26,7 +26,7 @@ namespace GamaEdtech.Backend.Common.Swagger
 
             if (isEnumeration)
             {
-                schema.Enum = fields.Select(t => new OpenApiString(t.Name)).Cast<IOpenApiAny>().ToList();
+                schema.Enum = [.. fields.Select(t => new OpenApiString(t.Name)).Cast<IOpenApiAny>()];
                 schema.Type = "string";
                 schema.Properties = null;
                 schema.AllOf = null;
@@ -38,7 +38,7 @@ namespace GamaEdtech.Backend.Common.Swagger
                 schema.Type = "array";
                 schema.Items = new OpenApiSchema
                 {
-                    Enum = fields.Select(t => new OpenApiString(t.Name)).Cast<IOpenApiAny>().ToList(),
+                    Enum = [.. fields.Select(t => new OpenApiString(t.Name)).Cast<IOpenApiAny>()],
                     Type = "string",
                     Properties = null,
                     AllOf = null,

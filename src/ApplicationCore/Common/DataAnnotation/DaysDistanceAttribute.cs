@@ -10,7 +10,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using GamaEdtech.Backend.Common.Core;
 
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property)]
     public sealed class DaysDistanceAttribute : ValidationAttribute
     {
         public DaysDistanceAttribute(string otherProperty, int maxDistance, string? expression = null)
@@ -23,7 +23,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             ErrorMessageResourceName = nameof(Resources.GlobalResource.Validation_DaysDistance);
         }
 
-        public string? OtherProperty { get; internal set; }
+        public string OtherProperty { get; internal set; }
 
         public int MaxDistance { get; internal set; }
 
@@ -43,13 +43,13 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
             {
                 var properties = validationContext.ObjectType.GetProperties();
                 var interpreter = new Interpreter();
-                MaxDistance = interpreter.Eval<int>(Expression, (from info in properties
+                MaxDistance = interpreter.Eval<int>(Expression, [.. from info in properties
                                                                  where Expression.Contains(info.Name, StringComparison.InvariantCultureIgnoreCase)
                                                                  select
-                                                                 new Parameter(info.Name, info.PropertyType, info.GetValue(validationContext.ObjectInstance, null))).ToArray());
+                                                                 new Parameter(info.Name, info.PropertyType, info.GetValue(validationContext.ObjectInstance, null))]);
             }
 
-            var otherPropertyInfo = validationContext.ObjectType.GetProperty(OtherProperty!);
+            var otherPropertyInfo = validationContext.ObjectType.GetProperty(OtherProperty);
             var otherValue = otherPropertyInfo?.GetValue(validationContext.ObjectInstance, null) as DateTime?;
             if (otherValue is null)
             {

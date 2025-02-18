@@ -2,6 +2,7 @@ namespace GamaEdtech.Backend.Common.Mapping
 {
     using System;
 
+    [AttributeUsage(AttributeTargets.Class)]
     public sealed class AdaptTwoWaysAttribute : Mapster.AdaptTwoWaysAttribute
     {
         public AdaptTwoWaysAttribute(Type type)

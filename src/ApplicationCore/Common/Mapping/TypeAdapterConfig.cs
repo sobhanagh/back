@@ -12,7 +12,7 @@
         {
         }
 
-        internal new IEnumerable<IRegister> Scan(params Assembly[] assemblies)
+        internal new IEnumerable<IRegister?> Scan(params Assembly[] assemblies)
         {
             var lst = assemblies.SelectMany(assembly => assembly.GetTypes()
                 .Where(t => typeof(IRegister).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()) && t.GetTypeInfo().IsClass && !t.GetTypeInfo().IsAbstract))

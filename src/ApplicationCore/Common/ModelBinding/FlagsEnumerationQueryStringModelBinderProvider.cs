@@ -11,10 +11,7 @@
         /// <inheritdoc />
         public IModelBinder? GetBinder(ModelBinderProviderContext context)
         {
-            if (context is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            ArgumentNullException.ThrowIfNull(context);
 
             var fullyQualifiedAssemblyName = context.Metadata.ModelType.FullName;
             if (fullyQualifiedAssemblyName is null)

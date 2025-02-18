@@ -2,6 +2,7 @@ namespace GamaEdtech.Backend.Common.DataAccess.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Dynamic.Core;
     using System.Linq.Expressions;
@@ -15,7 +16,7 @@ namespace GamaEdtech.Backend.Common.DataAccess.Repositories
     using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1005 // Avoid excessive parameters on generic types
-    public abstract class EntityRepositoryBase<TContext, TEntity, TKey>(ILogger<IDataAccess> logger, TContext context)
+    public abstract class EntityRepositoryBase<TContext, TEntity, TKey>([NotNull] ILogger<IDataAccess> logger, TContext? context)
 #pragma warning restore CA1005 // Avoid excessive parameters on generic types
         : RepositoryBase<TContext>(logger, context), IRepository<TEntity, TKey>
         where TContext : DbContext
@@ -103,14 +104,14 @@ namespace GamaEdtech.Backend.Common.DataAccess.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            _ = Context.Set<TEntity>().Add(entity);
+            _ = Context!.Set<TEntity>().Add(entity);
         }
 
         public TEntity? Update(TEntity entity)
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            return Context.Set<TEntity>().Update(entity).Entity;
+            return Context?.Set<TEntity>().Update(entity).Entity;
         }
 
         public void Remove(TKey id)
@@ -123,8 +124,8 @@ namespace GamaEdtech.Backend.Common.DataAccess.Repositories
         {
             ArgumentNullException.ThrowIfNull(entity);
 
-            _ = Context.Set<TEntity>().Attach(entity);
-            Context.Entry(entity).State = EntityState.Deleted;
+            _ = Context?.Set<TEntity>().Attach(entity);
+            Context!.Entry(entity).State = EntityState.Deleted;
             _ = Context.Set<TEntity>().Remove(entity);
         }
 
@@ -144,11 +145,11 @@ namespace GamaEdtech.Backend.Common.DataAccess.Repositories
 
         public async Task<int> CountAsync(ISpecification<TEntity>? specification) => await QueryDb(specification?.Expression(), null, null, false).CountAsync();
 
-        public void SetUnchanged(TEntity entitieit) => Context.Entry(entitieit).State = EntityState.Unchanged;
+        public void SetUnchanged(TEntity entitieit) => Context!.Entry(entitieit).State = EntityState.Unchanged;
 
         protected IQueryable<TEntity> QueryDb(Expression<Func<TEntity, bool>>? predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes, bool tracking)
         {
-            IQueryable<TEntity> query = Context.Set<TEntity>();
+            IQueryable<TEntity> query = Context!.Set<TEntity>();
 
             if (predicate is not null)
             {

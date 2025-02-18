@@ -35,7 +35,7 @@
 
         public ApplicationUser? User { get; set; }
 
-        int IIdentifiable<ApplicationUserToken, int>.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        int IIdentifiable<int>.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void Configure([NotNull] EntityTypeBuilder<ApplicationUserToken> builder)
         {

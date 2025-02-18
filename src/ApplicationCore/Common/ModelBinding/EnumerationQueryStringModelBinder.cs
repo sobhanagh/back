@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.ModelBinding
+namespace GamaEdtech.Backend.Common.ModelBinding
 {
     using System;
     using System.Collections.Generic;
@@ -15,10 +15,7 @@
         /// <inheritdoc />
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            if (bindingContext is null)
-            {
-                throw new ArgumentNullException(nameof(bindingContext));
-            }
+            ArgumentNullException.ThrowIfNull(bindingContext);
 
             var enumerationName = bindingContext.ValueProvider.GetValue(bindingContext.FieldName);
             if (enumerationName.Length == 0)
@@ -52,7 +49,8 @@
                 else
                 {
                     bindingContext.Result = ModelBindingResult.Failed();
-                    bindingContext.ModelState.AddModelError(bindingContext.FieldName, string.Format(Resources.GlobalResource.Validation_AttemptedValueIsInvalidAccessor, item, bindingContext.ModelName));
+                    var msg = Resources.GlobalResource.Validation_AttemptedValueIsInvalidAccessor;
+                    bindingContext.ModelState.AddModelError(bindingContext.FieldName, string.Format(msg, item, bindingContext.ModelName));
                     return Task.CompletedTask;
                 }
             }

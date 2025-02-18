@@ -41,12 +41,6 @@ namespace GamaEdtech.Backend.Common.Converter
             return list.ListToFlagsEnum<TEnum>();
         }
 
-        /// <summary>
-        /// Writes a specified <see cref="FlagsEnumeration"/> value as JSON.
-        /// </summary>
-        /// <param name="writer">The writer to write to.</param>
-        /// <param name="value">The value to convert to the JSON.</param>
-        /// <param name="options">An object that specifies serialization options to use.</param>
         public override void Write([NotNull] Utf8JsonWriter writer, TEnum value, JsonSerializerOptions options) => writer.WriteRawValue(JsonSerializer.Serialize(value.GetNames()));
     }
 }

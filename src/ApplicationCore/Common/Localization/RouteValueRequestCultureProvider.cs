@@ -24,10 +24,14 @@ namespace GamaEdtech.Backend.Common.Localization
                 return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(Constants.DefaultLanguageCode));
             }
 
-            var routeValues = httpContext.Request.Path.Value.Split('/');
-            return routeValues.Length <= 1
-                ? Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(Constants.DefaultLanguageCode))
-                : !cultures.Exists(t => t.Name.Equals(routeValues[1], StringComparison.OrdinalIgnoreCase))
+            var routeValues = httpContext.Request.Path.Value?.Split('/');
+            if (routeValues is null || routeValues.Length <= 1)
+            {
+                return Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(Constants.DefaultLanguageCode));
+            }
+
+            var exist = cultures.Exists(t => t.Name.Equals(routeValues[1], StringComparison.OrdinalIgnoreCase));
+            return !exist
                 ? Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(Constants.DefaultLanguageCode))
                 : Task.FromResult<ProviderCultureResult?>(new ProviderCultureResult(routeValues[1]));
         }

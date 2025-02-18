@@ -166,7 +166,7 @@ namespace GamaEdtech.Backend.Common.Converter.Enum
             protected JsonEnumConverterBase(JsonNamingPolicy? namingPolicy, bool allowNumbers, TryOverrideName? tryOverrideName)
             {
                 AllowNumbers = allowNumbers;
-                EnumData = JsonEnumExtensions.GetData<TEnum>(namingPolicy, tryOverrideName).ToArray();
+                EnumData = [.. JsonEnumExtensions.GetData<TEnum>(namingPolicy, tryOverrideName)];
                 NameLookup = JsonEnumExtensions.GetLookupTable(EnumData);
             }
 

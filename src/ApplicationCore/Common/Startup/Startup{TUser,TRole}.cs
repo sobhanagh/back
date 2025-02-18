@@ -47,7 +47,9 @@ namespace GamaEdtech.Backend.Common.Startup
 
         protected Startup([NotNull] StartupOption startupOption)
         {
+#pragma warning disable S3010 // Static fields should not be updated in constructors
             Constants.ErrorCodePrefix = startupOption.ErrorCodePrefix;
+#pragma warning restore S3010 // Static fields should not be updated in constructors
             this.startupOption = startupOption;
         }
 
@@ -231,6 +233,7 @@ namespace GamaEdtech.Backend.Common.Startup
                     .SetDefaultKeyLifetime(lifetime);
             }
 
+#pragma warning disable S4830 // Server certificates should be verified during SSL/TLS connections
             var httpClientBuilder = services.AddHttpClient(Constants.HttpClientIgnoreSslAndAutoRedirect).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
             {
                 ClientCertificateOptions = ClientCertificateOption.Manual,
@@ -238,12 +241,14 @@ namespace GamaEdtech.Backend.Common.Startup
                 AllowAutoRedirect = false,
                 UseProxy = false,
             });
+#pragma warning restore S4830 // Server certificates should be verified during SSL/TLS connections
             if (startupOption.HttpClientMessageHandler is not null)
             {
                 _ = httpClientBuilder.AddHttpMessageHandler(startupOption.HttpClientMessageHandler);
             }
 
 #pragma warning disable CA5398 // Avoid hardcoded SslProtocols values
+#pragma warning disable S4830 // Server certificates should be verified during SSL/TLS connections
             var httpClientBuilder13 = services.AddHttpClient(Constants.HttpClientIgnoreSslAndAutoRedirectTls13).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
             {
                 ClientCertificateOptions = ClientCertificateOption.Manual,
@@ -252,6 +257,7 @@ namespace GamaEdtech.Backend.Common.Startup
                 UseProxy = false,
                 SslProtocols = System.Security.Authentication.SslProtocols.Tls13,
             });
+#pragma warning restore S4830 // Server certificates should be verified during SSL/TLS connections
 #pragma warning restore CA5398 // Avoid hardcoded SslProtocols values
             if (startupOption.HttpClientMessageHandler is not null)
             {
@@ -303,17 +309,45 @@ namespace GamaEdtech.Backend.Common.Startup
             {
                 options.ModelMetadataDetailsProviders.Add(new DisplayMetadataProvider());
 
-                options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((v) => string.Format(GlobalResource.Validation_MissingBindRequiredValueAccessor, v));
+                options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((v) =>
+                {
+                    var msg = GlobalResource.Validation_MissingBindRequiredValueAccessor;
+                    return string.Format(msg, v);
+                });
                 options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => GlobalResource.Validation_MissingKeyOrValueAccessor);
                 options.ModelBindingMessageProvider.SetMissingRequestBodyRequiredValueAccessor(() => GlobalResource.Validation_MissingRequestBodyRequiredValueAccessor);
-                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((v) => string.Format(GlobalResource.Validation_ValueMustNotBeNullAccessor, v));
-                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((v1, v2) => string.Format(GlobalResource.Validation_AttemptedValueIsInvalidAccessor, v1, v2));
-                options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((v) => string.Format(GlobalResource.Validation_NonPropertyAttemptedValueIsInvalidAccessor, v));
-                options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((v) => string.Format(GlobalResource.Validation_UnknownValueIsInvalidAccessor, v));
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((v) =>
+                {
+                    var msg = GlobalResource.Validation_ValueMustNotBeNullAccessor;
+                    return string.Format(msg, v);
+                });
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((v1, v2) =>
+                {
+                    var msg = GlobalResource.Validation_AttemptedValueIsInvalidAccessor;
+                    return string.Format(msg, v1, v2);
+                });
+                options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((v) =>
+                {
+                    var msg = GlobalResource.Validation_NonPropertyAttemptedValueIsInvalidAccessor;
+                    return string.Format(msg, v);
+                });
+                options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((v) =>
+                {
+                    var msg = GlobalResource.Validation_UnknownValueIsInvalidAccessor;
+                    return string.Format(msg, v);
+                });
                 options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => GlobalResource.Validation_NonPropertyUnknownValueIsInvalidAccessor);
-                options.ModelBindingMessageProvider.SetValueIsInvalidAccessor((v) => string.Format(GlobalResource.Validation_ValueIsInvalidAccessor, v));
-                options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((v) => string.Format(GlobalResource.Validation_ValueMustBeANumberAccessor, v));
-                options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => string.Format(GlobalResource.Validation_NonPropertyValueMustBeANumberAccessor));
+                options.ModelBindingMessageProvider.SetValueIsInvalidAccessor((v) =>
+                {
+                    var msg = GlobalResource.Validation_ValueIsInvalidAccessor;
+                    return string.Format(msg, v);
+                });
+                options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((v) =>
+                {
+                    var msg = GlobalResource.Validation_ValueMustBeANumberAccessor;
+                    return string.Format(msg, v);
+                });
+                options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => GlobalResource.Validation_NonPropertyValueMustBeANumberAccessor);
 
                 options.Conventions.Add(new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
 
@@ -353,14 +387,14 @@ namespace GamaEdtech.Backend.Common.Startup
                     {
                         services.Add(new ServiceDescriptor(serviceType, provider =>
                         {
-                            var parameters = serviceLifetimeAttribute.Parameters.Select(t => provider.GetService(t)).ToArray();
-                            return Activator.CreateInstance(implementationType, parameters);
+                            var parameters = serviceLifetimeAttribute.Parameters.Select(t => provider.GetService(t!)).ToArray();
+                            return Activator.CreateInstance(implementationType, parameters)!;
                         }, serviceLifetimeAttribute.ServiceLifetime));
 
                         services.Add(new ServiceDescriptor(implementationType, provider =>
                         {
-                            var parameters = serviceLifetimeAttribute.Parameters.Select(t => provider.GetService(t)).ToArray();
-                            return Activator.CreateInstance(implementationType, parameters);
+                            var parameters = serviceLifetimeAttribute.Parameters.Select(t => provider.GetService(t!)).ToArray();
+                            return Activator.CreateInstance(implementationType, parameters)!;
                         }, serviceLifetimeAttribute.ServiceLifetime));
                     }
                     else
@@ -368,18 +402,6 @@ namespace GamaEdtech.Backend.Common.Startup
                         services.Add(new ServiceDescriptor(serviceType, implementationType, serviceLifetimeAttribute.ServiceLifetime));
                     }
 
-                    // switch (serviceLifetimeAttribute.ServiceLifetime)
-                    // {
-                    //    case ServiceLifetime.Singleton:
-                    //        services.AddSingleton(Lazy<serviceType>);
-                    //        break;
-                    //    case ServiceLifetime.Scoped:
-                    //        services.AddScoped(serviceType);
-                    //        break;
-                    //    case ServiceLifetime.Transient:
-                    //        services.AddTransient(serviceType);
-                    //        break;
-                    // }
                     if (serviceType == typeof(IEntityContext))
                     {
                         var arguments = implementationType?.BaseType?.GetGenericArguments();
@@ -390,22 +412,19 @@ namespace GamaEdtech.Backend.Common.Startup
                     }
                 }
 
-                if (startupOption.Identity)
+                if (startupOption.Identity && serviceType == typeof(IEntityContext))
                 {
-                    if (serviceType == typeof(IEntityContext))
-                    {
-                        _ = services
-                            .AddIdentity<TUser, TRole>(options => Configuration.Bind("IdentityOptions", options))
-                            .AddDefaultTokenProviders()
-                            .AddErrorDescriber<LocalizedIdentityErrorDescriber>();
+                    _ = services
+                        .AddIdentity<TUser, TRole>(options => Configuration.Bind("IdentityOptions", options))
+                        .AddDefaultTokenProviders()
+                        .AddErrorDescriber<LocalizedIdentityErrorDescriber>();
 
-                        _ = services.Configure<SecurityStampValidatorOptions>(options => Configuration.Bind("IdentityOptions:SecurityStampValidator", options));
-                    }
+                    _ = services.Configure<SecurityStampValidatorOptions>(options => Configuration.Bind("IdentityOptions:SecurityStampValidator", options));
                 }
             }
 
             var config = new TypeAdapterConfig();
-            _ = config.Scan(assemblies.ToArray());
+            _ = config.Scan([.. assemblies]);
             _ = services.AddSingleton(config);
         }
     }

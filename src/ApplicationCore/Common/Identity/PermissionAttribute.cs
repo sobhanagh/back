@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
 
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public sealed class PermissionAttribute : AuthorizeAttribute
     {
         public PermissionAttribute(string? policy = PermissionConstants.PermissionPolicy)

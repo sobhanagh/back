@@ -28,7 +28,7 @@
                 typeOfUlid = type.GenericTypeArguments[0];
             }
 
-            return !type.IsSubclassOf(typeOfUlid) ? null : Activator.CreateInstance(typeof(UlidQueryStringModelBinder)) as IModelBinder;
+            return !type.IsSubclassOf(typeOfUlid) ? null : Activator.CreateInstance<UlidQueryStringModelBinder>();
         }
     }
 }

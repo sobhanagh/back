@@ -42,7 +42,7 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
             where TEnum : Enumeration<TKey>
             where TKey : IEquatable<TKey>, IComparable<TKey>
         {
-            var item = GetAll<TEnum, TKey>()?.FirstOrDefault(t => value.Equals(t.Value));
+            var item = GetAll<TEnum, TKey>()?.FirstOrDefault(t => value.Equals(t!.Value));
             return item is null ? throw new ArgumentOutOfRangeException(nameof(value)) : item;
         }
 
