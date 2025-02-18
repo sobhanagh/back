@@ -8,7 +8,7 @@ namespace GamaEdtech.Application.Interface
 
     using System.Diagnostics.CodeAnalysis;
     using GamaEdtech.Data.Dto.Identity;
-    using GamaEdtech.Data.Entity.Identity;
+    using GamaEdtech.Domain.Entity.Identity;
 
     [Injectable]
     public interface IIdentityService

@@ -1,13 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationCore\Data\GamaEdtech.Data.csproj">
-      <Private>false</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\ApplicationCore\Resource\GamaEdtech.Resource.csproj">
-      <Private>false</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Application\Interface\GamaEdtech.Application.Interface.csproj">
+    <ProjectReference Include="..\Core\Resource\GamaEdtech.Resource.csproj">
       <Private>false</Private>
     </ProjectReference>
     <ProjectReference Include="..\Application\Service\GamaEdtech.Application.Service.csproj">

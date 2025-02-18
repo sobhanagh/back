@@ -7,7 +7,7 @@ namespace GamaEdtech.Application.Interface
     using GamaEdtech.Common.DataAnnotation;
 
     using GamaEdtech.Data.Dto.Subject;
-    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Domain.Entity;
 
     [Injectable]
     public interface ISubjectService

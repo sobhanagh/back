@@ -23,10 +23,10 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Mapping;
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.Identity;
-    using GamaEdtech.Data.Entity.Identity;
-    using GamaEdtech.Data.Enumeration;
-    using GamaEdtech.Data.Specification;
-    using GamaEdtech.Data.Specification.Identity;
+    using GamaEdtech.Domain.Entity.Identity;
+    using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.Identity;
 
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Http;

@@ -7,7 +7,7 @@ namespace GamaEdtech.Application.Interface
     using GamaEdtech.Common.DataAnnotation;
 
     using GamaEdtech.Data.Dto.Location;
-    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Domain.Entity;
 
     [Injectable]
     public interface ILocationService

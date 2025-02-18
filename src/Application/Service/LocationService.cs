@@ -13,7 +13,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Service;
     using GamaEdtech.Common.Core;
     using GamaEdtech.Data.Dto.Location;
-    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Domain.Entity;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;

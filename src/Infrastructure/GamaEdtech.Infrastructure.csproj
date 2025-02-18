@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationCore\Common\GamaEdtech.Common.csproj" />
-    <ProjectReference Include="..\ApplicationCore\Data\GamaEdtech.Data.csproj" />
+    <ProjectReference Include="..\Core\Common\GamaEdtech.Common.csproj" />
+    <ProjectReference Include="..\Core\Data\GamaEdtech.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

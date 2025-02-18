@@ -1,6 +1,6 @@
 namespace GamaEdtech.Infrastructure.EntityFramework.Context
 {
-    using GamaEdtech.Data.Entity.Identity;
+    using GamaEdtech.Domain.Entity.Identity;
 
     using GamaEdtech.Common.DataAnnotation;
 

@@ -15,7 +15,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Service;
 
     using GamaEdtech.Data.Dto.Subject;
-    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Domain.Entity;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
