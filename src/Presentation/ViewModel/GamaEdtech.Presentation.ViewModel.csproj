@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Common\GamaEdtech.Common.csproj" />
+    <ProjectReference Include="..\..\Domain\GamaEdtech.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using NetTopologySuite.Geometries;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace GamaEdtech.Backend.Infrastructure.Migrations
+namespace GamaEdtech.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class SchoolFields : Migration
@@ -235,7 +234,7 @@ namespace GamaEdtech.Backend.Infrastructure.Migrations
                 oldType: "nvarchar(max)",
                 oldNullable: true);
 
-            migrationBuilder.AddColumn<Point>(
+            migrationBuilder.AddColumn<string>(
                 name: "Location",
                 table: "Schools",
                 type: "geometry",

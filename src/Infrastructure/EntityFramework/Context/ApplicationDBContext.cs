@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Infrastructure.EntityFramework.Context
+namespace GamaEdtech.Infrastructure.EntityFramework.Context
 {
-    using GamaEdtech.Backend.Data.Entity.Identity;
+    using GamaEdtech.Domain.Entity.Identity;
 
-    using Farsica.Framework.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using global::EntityFramework.Exceptions.SqlServer;
 
@@ -14,7 +14,7 @@ namespace GamaEdtech.Backend.Infrastructure.EntityFramework.Context
     using System.Reflection;
 
     [ServiceLifetime(ServiceLifetime.Transient, "System.IServiceProvider,System.ComponentModel")]
-    public class ApplicationDBContext(IServiceProvider serviceProvider) : Farsica.Framework.DataAccess.Context.IdentityEntityContext<ApplicationDBContext, ApplicationUser, ApplicationRole,
+    public class ApplicationDBContext(IServiceProvider serviceProvider) : Common.DataAccess.Context.IdentityEntityContext<ApplicationDBContext, ApplicationUser, ApplicationRole,
         int, ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationRoleClaim, ApplicationUserToken>(serviceProvider)
     {
         protected override Assembly EntityAssembly => typeof(ApplicationUser).Assembly;
@@ -22,11 +22,7 @@ namespace GamaEdtech.Backend.Infrastructure.EntityFramework.Context
         protected override void OnConfiguring([NotNull] DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            _ = optionsBuilder.UseSqlServer(ConnectionName, t =>
-            {
-                _ = t.CommandTimeout(60 * 5);
-                _ = t.UseNetTopologySuite();
-            });
+            _ = optionsBuilder.UseSqlServer(ConnectionName, t => _ = t.CommandTimeout(60 * 5));
             _ = optionsBuilder.UseExceptionProcessor();
         }
     }
