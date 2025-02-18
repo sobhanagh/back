@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.Converter.Enum
+namespace GamaEdtech.Common.Converter.Enum
 {
     using System;
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.Core.Extensions;
+    using GamaEdtech.Common.Core.Extensions;
 
     public class JsonPropertyNameStringEnumConverter : GeneralJsonStringEnumConverter
     {

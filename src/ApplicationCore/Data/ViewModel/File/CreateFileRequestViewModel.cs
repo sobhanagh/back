@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.ViewModel.File
+namespace GamaEdtech.Data.ViewModel.File
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Http;
 

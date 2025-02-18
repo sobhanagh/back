@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Data.Specification
+﻿namespace GamaEdtech.Data.Specification
 {
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
     using System.Linq.Expressions;
 

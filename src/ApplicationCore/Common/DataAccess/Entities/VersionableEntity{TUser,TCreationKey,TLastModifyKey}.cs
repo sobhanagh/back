@@ -1,9 +1,9 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Entities
+namespace GamaEdtech.Common.DataAccess.Entities
 {
     using System;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     using Microsoft.AspNetCore.Identity;
 

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Data.ViewModel.Identity
+﻿namespace GamaEdtech.Data.ViewModel.Identity
 {
     public sealed class ProfileSettingsResponseViewModel
     {

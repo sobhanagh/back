@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Location
+namespace GamaEdtech.Data.ViewModel.Location
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class ManageLocationRequestViewModel
     {

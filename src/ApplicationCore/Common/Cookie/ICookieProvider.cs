@@ -1,9 +1,9 @@
-namespace GamaEdtech.Backend.Common.Cookie
+namespace GamaEdtech.Common.Cookie
 {
     using System;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     [Injectable]
     public interface ICookieProvider

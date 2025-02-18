@@ -1,11 +1,11 @@
-﻿namespace GamaEdtech.Backend.Common.HttpProvider
+﻿namespace GamaEdtech.Common.HttpProvider
 {
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     [Injectable]
     public interface IHttpProvider

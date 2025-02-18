@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Grade
+namespace GamaEdtech.Data.ViewModel.Grade
 {
     public sealed class ManageGradeResponseViewModel
     {

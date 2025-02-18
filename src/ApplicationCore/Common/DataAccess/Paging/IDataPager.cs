@@ -1,11 +1,11 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Paging
+﻿namespace GamaEdtech.Common.DataAccess.Paging
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAccess.Query;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.Query;
 
     [DataAnnotation.Injectable]
     public interface IDataPager<TEntity, TKey>

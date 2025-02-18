@@ -1,11 +1,11 @@
-namespace GamaEdtech.Backend.Common.Swagger
+namespace GamaEdtech.Common.Swagger
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
 
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     using Microsoft.OpenApi.Any;
     using Microsoft.OpenApi.Models;

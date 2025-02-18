@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Core.Extensions.Linq
+namespace GamaEdtech.Common.Core.Extensions.Linq
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

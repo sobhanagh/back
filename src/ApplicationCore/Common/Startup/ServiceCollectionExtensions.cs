@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Startup
+namespace GamaEdtech.Common.Startup
 {
     using System;
 
@@ -6,8 +6,8 @@ namespace GamaEdtech.Backend.Common.Startup
     using Microsoft.Extensions.DependencyInjection;
 
     using Swashbuckle.AspNetCore.SwaggerGen;
-    using GamaEdtech.Backend.Common.Swagger;
-    using GamaEdtech.Backend.Common.Cookie;
+    using GamaEdtech.Common.Swagger;
+    using GamaEdtech.Common.Cookie;
 
     public static class ServiceCollectionExtensions
     {

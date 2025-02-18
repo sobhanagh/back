@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Mapping
+﻿namespace GamaEdtech.Common.Mapping
 {
     using System;
     using System.Collections.Generic;

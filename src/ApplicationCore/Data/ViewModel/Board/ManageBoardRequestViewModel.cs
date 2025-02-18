@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Board
+namespace GamaEdtech.Data.ViewModel.Board
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class ManageBoardRequestViewModel
     {

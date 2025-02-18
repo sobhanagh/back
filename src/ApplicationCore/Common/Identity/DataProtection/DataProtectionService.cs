@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.Identity.DataProtection
+namespace GamaEdtech.Common.Identity.DataProtection
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml.Linq;
 
-    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Common.DataAccess.UnitOfWork;
 
     using NUlid;
 

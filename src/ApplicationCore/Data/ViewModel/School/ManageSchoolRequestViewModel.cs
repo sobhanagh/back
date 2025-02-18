@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Data.ViewModel.School
+namespace GamaEdtech.Data.ViewModel.School
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Enumeration;
 
     public sealed class ManageSchoolRequestViewModel
     {

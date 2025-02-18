@@ -1,16 +1,16 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Audit
+﻿namespace GamaEdtech.Common.DataAccess.Audit
 {
     using System.Collections.Generic;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     using NUlid;
-    using GamaEdtech.Backend.Common.Data.Enumeration;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Entities;
 
     [Table(nameof(AuditEntry))]
     public class AuditEntry : IEntity<AuditEntry, Ulid>

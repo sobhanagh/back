@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.Dto.Identity
+namespace GamaEdtech.Data.Dto.Identity
 {
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Enumeration;
 
     public sealed class UserPermissionsResponseDto
     {

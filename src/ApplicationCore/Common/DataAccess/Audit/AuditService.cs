@@ -1,15 +1,15 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Audit
+namespace GamaEdtech.Common.DataAccess.Audit
 {
     using System;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Core.Extensions.Linq;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
-    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
-    using GamaEdtech.Backend.Common.Service;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Core.Extensions.Linq;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Common.Service;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,7 @@ namespace GamaEdtech.Backend.Common.DataAccess.Audit
 
     using NUlid;
 
-    using static GamaEdtech.Backend.Common.Core.Constants;
+    using static GamaEdtech.Common.Core.Constants;
 
     public class AuditService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<ILogger<AuditService>> logger) : ServiceBase<AuditService>(unitOfWorkProvider, httpContextAccessor, logger), IAuditService
     {

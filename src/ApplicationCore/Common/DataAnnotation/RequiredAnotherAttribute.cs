@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Common.DataAnnotation
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class RequiredAnotherAttribute : ValidationAttribute

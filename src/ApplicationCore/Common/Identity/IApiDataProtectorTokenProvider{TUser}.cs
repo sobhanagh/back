@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.Identity
+﻿namespace GamaEdtech.Common.Identity
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Identity;
 

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+﻿namespace GamaEdtech.Common.Data
 {
     using System.Runtime.InteropServices;
 

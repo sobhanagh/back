@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Repositories
+﻿namespace GamaEdtech.Common.DataAccess.Repositories
 {
     using System;
 
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.Entities;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;

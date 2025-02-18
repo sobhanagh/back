@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "GamaEdtech.Backend": {
+    "GamaEdtech": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

@@ -1,9 +1,9 @@
-﻿namespace GamaEdtech.Backend.Common.Identity
+﻿namespace GamaEdtech.Common.Identity
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     [Injectable]
     public interface ITokenService

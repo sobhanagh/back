@@ -1,16 +1,16 @@
-namespace GamaEdtech.Backend.UI.Web.Api
+namespace GamaEdtech.UI.Web.Api
 {
     using System.Diagnostics.CodeAnalysis;
 
     using Asp.Versioning;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Data;
 
-    using GamaEdtech.Backend.Data.Entity;
-    using GamaEdtech.Backend.Data.Specification.Grade;
-    using GamaEdtech.Backend.Data.ViewModel.Grade;
-    using GamaEdtech.Backend.Shared.Service;
+    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Data.Specification.Grade;
+    using GamaEdtech.Data.ViewModel.Grade;
 
     using Microsoft.AspNetCore.Mvc;
 

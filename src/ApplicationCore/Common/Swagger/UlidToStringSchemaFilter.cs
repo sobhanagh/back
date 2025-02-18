@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Swagger
+namespace GamaEdtech.Common.Swagger
 {
     using System.Diagnostics.CodeAnalysis;
 

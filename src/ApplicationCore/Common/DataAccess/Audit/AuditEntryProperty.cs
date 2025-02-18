@@ -1,14 +1,14 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Audit
+﻿namespace GamaEdtech.Common.DataAccess.Audit
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     using NUlid;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Entities;
 
     [Table(nameof(AuditEntryProperty))]
     public class AuditEntryProperty : IEntity<AuditEntryProperty, Ulid>

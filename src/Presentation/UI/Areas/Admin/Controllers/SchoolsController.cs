@@ -1,19 +1,19 @@
-namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
+namespace GamaEdtech.UI.Web.Areas.Admin.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
 
     using Asp.Versioning;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Specification.Impl;
-    using GamaEdtech.Backend.Common.Identity;
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification.Impl;
+    using GamaEdtech.Common.Identity;
 
-    using GamaEdtech.Backend.Data.Dto.School;
-    using GamaEdtech.Backend.Data.Entity;
-    using GamaEdtech.Backend.Data.Enumeration;
-    using GamaEdtech.Backend.Data.ViewModel.School;
-    using GamaEdtech.Backend.Shared.Service;
+    using GamaEdtech.Data.Dto.School;
+    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Data.Enumeration;
+    using GamaEdtech.Data.ViewModel.School;
 
     using Microsoft.AspNetCore.Mvc;
 

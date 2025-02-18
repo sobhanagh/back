@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Hosting
+namespace GamaEdtech.Common.Hosting
 {
     using System;
     using System.IO;
@@ -7,7 +7,7 @@ namespace GamaEdtech.Backend.Common.Hosting
 
     using Destructurama;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
@@ -17,10 +17,10 @@ namespace GamaEdtech.Backend.Common.Hosting
     using Microsoft.Extensions.Logging;
 
     using Serilog;
-    using GamaEdtech.Backend.Common.Startup;
-    using GamaEdtech.Backend.Common.DataAccess.Context;
-    using GamaEdtech.Backend.Common.Logging;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Startup;
+    using GamaEdtech.Common.DataAccess.Context;
+    using GamaEdtech.Common.Logging;
+    using GamaEdtech.Common.Data;
 
     public static class Host
     {

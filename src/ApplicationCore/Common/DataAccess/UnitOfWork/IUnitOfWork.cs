@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
+﻿namespace GamaEdtech.Common.DataAccess.UnitOfWork
 {
     public interface IUnitOfWork : IUnitOfWorkBase
     {

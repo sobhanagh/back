@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GamaEdtech.Backend.Resource.Data.ViewModel.Audit {
+namespace GamaEdtech.Resource.Data.ViewModel.Audit {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GamaEdtech.Backend.Resource.Data.ViewModel.Audit {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Backend.Resource.Data.ViewModel.Audit.AuditsRequestViewModel", typeof(AuditsRequestViewModel).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Resource.Data.ViewModel.Audit.AuditsRequestViewModel", typeof(AuditsRequestViewModel).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Entities
+namespace GamaEdtech.Common.DataAccess.Entities
 {
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     public interface IEnablable
     {

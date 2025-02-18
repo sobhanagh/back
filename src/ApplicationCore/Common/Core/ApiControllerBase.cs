@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Common.Core
+namespace GamaEdtech.Common.Core
 {
     using System;
 
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Data;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;

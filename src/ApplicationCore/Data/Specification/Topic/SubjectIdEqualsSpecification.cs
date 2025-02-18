@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Data.Specification.Topic
+namespace GamaEdtech.Data.Specification.Topic
 {
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
-    using GamaEdtech.Backend.Data.Entity;
+    using GamaEdtech.Data.Entity;
 
     public sealed class SubjectIdEqualsSpecification(int subjectId) : SpecificationBase<Topic>
     {

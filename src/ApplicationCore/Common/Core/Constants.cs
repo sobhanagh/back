@@ -1,13 +1,13 @@
 #pragma warning disable CA1720 // Identifier contains type name
-namespace GamaEdtech.Backend.Common.Core
+namespace GamaEdtech.Common.Core
 {
     using System;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.Resources;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.Resources;
 
-    using GamaEdtech.Backend.Common.Converter;
+    using GamaEdtech.Common.Converter;
 
     public static class Constants
     {

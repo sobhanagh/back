@@ -1,5 +1,5 @@
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
-namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
+namespace GamaEdtech.Common.DataAccess.UnitOfWork
 {
     using System;
     using System.Collections.Generic;
@@ -8,10 +8,10 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
     using System.Threading;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAccess.Exceptions;
-    using GamaEdtech.Backend.Common.DataAccess.Repositories;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.Exceptions;
+    using GamaEdtech.Common.DataAccess.Repositories;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;

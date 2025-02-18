@@ -1,9 +1,9 @@
-namespace GamaEdtech.Backend.Common.Identity.DataProtection
+namespace GamaEdtech.Common.Identity.DataProtection
 {
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

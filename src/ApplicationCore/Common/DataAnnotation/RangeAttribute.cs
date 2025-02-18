@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Common.DataAnnotation
 {
     using System;
     using System.Collections.Generic;
@@ -6,9 +6,9 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
     using System.Globalization;
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic;
+    using GamaEdtech.Common.Core.Extensions.Collections.Generic;
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 

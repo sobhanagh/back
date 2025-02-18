@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Identity.DataProtection
+namespace GamaEdtech.Common.Identity.DataProtection
 {
     using System;
 

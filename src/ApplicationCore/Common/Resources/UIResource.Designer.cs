@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GamaEdtech.Backend.Common.Resources {
+namespace GamaEdtech.Common.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GamaEdtech.Backend.Common.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Backend.Common.Resources.UIResource", typeof(UIResource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Common.Resources.UIResource", typeof(UIResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

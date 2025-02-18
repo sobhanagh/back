@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Entities
+namespace GamaEdtech.Common.DataAccess.Entities
 {
     using System;
 
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     public interface IIdentifiable<TKey>
         where TKey : IEquatable<TKey>

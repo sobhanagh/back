@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.Service
+namespace GamaEdtech.Common.Service
 {
     using System;
 
-    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Common.DataAccess.UnitOfWork;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Localization;

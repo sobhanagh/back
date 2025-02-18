@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Core.Extensions
+namespace GamaEdtech.Common.Core.Extensions
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace GamaEdtech.Backend.Common.Core.Extensions
     using System.Runtime.CompilerServices;
     using System.Text.Json;
 
-    using GamaEdtech.Backend.Common.Converter.Enum;
+    using GamaEdtech.Common.Converter.Enum;
 
     public static class JsonEnumExtensions
     {

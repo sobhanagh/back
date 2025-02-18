@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Topic
+namespace GamaEdtech.Data.ViewModel.Topic
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class ManageTopicRequestViewModel
     {

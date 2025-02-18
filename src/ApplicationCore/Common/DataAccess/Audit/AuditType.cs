@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Audit
+﻿namespace GamaEdtech.Common.DataAccess.Audit
 {
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     public class AuditType : Enumeration<byte>
     {

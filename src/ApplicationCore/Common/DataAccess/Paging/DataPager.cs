@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Paging
+namespace GamaEdtech.Common.DataAccess.Paging
 {
     using System;
     using System.Collections.Generic;
@@ -6,9 +6,9 @@ namespace GamaEdtech.Backend.Common.DataAccess.Paging
     using System.Linq;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAccess.Query;
-    using GamaEdtech.Backend.Common.DataAccess.UnitOfWork;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.Query;
+    using GamaEdtech.Common.DataAccess.UnitOfWork;
 
     public class DataPager<TEntity, TKey>(Lazy<IUnitOfWorkProvider> unitOfWorkProvider) : IDataPager<TEntity, TKey>
         where TEntity : class, IEntity<TEntity, TKey>

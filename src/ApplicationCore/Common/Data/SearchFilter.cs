@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+﻿namespace GamaEdtech.Common.Data
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class SearchFilter
     {

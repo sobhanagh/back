@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.ModelBinding
+namespace GamaEdtech.Common.ModelBinding
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@ namespace GamaEdtech.Backend.Common.ModelBinding
     using System.Reflection;
     using System.Resources;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;

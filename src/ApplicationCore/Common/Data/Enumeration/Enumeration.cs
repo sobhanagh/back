@@ -1,9 +1,9 @@
-namespace GamaEdtech.Backend.Common.Data.Enumeration
+namespace GamaEdtech.Common.Data.Enumeration
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
 #pragma warning disable S4035 // Classes implementing "IEquatable<T>" should be sealed
     public abstract class Enumeration<T> : IComparable, IEquatable<Enumeration<T>>, IComparable<Enumeration<T>>

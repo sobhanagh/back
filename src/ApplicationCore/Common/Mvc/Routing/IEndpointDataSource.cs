@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.Mvc.Routing
+﻿namespace GamaEdtech.Common.Mvc.Routing
 {
     using System.Collections.Generic;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     [Injectable]
     public interface IEndpointDataSource

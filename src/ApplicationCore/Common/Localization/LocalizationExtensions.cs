@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Common.Localization
+namespace GamaEdtech.Common.Localization
 {
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Localization;

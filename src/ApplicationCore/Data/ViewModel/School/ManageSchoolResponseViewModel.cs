@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.ViewModel.School
+namespace GamaEdtech.Data.ViewModel.School
 {
     public sealed class ManageSchoolResponseViewModel
     {

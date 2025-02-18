@@ -1,9 +1,9 @@
-namespace GamaEdtech.Backend.Common.Data
+namespace GamaEdtech.Common.Data
 {
     using System;
     using System.Text.RegularExpressions;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
 #pragma warning disable CA1815 // Override equals and operator equals on value types
     public partial struct Error(Exception? exception)

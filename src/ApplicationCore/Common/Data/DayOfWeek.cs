@@ -1,11 +1,11 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+﻿namespace GamaEdtech.Common.Data
 {
     using System.Collections;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.Resources;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.Resources;
 
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     public class DayOfWeek : FlagsEnumeration<DayOfWeek>
     {

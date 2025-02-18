@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Core
+namespace GamaEdtech.Common.Core
 {
     using System;
     using System.Collections;
@@ -19,10 +19,10 @@ namespace GamaEdtech.Backend.Common.Core
     using System.Threading;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core.Extensions;
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Core.Extensions;
+    using GamaEdtech.Common.Core.Extensions.Collections;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
@@ -649,8 +649,11 @@ namespace GamaEdtech.Backend.Common.Core
                 .Replace(".Infrastructure.", resourceAssembly + ".Infrastructure.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Infrastructure,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
-                .Replace(".DomainService.", resourceAssembly + ".DomainService.", StringComparison.OrdinalIgnoreCase)
-                .Replace(".DomainService,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Application.Service.", resourceAssembly + ".Application.Service.", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Application.Service,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+
+                .Replace(".Application.Interface.", resourceAssembly + ".Application.Interface.", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Application.Interface,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
                 .Replace(".Shared.", resourceAssembly + ".Shared.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Shared,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.UI.Web.Controllers
+namespace GamaEdtech.UI.Web.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;

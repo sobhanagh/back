@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.ModelBinding
+namespace GamaEdtech.Common.ModelBinding
 {
     using System;
     using System.Collections.Generic;
@@ -7,8 +7,8 @@ namespace GamaEdtech.Backend.Common.ModelBinding
     using System.Security.Claims;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.TimeZone;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.TimeZone;
 
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.DependencyInjection;

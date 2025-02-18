@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
+namespace GamaEdtech.Common.DataAccess.UnitOfWork
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@ namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
     using System.Threading;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAccess.Repositories;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.Repositories;
 
     public interface IUnitOfWorkBase : IDisposable
     {

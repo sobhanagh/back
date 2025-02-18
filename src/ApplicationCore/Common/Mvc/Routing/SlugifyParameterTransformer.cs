@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Common.Mvc.Routing
+namespace GamaEdtech.Common.Mvc.Routing
 {
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     using Microsoft.AspNetCore.Routing;
 

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Paging
+namespace GamaEdtech.Common.DataAccess.Paging
 {
     using System;
     using System.Collections.Generic;

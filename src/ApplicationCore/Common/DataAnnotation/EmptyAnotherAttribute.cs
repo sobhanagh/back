@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Common.DataAnnotation
 {
     using System;
     using System.ComponentModel.DataAnnotations;
     using System.Diagnostics.CodeAnalysis;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class EmptyAnotherAttribute : ValidationAttribute

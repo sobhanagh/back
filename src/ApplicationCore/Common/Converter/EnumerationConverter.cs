@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Converter
+namespace GamaEdtech.Common.Converter
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -6,7 +6,7 @@ namespace GamaEdtech.Backend.Common.Converter
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     public class EnumerationConverter<TEnum, TKey> : JsonConverter<TEnum>
         where TEnum : Enumeration<TKey>

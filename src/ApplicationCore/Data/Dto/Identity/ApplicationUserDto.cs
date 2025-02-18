@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Data.Dto.Identity
+namespace GamaEdtech.Data.Dto.Identity
 {
     using System.Diagnostics.CodeAnalysis;
 
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.Entities;
 
     public class ApplicationUserDto : Common.Mapping.IRegister, IEnablable
     {

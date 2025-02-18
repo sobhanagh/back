@@ -1,10 +1,10 @@
-﻿namespace GamaEdtech.Backend.Common.TimeZone
+﻿namespace GamaEdtech.Common.TimeZone
 {
     using System.Collections.Generic;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Data;
 
     [Injectable]
     public interface ITimeZoneProvider

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Content Include="..\Presentation\UI\appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+    <Folder Include="UI\Web\Areas\Admin\Fixtures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationCore\Data\GamaEdtech.Data.csproj" />
+    <ProjectReference Include="..\Application\Interface\GamaEdtech.Application.Interface.csproj" />
+    <ProjectReference Include="..\Presentation\UI\GamaEdtech.UI.Web.csproj" />
+  </ItemGroup>
+
+</Project>

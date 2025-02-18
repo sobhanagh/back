@@ -1,22 +1,22 @@
-namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
+namespace GamaEdtech.UI.Web.Areas.Admin.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
 
     using Asp.Versioning;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Specification.Impl;
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification.Impl;
 
-    using GamaEdtech.Backend.Data.Dto.Grade;
-    using GamaEdtech.Backend.Data.Entity;
-    using GamaEdtech.Backend.Data.Specification.Grade;
-    using GamaEdtech.Backend.Data.ViewModel.Grade;
-    using GamaEdtech.Backend.Shared.Service;
+    using GamaEdtech.Data.Dto.Grade;
+    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Data.Specification.Grade;
+    using GamaEdtech.Data.ViewModel.Grade;
 
     using Microsoft.AspNetCore.Mvc;
 
-    [Backend.Common.DataAnnotation.Area(nameof(Admin), "Admin")]
+    [Common.DataAnnotation.Area(nameof(Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
     //[Permission(Roles = [nameof(Role.Admin)])]

@@ -1,11 +1,11 @@
-namespace GamaEdtech.Backend.Data.Specification.School
+namespace GamaEdtech.Data.Specification.School
 {
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
-    using GamaEdtech.Backend.Data.Entity;
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Entity;
+    using GamaEdtech.Data.Enumeration;
 
     public sealed class SchoolTypeEqualsSpecification(SchoolType schoolType) : SpecificationBase<School>
     {

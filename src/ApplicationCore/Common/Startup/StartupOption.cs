@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Startup
+namespace GamaEdtech.Common.Startup
 {
     using System;
     using System.Net.Http;

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Specification
+﻿namespace GamaEdtech.Common.DataAccess.Specification
 {
     public static class SpecificationExtensions
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GamaEdtech.Backend.Resource.Data.Enumeration {
+namespace GamaEdtech.Resource.Data.Enumeration {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GamaEdtech.Backend.Resource.Data.Enumeration {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Backend.Resource.Data.Enumeration.Role", typeof(Role).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GamaEdtech.Resource.Data.Enumeration.Role", typeof(Role).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

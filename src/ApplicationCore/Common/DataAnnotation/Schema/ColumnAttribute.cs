@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
+namespace GamaEdtech.Common.DataAnnotation.Schema
 {
     using System.Diagnostics.CodeAnalysis;
 
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Data;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class ColumnAttribute : System.ComponentModel.DataAnnotations.Schema.ColumnAttribute

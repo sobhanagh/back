@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.ModelBinding
+﻿namespace GamaEdtech.Common.ModelBinding
 {
     using System;
 

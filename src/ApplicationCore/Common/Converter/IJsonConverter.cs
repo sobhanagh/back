@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Converter
+﻿namespace GamaEdtech.Common.Converter
 {
     public interface IJsonConverter
     {

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Caching
+namespace GamaEdtech.Common.Caching
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -6,12 +6,12 @@ namespace GamaEdtech.Backend.Common.Caching
     using System.Text.Json;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Converter;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Converter;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.Extensions.Caching.Distributed;
-    using GamaEdtech.Backend.Common.Core.Extensions;
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Core.Extensions;
+    using GamaEdtech.Common.Data.Enumeration;
 
     [ServiceLifetime(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public class DistributedCacheProvider : ICacheProvider

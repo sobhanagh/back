@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Common.Data
+namespace GamaEdtech.Common.Data
 {
     using System.Collections.Generic;
 
-    using static GamaEdtech.Backend.Common.Core.Constants;
+    using static GamaEdtech.Common.Core.Constants;
 
     public struct ResultData<T>(OperationResult operationResult)
     {

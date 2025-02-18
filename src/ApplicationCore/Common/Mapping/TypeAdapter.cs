@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Mapping
+﻿namespace GamaEdtech.Common.Mapping
 {
     public static class TypeAdapter
     {

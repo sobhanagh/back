@@ -1,7 +1,7 @@
-namespace GamaEdtech.Backend.Data.Enumeration
+namespace GamaEdtech.Data.Enumeration
 {
-    using GamaEdtech.Backend.Common.Data.Enumeration;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Data.Enumeration;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class LocationType : Enumeration<byte>
     {

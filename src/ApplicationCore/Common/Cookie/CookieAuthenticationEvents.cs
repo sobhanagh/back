@@ -1,11 +1,11 @@
-namespace GamaEdtech.Backend.Common.Cookie
+namespace GamaEdtech.Common.Cookie
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;

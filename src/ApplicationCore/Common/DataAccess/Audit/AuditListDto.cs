@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Audit
+﻿namespace GamaEdtech.Common.DataAccess.Audit
 {
     using System;
 

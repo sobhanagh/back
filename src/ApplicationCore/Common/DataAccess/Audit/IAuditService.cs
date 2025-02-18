@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Audit
+namespace GamaEdtech.Common.DataAccess.Audit
 {
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAccess.Specification;
+    using GamaEdtech.Common.Data;
 
     [Injectable]
     public interface IAuditService

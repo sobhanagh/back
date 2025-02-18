@@ -1,12 +1,12 @@
-namespace GamaEdtech.Backend.Common.Localization
+namespace GamaEdtech.Common.Localization
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Core.Extensions.Collections;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Localization;

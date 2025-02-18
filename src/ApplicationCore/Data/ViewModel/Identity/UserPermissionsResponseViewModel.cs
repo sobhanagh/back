@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Identity
+namespace GamaEdtech.Data.ViewModel.Identity
 {
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Enumeration;
 
-    using GamaEdtech.Backend.Common.Converter;
+    using GamaEdtech.Common.Converter;
 
     using System.Text.Json.Serialization;
 

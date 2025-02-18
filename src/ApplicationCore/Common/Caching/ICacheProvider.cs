@@ -1,13 +1,13 @@
-namespace GamaEdtech.Backend.Common.Caching
+namespace GamaEdtech.Common.Caching
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.Extensions.Caching.Distributed;
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     [Injectable]
     public interface ICacheProvider

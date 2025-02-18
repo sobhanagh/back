@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Subject
+namespace GamaEdtech.Data.ViewModel.Subject
 {
     public sealed class SubjectResponseViewModel
     {

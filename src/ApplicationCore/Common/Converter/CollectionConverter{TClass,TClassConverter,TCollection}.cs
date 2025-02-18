@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Converter
+namespace GamaEdtech.Common.Converter
 {
     using System;
     using System.Collections.Generic;

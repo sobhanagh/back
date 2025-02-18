@@ -1,13 +1,13 @@
-namespace GamaEdtech.Backend.Data.Entity
+namespace GamaEdtech.Data.Entity
 {
     using System.Diagnostics.CodeAnalysis;
 
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
-    using GamaEdtech.Backend.Data.Entity.Identity;
+    using GamaEdtech.Data.Entity.Identity;
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

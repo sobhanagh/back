@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+﻿namespace GamaEdtech.Common.DataAnnotation
 {
     public enum LabelPosition
     {

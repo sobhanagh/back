@@ -1,9 +1,9 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Specification
+﻿namespace GamaEdtech.Common.DataAccess.Specification
 {
     using System;
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.Core.Extensions.Linq;
+    using GamaEdtech.Common.Core.Extensions.Linq;
 
     public class AndSpecification<T>(ISpecification<T> left, ISpecification<T> right) : SpecificationBase<T>
     {

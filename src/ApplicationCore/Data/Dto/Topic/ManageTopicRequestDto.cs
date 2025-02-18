@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.Topic
+namespace GamaEdtech.Data.Dto.Topic
 {
     public sealed class ManageTopicRequestDto
     {

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Data.Enumeration
+namespace GamaEdtech.Common.Data.Enumeration
 {
     using System;
     using System.Collections.Generic;

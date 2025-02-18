@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Common.Identity
+namespace GamaEdtech.Common.Identity
 {
-    using GamaEdtech.Backend.Common.Resources;
+    using GamaEdtech.Common.Resources;
 
     using Microsoft.AspNetCore.Identity;
 

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.Identity
+namespace GamaEdtech.Data.Dto.Identity
 {
     public class SignInResponseDto
     {

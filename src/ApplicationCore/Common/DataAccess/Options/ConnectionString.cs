@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Options
+namespace GamaEdtech.Common.DataAccess.Options
 {
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Data;
 
     public class ConnectionString(DbProviderType providerType, string? host, string? dbIdentifier, string? user, string? password, ushort? port = null, Dictionary<string, string>? parameters = null)
     {

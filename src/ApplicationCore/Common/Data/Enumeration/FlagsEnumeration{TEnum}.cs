@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Data.Enumeration
+namespace GamaEdtech.Common.Data.Enumeration
 {
     using System;
     using System.Collections;
@@ -8,7 +8,7 @@ namespace GamaEdtech.Backend.Common.Data.Enumeration
     using System.Linq;
     using System.Reflection;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     public abstract class FlagsEnumeration<TEnum>
         where TEnum : FlagsEnumeration<TEnum>, new()

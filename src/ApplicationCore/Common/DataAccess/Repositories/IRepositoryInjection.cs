@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Repositories
+﻿namespace GamaEdtech.Common.DataAccess.Repositories
 {
     using Microsoft.EntityFrameworkCore;
 

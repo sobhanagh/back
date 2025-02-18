@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Startup
+namespace GamaEdtech.Common.Startup
 {
     using System;
     using System.Collections.Generic;
@@ -10,20 +10,20 @@ namespace GamaEdtech.Backend.Common.Startup
     using System.Text.Encodings.Web;
     using System.Text.Unicode;
 
-    using GamaEdtech.Backend.Common.Converter;
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Context;
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.Identity;
-    using GamaEdtech.Backend.Common.Identity.DataProtection;
-    using GamaEdtech.Backend.Common.Localization;
-    using GamaEdtech.Backend.Common.Logging;
-    using GamaEdtech.Backend.Common.Mapping;
-    using GamaEdtech.Backend.Common.ModelBinding;
-    using GamaEdtech.Backend.Common.Mvc.Routing;
-    using GamaEdtech.Backend.Common.Resources;
+    using GamaEdtech.Common.Converter;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Core.Extensions.Collections;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Context;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.Identity;
+    using GamaEdtech.Common.Identity.DataProtection;
+    using GamaEdtech.Common.Localization;
+    using GamaEdtech.Common.Logging;
+    using GamaEdtech.Common.Mapping;
+    using GamaEdtech.Common.ModelBinding;
+    using GamaEdtech.Common.Mvc.Routing;
+    using GamaEdtech.Common.Resources;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.School
+namespace GamaEdtech.Data.Dto.School
 {
     public sealed class SchoolsDto
     {

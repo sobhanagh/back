@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation.Schema
+namespace GamaEdtech.Common.DataAnnotation.Schema
 {
     using System;
 

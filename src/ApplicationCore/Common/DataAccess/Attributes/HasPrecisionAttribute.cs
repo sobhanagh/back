@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Attributes
+﻿namespace GamaEdtech.Common.DataAccess.Attributes
 {
     using System;
 

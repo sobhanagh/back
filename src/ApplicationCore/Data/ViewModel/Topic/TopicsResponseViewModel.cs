@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Topic
+namespace GamaEdtech.Data.ViewModel.Topic
 {
     public sealed class TopicsResponseViewModel
     {

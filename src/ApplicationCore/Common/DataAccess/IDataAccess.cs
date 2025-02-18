@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAccess
+namespace GamaEdtech.Common.DataAccess
 {
     public interface IDataAccess
     {

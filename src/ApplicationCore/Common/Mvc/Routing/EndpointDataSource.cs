@@ -1,11 +1,11 @@
-﻿namespace GamaEdtech.Backend.Common.Mvc.Routing
+﻿namespace GamaEdtech.Common.Mvc.Routing
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.Identity;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.Identity;
 
     using Microsoft.AspNetCore.Mvc.Controllers;
 

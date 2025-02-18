@@ -1,9 +1,9 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Common.DataAnnotation
 {
     using System.Collections.Generic;
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public sealed class NationalCodeAttribute : ValidationAttribute

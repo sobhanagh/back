@@ -1,11 +1,11 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+﻿namespace GamaEdtech.Common.Data
 {
     using System.Collections;
     using System.Collections.Generic;
     using System.Data;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     public class GridDataSource
     {

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Converter.Enum
+namespace GamaEdtech.Common.Converter.Enum
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -9,8 +9,8 @@ namespace GamaEdtech.Backend.Common.Converter.Enum
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.Core.Extensions;
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections;
+    using GamaEdtech.Common.Core.Extensions;
+    using GamaEdtech.Common.Core.Extensions.Collections;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
     public readonly record struct EnumData<TEnum>(ReadOnlyMemory<char> Name, TEnum Value, ulong UInt64Value)

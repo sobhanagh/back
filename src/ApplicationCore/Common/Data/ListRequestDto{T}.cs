@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+﻿namespace GamaEdtech.Common.Data
 {
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
     public class ListRequestDto<T>
     {

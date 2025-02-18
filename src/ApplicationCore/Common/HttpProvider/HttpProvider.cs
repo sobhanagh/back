@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.HttpProvider
+namespace GamaEdtech.Common.HttpProvider
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace GamaEdtech.Backend.Common.HttpProvider
     using System.Net.Http.Json;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     public sealed class HttpProvider(Lazy<IHttpClientFactory> httpClientFactory) : IHttpProvider
     {

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Localization
+namespace GamaEdtech.Common.Localization
 {
     using System;
     using System.Collections.Concurrent;
@@ -7,7 +7,7 @@ namespace GamaEdtech.Backend.Common.Localization
     using System.Reflection;
     using System.Resources;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;

@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Grade
+namespace GamaEdtech.Data.ViewModel.Grade
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class ManageGradeRequestViewModel
     {

@@ -1,10 +1,10 @@
-﻿namespace GamaEdtech.Backend.Common.Service.Factory
+﻿namespace GamaEdtech.Common.Service.Factory
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     public class GenericFactory<TProvider, TProviderType>(IEnumerable<TProvider> providers) : IGenericFactory<TProvider, TProviderType>
         where TProvider : IProvider<TProviderType>

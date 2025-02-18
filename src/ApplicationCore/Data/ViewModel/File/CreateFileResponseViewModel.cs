@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.ViewModel.File
+namespace GamaEdtech.Data.ViewModel.File
 {
     public sealed class CreateFileResponseViewModel
     {

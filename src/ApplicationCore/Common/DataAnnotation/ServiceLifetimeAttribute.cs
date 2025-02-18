@@ -1,10 +1,10 @@
-﻿namespace GamaEdtech.Backend.Common.DataAnnotation
+﻿namespace GamaEdtech.Common.DataAnnotation
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     using Microsoft.Extensions.DependencyInjection;
 

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.File
+namespace GamaEdtech.Data.Dto.File
 {
     using Microsoft.AspNetCore.Http;
 

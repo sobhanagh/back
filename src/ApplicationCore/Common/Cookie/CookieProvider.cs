@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Cookie
+namespace GamaEdtech.Common.Cookie
 {
     using System;
     using System.IO;
@@ -6,12 +6,12 @@ namespace GamaEdtech.Backend.Common.Cookie
     using System.Text.Json;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Hosting;
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     [ServiceLifetime(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Singleton)]
     public class CookieProvider(IHttpContextAccessor httpContextAccessor, IWebHostEnvironment webHostEnvironment) : ICookieProvider

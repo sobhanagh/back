@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Core.Extensions.Linq
+namespace GamaEdtech.Common.Core.Extensions.Linq
 {
     using System;
     using System.Collections;
@@ -8,8 +8,8 @@ namespace GamaEdtech.Backend.Common.Core.Extensions.Linq
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Core.Extensions.Collections;
+    using GamaEdtech.Common.Data;
 
     using Microsoft.EntityFrameworkCore;
 

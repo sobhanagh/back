@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.ModelBinding
+namespace GamaEdtech.Common.ModelBinding
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 

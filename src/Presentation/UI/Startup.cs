@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.UI.Web
+namespace GamaEdtech.UI.Web
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
@@ -6,12 +6,12 @@ namespace GamaEdtech.Backend.UI.Web
     using Asp.Versioning;
     using Asp.Versioning.ApiExplorer;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Identity;
-    using GamaEdtech.Backend.Common.Startup;
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Identity;
+    using GamaEdtech.Common.Startup;
 
-    using GamaEdtech.Backend.Data.Entity.Identity;
-    using GamaEdtech.Backend.Shared.Service;
+    using GamaEdtech.Data.Entity.Identity;
 
     using Microsoft.OpenApi.Models;
 
@@ -27,7 +27,7 @@ namespace GamaEdtech.Backend.UI.Web
             Identity = true,
         })
     {
-        public const string DefaultNamespace = "GamaEdtech.Backend";
+        public const string DefaultNamespace = "GamaEdtech";
 
         private static readonly Lazy<IServiceProvider?> ServicesList = new(Common.Hosting.Host.CreateHost<Startup>([])?.Services);
         private const string AllowCorsPolicy = "allowCorsPolicy";

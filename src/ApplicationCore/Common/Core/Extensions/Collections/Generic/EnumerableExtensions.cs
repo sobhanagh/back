@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Core.Extensions.Collections.Generic
+﻿namespace GamaEdtech.Common.Core.Extensions.Collections.Generic
 {
     using System;
     using System.Collections.Generic;
@@ -6,8 +6,8 @@
     using System.Linq.Dynamic.Core;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core.Extensions.Linq;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Core.Extensions.Linq;
+    using GamaEdtech.Common.Data;
 
     public static class EnumerableExtensions
     {

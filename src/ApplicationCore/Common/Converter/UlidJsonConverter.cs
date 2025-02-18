@@ -1,11 +1,11 @@
-namespace GamaEdtech.Backend.Common.Converter
+namespace GamaEdtech.Common.Converter
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.Resources;
+    using GamaEdtech.Common.Resources;
 
     using NUlid;
 

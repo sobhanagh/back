@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.Dto.Location
+namespace GamaEdtech.Data.Dto.Location
 {
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Enumeration;
 
     public sealed class ManageLocationRequestDto
     {

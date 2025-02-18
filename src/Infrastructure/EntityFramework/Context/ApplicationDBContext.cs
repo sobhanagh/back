@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Infrastructure.EntityFramework.Context
+namespace GamaEdtech.Infrastructure.EntityFramework.Context
 {
-    using GamaEdtech.Backend.Data.Entity.Identity;
+    using GamaEdtech.Data.Entity.Identity;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using global::EntityFramework.Exceptions.SqlServer;
 

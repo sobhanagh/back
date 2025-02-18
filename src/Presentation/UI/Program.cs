@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.UI.Web
+namespace GamaEdtech.UI.Web
 {
-    using GamaEdtech.Backend.Data.Entity.Identity;
+    using GamaEdtech.Data.Entity.Identity;
 
     using System.Threading.Tasks;
 

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <AssemblyAttribute Include="GamaEdtech.Common.DataAnnotation.InjectableAttribute">
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApplicationCore\Common\GamaEdtech.Common.csproj" />
+    <ProjectReference Include="..\..\ApplicationCore\Data\GamaEdtech.Data.csproj" />
+  </ItemGroup>
+
+</Project>

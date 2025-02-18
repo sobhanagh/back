@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Data.Specification.Location
+namespace GamaEdtech.Data.Specification.Location
 {
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
-    using GamaEdtech.Backend.Data.Entity;
+    using GamaEdtech.Data.Entity;
 
     public sealed class CodeContainsSpecification(string code) : SpecificationBase<Location>
     {

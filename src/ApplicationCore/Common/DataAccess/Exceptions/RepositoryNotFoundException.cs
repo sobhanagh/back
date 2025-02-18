@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Exceptions
+﻿namespace GamaEdtech.Common.DataAccess.Exceptions
 {
     using System;
 

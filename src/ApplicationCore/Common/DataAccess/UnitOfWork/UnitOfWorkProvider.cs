@@ -1,14 +1,14 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.UnitOfWork
+﻿namespace GamaEdtech.Common.DataAccess.UnitOfWork
 {
     using System;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
-    using GamaEdtech.Backend.Common.DataAccess.Context;
-    using GamaEdtech.Backend.Common.DataAccess;
+    using GamaEdtech.Common.DataAccess.Context;
+    using GamaEdtech.Common.DataAccess;
 
     [ServiceLifetime(ServiceLifetime.Scoped)]
     public class UnitOfWorkProvider : IUnitOfWorkProvider

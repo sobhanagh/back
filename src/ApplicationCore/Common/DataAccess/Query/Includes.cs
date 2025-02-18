@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Query
+﻿namespace GamaEdtech.Common.DataAccess.Query
 {
     using System;
     using System.Linq;

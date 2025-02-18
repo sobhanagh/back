@@ -1,7 +1,7 @@
-﻿namespace GamaEdtech.Backend.Data.ViewModel.Identity
+﻿namespace GamaEdtech.Data.ViewModel.Identity
 {
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class ConsumersRequestViewModel
     {

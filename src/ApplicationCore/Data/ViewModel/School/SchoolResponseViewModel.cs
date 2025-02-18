@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.ViewModel.School
+namespace GamaEdtech.Data.ViewModel.School
 {
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Enumeration;
 
     public sealed class SchoolResponseViewModel
     {

@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Identity
+namespace GamaEdtech.Common.Identity
 {
     public static class PermissionConstants
     {

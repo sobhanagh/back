@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.Data
+﻿namespace GamaEdtech.Common.Data
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
-    using static GamaEdtech.Backend.Common.Core.Constants;
+    using static GamaEdtech.Common.Core.Constants;
 
     public sealed class SortFilter
     {

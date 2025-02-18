@@ -1,26 +1,26 @@
-namespace GamaEdtech.Backend.UI.Web.Areas.Admin.Controllers
+namespace GamaEdtech.UI.Web.Areas.Admin.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     using Asp.Versioning;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAccess.Specification.Impl;
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.Identity;
-    using GamaEdtech.Backend.Common.Mvc.Routing;
-    using GamaEdtech.Backend.Data.Dto.Identity;
-    using GamaEdtech.Backend.Data.Entity.Identity;
-    using GamaEdtech.Backend.Data.Enumeration;
-    using GamaEdtech.Backend.Data.ViewModel.Identity;
-    using GamaEdtech.Backend.Shared.Service;
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification.Impl;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.Identity;
+    using GamaEdtech.Common.Mvc.Routing;
+    using GamaEdtech.Data.Dto.Identity;
+    using GamaEdtech.Data.Entity.Identity;
+    using GamaEdtech.Data.Enumeration;
+    using GamaEdtech.Data.ViewModel.Identity;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
 
-    using static GamaEdtech.Backend.Common.Core.Constants;
+    using static GamaEdtech.Common.Core.Constants;
 
     [Common.DataAnnotation.Area(nameof(Role.Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]

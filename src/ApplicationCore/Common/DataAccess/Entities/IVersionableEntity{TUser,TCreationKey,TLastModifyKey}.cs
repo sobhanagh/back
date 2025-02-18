@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Entities
+﻿namespace GamaEdtech.Common.DataAccess.Entities
 {
     using System;
 

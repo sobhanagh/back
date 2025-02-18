@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Data.Specification.Subject
+namespace GamaEdtech.Data.Specification.Subject
 {
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
-    using GamaEdtech.Backend.Data.Entity;
+    using GamaEdtech.Data.Entity;
 
     public sealed class GradeIdEqualsSpecification(int gradeId) : SpecificationBase<Subject>
     {

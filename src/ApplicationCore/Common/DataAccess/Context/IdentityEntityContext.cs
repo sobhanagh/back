@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAccess.Context
+namespace GamaEdtech.Common.DataAccess.Context
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -7,16 +7,16 @@ namespace GamaEdtech.Backend.Common.DataAccess.Context
     using System.Threading;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
-    using GamaEdtech.Backend.Common.Core.Extensions.Collections;
-    using GamaEdtech.Backend.Common.DataAccess;
-    using GamaEdtech.Backend.Common.DataAccess.Audit;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAccess.ValueConversion;
-    using GamaEdtech.Backend.Common.DataAccess.ValueGeneration;
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Common.Core.Extensions.Collections;
+    using GamaEdtech.Common.DataAccess;
+    using GamaEdtech.Common.DataAccess.Audit;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAccess.ValueConversion;
+    using GamaEdtech.Common.DataAccess.ValueGeneration;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;

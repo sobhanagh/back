@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.ValueGeneration
+﻿namespace GamaEdtech.Common.DataAccess.ValueGeneration
 {
     using Microsoft.EntityFrameworkCore.ChangeTracking;
     using Microsoft.EntityFrameworkCore.ValueGeneration;

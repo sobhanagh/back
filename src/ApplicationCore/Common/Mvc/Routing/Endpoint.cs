@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Mvc.Routing
+﻿namespace GamaEdtech.Common.Mvc.Routing
 {
     using System.Collections.Generic;
 

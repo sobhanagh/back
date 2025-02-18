@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Common.Service.Factory
+﻿namespace GamaEdtech.Common.Service.Factory
 {
-    using GamaEdtech.Backend.Common.Data.Enumeration;
+    using GamaEdtech.Common.Data.Enumeration;
 
     public interface IProvider<T>
         where T : Enumeration<byte>

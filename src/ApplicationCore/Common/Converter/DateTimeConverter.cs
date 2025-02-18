@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Converter
+namespace GamaEdtech.Common.Converter
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -8,13 +8,13 @@ namespace GamaEdtech.Backend.Common.Converter
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
-    using GamaEdtech.Backend.Common.TimeZone;
+    using GamaEdtech.Common.TimeZone;
 
     using Microsoft.Extensions.DependencyInjection;
 
-    using static GamaEdtech.Backend.Common.Core.Constants;
+    using static GamaEdtech.Common.Core.Constants;
 
     public class DateTimeConverter<T>(string? format, FormatProvider? formatProvider) : JsonConverter<T>
     {

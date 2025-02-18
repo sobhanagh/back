@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Identity
+﻿namespace GamaEdtech.Common.Identity
 {
     using System;
     using System.Security.Claims;
@@ -10,7 +10,7 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
 
-    using static GamaEdtech.Backend.Common.Core.Constants;
+    using static GamaEdtech.Common.Core.Constants;
 
     public class TokenAuthenticationHandler(IOptionsMonitor<TokenAuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
         : AuthenticationHandler<TokenAuthenticationSchemeOptions>(options, logger, encoder)

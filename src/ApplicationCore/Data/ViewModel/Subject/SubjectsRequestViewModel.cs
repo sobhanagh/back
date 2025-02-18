@@ -1,7 +1,7 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Subject
+namespace GamaEdtech.Data.ViewModel.Subject
 {
-    using GamaEdtech.Backend.Common.Data;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class SubjectsRequestViewModel
     {

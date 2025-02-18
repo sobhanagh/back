@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.Logging
+﻿namespace GamaEdtech.Common.Logging
 {
     using Microsoft.Extensions.Logging;
 

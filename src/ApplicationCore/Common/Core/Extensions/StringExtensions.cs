@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Core.Extensions
+namespace GamaEdtech.Common.Core.Extensions
 {
     using System;
     using System.Collections.Generic;

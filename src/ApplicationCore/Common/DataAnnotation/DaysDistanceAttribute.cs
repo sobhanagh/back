@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.DataAnnotation
+namespace GamaEdtech.Common.DataAnnotation
 {
     using System;
     using System.ComponentModel.DataAnnotations;
@@ -8,7 +8,7 @@ namespace GamaEdtech.Backend.Common.DataAnnotation
 
     using DynamicExpresso;
 
-    using GamaEdtech.Backend.Common.Core;
+    using GamaEdtech.Common.Core;
 
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class DaysDistanceAttribute : ValidationAttribute

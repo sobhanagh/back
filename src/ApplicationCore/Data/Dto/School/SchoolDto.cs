@@ -1,6 +1,6 @@
-namespace GamaEdtech.Backend.Data.Dto.School
+namespace GamaEdtech.Data.Dto.School
 {
-    using GamaEdtech.Backend.Data.Enumeration;
+    using GamaEdtech.Data.Enumeration;
 
     public sealed class SchoolDto
     {

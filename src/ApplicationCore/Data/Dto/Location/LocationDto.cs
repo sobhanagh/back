@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.Location
+namespace GamaEdtech.Data.Dto.Location
 {
     public sealed class LocationDto
     {

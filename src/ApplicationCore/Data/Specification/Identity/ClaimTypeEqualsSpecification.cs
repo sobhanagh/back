@@ -1,8 +1,8 @@
-namespace GamaEdtech.Backend.Data.Specification.Identity
+namespace GamaEdtech.Data.Specification.Identity
 {
-    using GamaEdtech.Backend.Data.Entity.Identity;
+    using GamaEdtech.Data.Entity.Identity;
 
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
     using System.Linq.Expressions;
 

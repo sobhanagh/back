@@ -1,12 +1,12 @@
-namespace GamaEdtech.Backend.Common.Logging
+namespace GamaEdtech.Common.Logging
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Data;
 
     using Microsoft.AspNetCore.Diagnostics;
     using Microsoft.AspNetCore.Http;

@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.HttpProvider
+﻿namespace GamaEdtech.Common.HttpProvider
 {
     using System.Collections.Generic;
 

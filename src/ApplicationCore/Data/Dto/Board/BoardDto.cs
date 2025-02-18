@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.Board
+namespace GamaEdtech.Data.Dto.Board
 {
     public sealed class BoardDto
     {

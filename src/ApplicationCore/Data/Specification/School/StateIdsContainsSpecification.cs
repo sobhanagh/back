@@ -1,11 +1,11 @@
-namespace GamaEdtech.Backend.Data.Specification.School
+namespace GamaEdtech.Data.Specification.School
 {
     using System.Linq;
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification;
 
-    using GamaEdtech.Backend.Data.Entity;
+    using GamaEdtech.Data.Entity;
 
     public sealed class StateIdsContainsSpecification(IEnumerable<int> stateIds) : SpecificationBase<School>
     {

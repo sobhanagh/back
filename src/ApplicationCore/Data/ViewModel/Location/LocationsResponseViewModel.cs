@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.ViewModel.Location
+namespace GamaEdtech.Data.ViewModel.Location
 {
     public sealed class LocationsResponseViewModel
     {

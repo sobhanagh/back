@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Data
+namespace GamaEdtech.Common.Data
 {
     public class ParameterDto<T>
     {

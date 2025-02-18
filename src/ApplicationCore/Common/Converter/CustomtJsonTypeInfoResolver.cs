@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Converter
+namespace GamaEdtech.Common.Converter
 {
     using System;
     using System.Linq;
@@ -6,8 +6,8 @@ namespace GamaEdtech.Backend.Common.Converter
     using System.Text.Json;
     using System.Text.Json.Serialization.Metadata;
 
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.DataAnnotation;
 
     internal sealed class CustomtJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
     {

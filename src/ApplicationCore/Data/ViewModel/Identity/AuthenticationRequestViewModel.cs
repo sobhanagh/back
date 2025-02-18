@@ -1,6 +1,6 @@
-﻿namespace GamaEdtech.Backend.Data.ViewModel.Identity
+﻿namespace GamaEdtech.Data.ViewModel.Identity
 {
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     public sealed class AuthenticationRequestViewModel
     {

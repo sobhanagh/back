@@ -1,10 +1,10 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.Specification
+﻿namespace GamaEdtech.Common.DataAccess.Specification
 {
     using System;
     using System.Linq;
     using System.Linq.Expressions;
 
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Data;
 
     public abstract class SpecificationBase<T> : ISpecification<T>
     {

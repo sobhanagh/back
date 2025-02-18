@@ -1,8 +1,8 @@
-﻿namespace GamaEdtech.Backend.Common.Infrastructure
+﻿namespace GamaEdtech.Common.Infrastructure
 {
     using System;
 
-    using GamaEdtech.Backend.Common.HttpProvider;
+    using GamaEdtech.Common.HttpProvider;
 
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;

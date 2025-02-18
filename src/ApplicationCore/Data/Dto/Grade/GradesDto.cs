@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Data.Dto.Grade
+namespace GamaEdtech.Data.Dto.Grade
 {
     public sealed class GradesDto
     {

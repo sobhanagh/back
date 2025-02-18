@@ -1,4 +1,4 @@
-namespace GamaEdtech.Backend.Common.Converter.Enum
+namespace GamaEdtech.Common.Converter.Enum
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

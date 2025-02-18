@@ -1,10 +1,10 @@
-namespace GamaEdtech.Backend.Common.Swagger
+namespace GamaEdtech.Common.Swagger
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
 
-    using GamaEdtech.Backend.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation;
 
     using Microsoft.AspNetCore.Mvc.Controllers;
     using Microsoft.OpenApi.Models;

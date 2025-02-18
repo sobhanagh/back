@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Common.DataAccess.ValueConversion
+﻿namespace GamaEdtech.Common.DataAccess.ValueConversion
 {
     using System;
     using System.Linq.Expressions;

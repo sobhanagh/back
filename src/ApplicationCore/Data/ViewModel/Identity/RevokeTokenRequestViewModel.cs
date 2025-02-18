@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Backend.Data.ViewModel.Identity
+﻿namespace GamaEdtech.Data.ViewModel.Identity
 {
 #pragma warning disable S2094 // Classes should not be empty
     public sealed class RevokeTokenRequestViewModel

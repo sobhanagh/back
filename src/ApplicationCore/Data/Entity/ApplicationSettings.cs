@@ -1,15 +1,15 @@
-namespace GamaEdtech.Backend.Data.Entity
+namespace GamaEdtech.Data.Entity
 {
-    using GamaEdtech.Backend.Data.Entity.Identity;
-    using GamaEdtech.Backend.Common.DataAccess.Entities;
-    using GamaEdtech.Backend.Common.DataAnnotation;
-    using GamaEdtech.Backend.Common.DataAnnotation.Schema;
+    using GamaEdtech.Data.Entity.Identity;
+    using GamaEdtech.Common.DataAccess.Entities;
+    using GamaEdtech.Common.DataAnnotation;
+    using GamaEdtech.Common.DataAnnotation.Schema;
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     using System.Diagnostics.CodeAnalysis;
-    using GamaEdtech.Backend.Common.Core;
-    using GamaEdtech.Backend.Common.Data;
+    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Data;
 
     [Table(nameof(ApplicationSettings))]
     [Audit((int)Constants.EntityType.ApplicationSetting)]
