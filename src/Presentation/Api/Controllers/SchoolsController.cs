@@ -254,7 +254,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPut("{schoolId:int}/comments/{commentId:long}/like"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("{schoolId:int}/comments/{commentId:long}/like"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> LikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
         {
             try
@@ -276,7 +276,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPut("{schoolId:int}/comments/{commentId:long}/dislike"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("{schoolId:int}/comments/{commentId:long}/dislike"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> DislikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
         {
             try
