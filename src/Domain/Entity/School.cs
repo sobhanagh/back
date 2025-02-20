@@ -89,6 +89,8 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(Facilities), DataType.UnicodeMaxString)]
         public string? Facilities { get; set; }
 
+        public virtual ICollection<SchoolComment>? Comments { get; set; }
+
         public void Configure([NotNull] EntityTypeBuilder<School> builder)
         {
             _ = builder.OwnEnumeration<School, SchoolType, byte>(t => t.SchoolType);

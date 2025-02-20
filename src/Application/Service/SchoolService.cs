@@ -5,12 +5,13 @@ namespace GamaEdtech.Application.Service
 
     using EntityFramework.Exceptions.Common;
 
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Core.Extensions.Linq;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
-    using GamaEdtech.Common.Core;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
 
@@ -20,7 +21,6 @@ namespace GamaEdtech.Application.Service
     using Microsoft.Extensions.Logging;
 
     using static GamaEdtech.Common.Core.Constants;
-    using GamaEdtech.Application.Interface;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger)
@@ -195,6 +195,187 @@ namespace GamaEdtech.Application.Service
             catch (ReferenceConstraintException)
             {
                 return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["SchoolCantBeRemoved"], },] };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<SchoolRateDto>> GetSchoolRateAsync([NotNull] ISpecification<SchoolComment> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var result = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                    .GroupBy(t => t.SchoolId)
+                    .Select(t => new SchoolRateDto
+                    {
+                        AverageRate = t.Average(c => c.AverageRate),
+                        TuitionRatioRate = t.Average(c => c.TuitionRatioRate),
+                        SafetyAndHappinessRate = t.Average(c => c.SafetyAndHappinessRate),
+                        ITTrainingRate = t.Average(c => c.ITTrainingRate),
+                        FacilitiesRate = t.Average(c => c.FacilitiesRate),
+                        EducationRate = t.Average(c => c.EducationRate),
+                        ClassesQualityRate = t.Average(c => c.ClassesQualityRate),
+                        BehaviorRate = t.Average(c => c.BehaviorRate),
+                        ArtisticActivitiesRate = t.Average(c => c.ArtisticActivitiesRate),
+                    }).FirstOrDefaultAsync();
+
+                return result is null
+                    ? new(OperationResult.NotFound)
+                    {
+                        Errors = [new() { Message = Localizer.Value["SchoolNotFound"] },],
+                    }
+                    : new(OperationResult.Succeeded) { Data = result };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
+        public async Task<ResultData<ListDataSource<SchoolCommentDto>>> GetSchoolCommentsAsync(ListRequestDto<SchoolComment>? requestDto = null)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var result = await uow.GetRepository<SchoolComment>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
+                var users = await result.List.Select(t => new SchoolCommentDto
+                {
+                    Id = t.Id,
+                    Comment = t.Comment,
+                    CreationUser = t.CreationUser!.FullName,
+                    CreationUserAvatar = t.CreationUser!.Avatar,
+                    CreationDate = t.CreationDate,
+                    LikeCount = t.LikeCount,
+                    DislikeCount = t.DislikeCount,
+                    AverageRate = t.AverageRate,
+
+                }).ToListAsync();
+                return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
+        public async Task<ResultData<long>> ManageSchoolCommentAsync([NotNull] ManageSchoolCommentRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<SchoolComment>();
+                SchoolComment? schoolComment = null;
+
+                if (requestDto.Id.HasValue)
+                {
+                    schoolComment = await repository.GetAsync(requestDto.Id.Value);
+                    if (schoolComment is null)
+                    {
+                        return new(OperationResult.NotFound)
+                        {
+                            Errors = [new() { Message = Localizer.Value["SchoolCommentNotFound"] },],
+                        };
+                    }
+
+                    schoolComment.Comment = requestDto.Comment;
+                    schoolComment.CreationDate = requestDto.CreationDate;
+                    schoolComment.CreationUserId = requestDto.CreationUserId;
+
+                    schoolComment.ArtisticActivitiesRate = requestDto.ArtisticActivitiesRate;
+                    schoolComment.BehaviorRate = requestDto.BehaviorRate;
+                    schoolComment.ClassesQualityRate = requestDto.ClassesQualityRate;
+                    schoolComment.EducationRate = requestDto.EducationRate;
+                    schoolComment.FacilitiesRate = requestDto.FacilitiesRate;
+                    schoolComment.ITTrainingRate = requestDto.ITTrainingRate;
+                    schoolComment.SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate;
+                    schoolComment.TuitionRatioRate = requestDto.TuitionRatioRate;
+                    schoolComment.AverageRate = Calculate(schoolComment);
+
+                    _ = repository.Update(schoolComment);
+                }
+                else
+                {
+                    schoolComment = new SchoolComment
+                    {
+                        SchoolId = requestDto.SchoolId,
+                        ArtisticActivitiesRate = requestDto.ArtisticActivitiesRate,
+                        BehaviorRate = requestDto.BehaviorRate,
+                        ClassesQualityRate = requestDto.ClassesQualityRate,
+                        Comment = requestDto.Comment,
+                        CreationDate = requestDto.CreationDate,
+                        CreationUserId = requestDto.CreationUserId,
+                        EducationRate = requestDto.EducationRate,
+                        FacilitiesRate = requestDto.FacilitiesRate,
+                        ITTrainingRate = requestDto.ITTrainingRate,
+                        SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate,
+                        TuitionRatioRate = requestDto.TuitionRatioRate,
+                    };
+                    schoolComment.AverageRate = Calculate(schoolComment);
+                    repository.Add(schoolComment);
+                }
+
+                _ = await uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = schoolComment.Id };
+
+                static double Calculate(SchoolComment comment) => (double)(
+                        comment.ArtisticActivitiesRate +
+                        comment.BehaviorRate +
+                        comment.ClassesQualityRate +
+                        comment.EducationRate +
+                        comment.FacilitiesRate +
+                        comment.ITTrainingRate +
+                        comment.SafetyAndHappinessRate +
+                        comment.TuitionRatioRate
+                        ) / 8;
+            }
+            catch (ReferenceConstraintException)
+            {
+                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InvalidData"], }] };
+            }
+            catch (UniqueConstraintException)
+            {
+                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["DuplicateData"], }] };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.LikeCount, p => p.LikeCount + 1));
+
+                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.DislikeCount, p => p.DislikeCount + 1));
+
+                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
             }
             catch (Exception exc)
             {
