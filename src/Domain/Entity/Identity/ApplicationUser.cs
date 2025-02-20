@@ -106,6 +106,20 @@ namespace GamaEdtech.Domain.Entity.Identity
         [Column(nameof(Enabled), DataType.Boolean)]
         public bool Enabled { get; set; }
 
+        [Column(nameof(FirstName), DataType.UnicodeString)]
+        [StringLength(100)]
+        public string? FirstName { get; set; }
+
+        [Column(nameof(LastName), DataType.UnicodeString)]
+        [StringLength(100)]
+        public string? LastName { get; set; }
+
+        [Column(nameof(Avatar), DataType.UnicodeMaxString)]
+        public string? Avatar { get; set; }
+
+        [NotMapped]
+        public string? FullName => FirstName + " " + LastName;
+
         public ICollection<ApplicationUserClaim>? UserClaims { get; set; }
 
         public ICollection<ApplicationUserLogin>? UserLogins { get; set; }
