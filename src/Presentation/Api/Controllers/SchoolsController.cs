@@ -21,31 +21,51 @@ namespace GamaEdtech.Presentation.Api.Controllers
     public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
         : ApiControllerBase<SchoolsController>(logger)
     {
-        [HttpGet, Produces<ApiResponse<ListDataSource<SchoolsResponseViewModel>>>()]
-        public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolsRequestViewModel request)
+        [HttpGet, Produces<ApiResponse<ListDataSource<SchoolsListResponseViewModel>>>()]
+        public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolsListRequestViewModel request)
         {
             try
             {
-                ISpecification<School>? specification = null;
-                if (request.CountryIds?.Any() == true)
+                ISpecification<School>? baseSpecification = null;
+                if (request.CountryId.HasValue)
                 {
-                    specification = new CountryIdsContainsSpecification(request.CountryIds);
+                    baseSpecification = new CountryIdEqualsSpecification(request.CountryId.Value);
                 }
-                if (request.StateIds?.Any() == true)
+                if (request.StateId.HasValue)
                 {
-                    var stateSpecification = new StateIdsContainsSpecification(request.StateIds);
-                    specification = specification is null ? stateSpecification : specification.And(stateSpecification);
+                    var specification = new StateIdEqualsSpecification(request.StateId.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
-                if (request.CityIds?.Any() == true)
+                if (request.CityId.HasValue)
                 {
-                    var citySpecification = new CityIdsContainsSpecification(request.CityIds);
-                    specification = specification is null ? citySpecification : specification.And(citySpecification);
+                    var specification = new CityIdEqualsSpecification(request.CityId.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+                if (!string.IsNullOrEmpty(request.Name))
+                {
+                    var specification = new NameContainsSpecification(request.Name);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+                if (request.Location is not null)
+                {
+                    var specification = new LocationIncludeSpecification(request.Location.Latitude!.Value, request.Location.Longitude!.Value, request.Location.Radius!.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+                if (request.SchoolType is not null)
+                {
+                    var specification = new SchoolTypeEqualsSpecification(request.SchoolType);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+                if (request.BoardId.HasValue)
+                {
+                    var specification = new BoardIdEqualsSpecification(request.BoardId.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
 
                 var result = await schoolService.Value.GetSchoolsAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = specification,
+                    Specification = baseSpecification,
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolsResponseViewModel>>
                 {
