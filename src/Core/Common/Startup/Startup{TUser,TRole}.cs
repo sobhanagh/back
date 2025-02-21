@@ -100,11 +100,11 @@ namespace GamaEdtech.Common.Startup
             {
                 _ = endpoints.MapControllerRoute(
                     name: "areaRoute",
-                    pattern: $"{(startupOption.Localization ? "{culture=fa}/" : string.Empty)}{{area:slugify:exists}}/{{controller:slugify=Home}}/{{action:slugify=Index}}/{{id?}}");
+                    pattern: $"{(startupOption.Localization ? "{culture=en}/" : string.Empty)}{{area:slugify:exists}}/{{controller:slugify=Home}}/{{action:slugify=Index}}/{{id?}}");
 
                 _ = endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: $"{(startupOption.Localization ? "{culture=fa}/" : string.Empty)}{{controller:slugify=Home}}/{{action:slugify=Index}}/{{id?}}");
+                    pattern: $"{(startupOption.Localization ? "{culture=en}/" : string.Empty)}{{controller:slugify=Home}}/{{action:slugify=Index}}/{{id?}}");
             });
         }
 

@@ -44,7 +44,7 @@ namespace GamaEdtech.Common.ModelBinding
                 TimeSpan GetTimeSpan()
                 {
                     var timeZoneId = bindingContext.HttpContext?.User.FindFirstValue(Constants.TimeZoneIdClaim) ?? Constants.UtcTimeZoneId;
-                    return bindingContext.HttpContext?.RequestServices.GetRequiredService<ITimeZoneProvider>().GetTimeZones()?.FirstOrDefault(t => t.Id == timeZoneId)?.BaseUtcOffset ?? Constants.IranBaseUtcOffset;
+                    return bindingContext.HttpContext?.RequestServices.GetRequiredService<ITimeZoneProvider>().GetTimeZones()?.FirstOrDefault(t => t.Id == timeZoneId)?.BaseUtcOffset ?? Constants.BaseUtcOffset;
                 }
             }
 

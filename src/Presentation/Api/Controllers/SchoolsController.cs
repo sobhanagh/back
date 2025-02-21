@@ -125,7 +125,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 return Ok(new ApiResponse<SchoolRateResponseViewModel>
                 {
                     Errors = result.Errors,
-                    Data = result.Data is null ? null : new()
+                    Data = result.Data is null ? new() : new()
                     {
                         ArtisticActivitiesRate = result.Data.ArtisticActivitiesRate,
                         AverageRate = result.Data.AverageRate,

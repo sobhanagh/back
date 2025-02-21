@@ -50,8 +50,6 @@ namespace GamaEdtech.Common.Core
             return ip?.AsSpan().Contains('.') == true && ip.AsSpan().Contains(':') ? ip.AsSpan(0, ip.AsSpan().IndexOf(':')).ToString() : ip;
         }
 
-        public static string? GetHeaderParameter(this HttpContext? httpContext, string key) => httpContext?.Request.Headers.TryGetValue(key, out var stringValues) == true ? stringValues.FirstOrDefault() : null;
-
         public static bool ValidateNationalCode(string? nationalCode)
         {
             try
@@ -655,11 +653,17 @@ namespace GamaEdtech.Common.Core
                 .Replace(".Application.Interface.", resourceAssembly + ".Application.Interface.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Application.Interface,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
+                .Replace(".Presentation.ViewModel.", resourceAssembly + ".Presentation.ViewModel.", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Presentation.ViewModel,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+
                 .Replace(".Shared.", resourceAssembly + ".Shared.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Shared,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
                 .Replace(".Data.", resourceAssembly + ".Data.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Data,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+
+                .Replace(".Domain.", resourceAssembly + ".Domain.", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Domain,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
                 .Replace(".Common.", resourceAssembly + ".Common.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Common,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)

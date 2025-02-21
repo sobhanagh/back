@@ -5,13 +5,13 @@ namespace GamaEdtech.Domain.Enumeration
 
     public sealed class LocationType : Enumeration<byte>
     {
-        [Display(Name = "Country")]
+        [Display]
         public static readonly LocationType Country = new(nameof(Country), 0, null);
 
-        [Display(Name = "State")]
+        [Display]
         public static readonly LocationType State = new(nameof(State), 1, Country);
 
-        [Display(Name = "City")]
+        [Display]
         public static readonly LocationType City = new(nameof(City), 2, State);
 
         public LocationType? ValidParentLocationType { get; }

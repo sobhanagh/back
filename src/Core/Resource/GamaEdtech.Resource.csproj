@@ -1,6 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
+      <Compile Update="Domain\Enumeration\LocationType.Designer.cs">
+        <DependentUpon>LocationType.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
+      <Compile Update="Domain\Enumeration\SchoolType.Designer.cs">
+        <DependentUpon>SchoolType.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+      </Compile>
       <Compile Update="Domain\Enumeration\Role.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
@@ -94,6 +104,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Update="Domain\Enumeration\LocationType.resx">
+        <LastGenOutput>LocationType.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Domain\Enumeration\SchoolType.resx">
+        <LastGenOutput>SchoolType.Designer.cs</LastGenOutput>
+        <Generator>PublicResXFileCodeGenerator</Generator>
+      </EmbeddedResource>
       <EmbeddedResource Update="Domain\Enumeration\Role.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>Role.Designer.cs</LastGenOutput>
