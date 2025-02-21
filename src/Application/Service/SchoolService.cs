@@ -223,12 +223,7 @@ namespace GamaEdtech.Application.Service
                         ArtisticActivitiesRate = t.Average(c => c.ArtisticActivitiesRate),
                     }).FirstOrDefaultAsync();
 
-                return result is null
-                    ? new(OperationResult.NotFound)
-                    {
-                        Errors = [new() { Message = Localizer.Value["SchoolNotFound"] },],
-                    }
-                    : new(OperationResult.Succeeded) { Data = result };
+                return new(OperationResult.Succeeded) { Data = result };
             }
             catch (Exception exc)
             {

@@ -50,8 +50,6 @@ namespace GamaEdtech.Common.Core
             return ip?.AsSpan().Contains('.') == true && ip.AsSpan().Contains(':') ? ip.AsSpan(0, ip.AsSpan().IndexOf(':')).ToString() : ip;
         }
 
-        public static string? GetHeaderParameter(this HttpContext? httpContext, string key) => httpContext?.Request.Headers.TryGetValue(key, out var stringValues) == true ? stringValues.FirstOrDefault() : null;
-
         public static bool ValidateNationalCode(string? nationalCode)
         {
             try

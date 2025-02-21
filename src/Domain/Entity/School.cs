@@ -97,6 +97,9 @@ namespace GamaEdtech.Domain.Entity
             _ = builder.HasOne(t => t.Country).WithMany().HasForeignKey(t => t.CountryId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.State).WithMany().HasForeignKey(t => t.StateId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.City).WithMany().HasForeignKey(t => t.CityId).OnDelete(DeleteBehavior.NoAction);
+
+            _ = builder.HasIndex(t => t.Latitude);
+            _ = builder.HasIndex(t => t.Longitude);
         }
     }
 }

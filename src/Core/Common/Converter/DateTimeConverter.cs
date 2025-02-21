@@ -130,7 +130,7 @@ namespace GamaEdtech.Common.Converter
         {
             var converter = options.Converters.OfType<ServiceProviderDummyConverter>().FirstOrDefault();
             var timeZoneId = converter?.HttpContextAccessor.HttpContext?.User.FindFirstValue(TimeZoneIdClaim) ?? UtcTimeZoneId;
-            return converter?.ServiceProvider?.GetRequiredService<ITimeZoneProvider>().GetTimeZones()?.FirstOrDefault(t => t.Id == timeZoneId)?.BaseUtcOffset ?? IranBaseUtcOffset;
+            return converter?.ServiceProvider?.GetRequiredService<ITimeZoneProvider>().GetTimeZones()?.FirstOrDefault(t => t.Id == timeZoneId)?.BaseUtcOffset ?? BaseUtcOffset;
         }
     }
 }

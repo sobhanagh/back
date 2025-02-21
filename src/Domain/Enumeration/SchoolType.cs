@@ -5,25 +5,25 @@ namespace GamaEdtech.Domain.Enumeration
 
     public sealed class SchoolType : Enumeration<byte>
     {
-        [Display(Name = "Public")]
+        [Display]
         public static readonly SchoolType Public = new(nameof(Public), 0);
 
-        [Display(Name = "Private")]
+        [Display]
         public static readonly SchoolType Private = new(nameof(Private), 1);
 
-        [Display(Name = "Religious")]
+        [Display]
         public static readonly SchoolType Religious = new(nameof(Religious), 2);
 
-        [Display(Name = "FirstNation")]
+        [Display]
         public static readonly SchoolType FirstNation = new(nameof(FirstNation), 3);
 
-        [Display(Name = "PrivateNonProfit")]
+        [Display]
         public static readonly SchoolType PrivateNonProfit = new(nameof(PrivateNonProfit), 4);
 
-        [Display(Name = "Government")]
+        [Display]
         public static readonly SchoolType Government = new(nameof(Government), 5);
 
-        [Display(Name = "Community")]
+        [Display]
         public static readonly SchoolType Community = new(nameof(Community), 6);
 
         public SchoolType()

@@ -1,5 +1,8 @@
 namespace GamaEdtech.Presentation.ViewModel.School
 {
+    using System.Text.Json.Serialization;
+
+    using GamaEdtech.Common.Converter;
     using GamaEdtech.Domain.Enumeration;
 
     public sealed class SchoolResponseViewModel
@@ -7,6 +10,8 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? LocalName { get; set; }
+
+        [JsonConverter(typeof(EnumerationConverter<SchoolType, byte>))]
         public SchoolType? SchoolType { get; set; }
         public int? StateId { get; set; }
         public string? StateTitle { get; set; }
