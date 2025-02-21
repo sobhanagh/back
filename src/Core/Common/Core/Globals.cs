@@ -653,11 +653,17 @@ namespace GamaEdtech.Common.Core
                 .Replace(".Application.Interface.", resourceAssembly + ".Application.Interface.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Application.Interface,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
+                .Replace(".Presentation.ViewModel.", resourceAssembly + ".Presentation.ViewModel.", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Presentation.ViewModel,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+
                 .Replace(".Shared.", resourceAssembly + ".Shared.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Shared,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
                 .Replace(".Data.", resourceAssembly + ".Data.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Data,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+
+                .Replace(".Domain.", resourceAssembly + ".Domain.", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Domain,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
                 .Replace(".Common.", resourceAssembly + ".Common.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Common,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
