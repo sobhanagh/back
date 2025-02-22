@@ -5,13 +5,16 @@ namespace GamaEdtech.Domain.Specification.School
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Domain.Entity;
 
+    using NetTopologySuite;
+
     public sealed class LocationIncludeSpecification(double latitude, double longitude, double radius) : SpecificationBase<School>
     {
         public override Expression<Func<School, bool>> Expression()
         {
-            latitude += radius;
-            longitude += radius;
-            return (t) => t.Latitude >= latitude && t.Longitude <= longitude;
+            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
+            var location = geometryFactory.CreatePoint(new NetTopologySuite.Geometries.Coordinate(latitude, longitude));
+
+            return (t) => t.Location != null && t.Location.Distance(location) < radius;
         }
     }
 }

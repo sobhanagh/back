@@ -1,6 +1,7 @@
 namespace GamaEdtech.Presentation.Api.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Text.Json;
 
     using Asp.Versioning;
 
@@ -21,8 +22,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
     public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
         : ApiControllerBase<SchoolsController>(logger)
     {
-        [HttpGet, Produces<ApiResponse<ListDataSource<SchoolsListResponseViewModel>>>()]
-        public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolsListRequestViewModel request)
+        [HttpGet, Produces<ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>>()]
+        public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolInfoRequestViewModel request)
         {
             try
             {
@@ -51,35 +52,41 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     var specification = new LocationIncludeSpecification(request.Location.Latitude!.Value, request.Location.Longitude!.Value, request.Location.Radius!.Value);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
-                if (request.SchoolType is not null)
-                {
-                    var specification = new SchoolTypeEqualsSpecification(request.SchoolType);
-                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
-                }
-                if (request.BoardId.HasValue)
-                {
-                    var specification = new BoardIdEqualsSpecification(request.BoardId.Value);
-                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
-                }
 
-                var result = await schoolService.Value.GetSchoolsAsync(new ListRequestDto<School>
+                var result = await schoolService.Value.GetSchoolsListAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
                     Specification = baseSpecification,
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolsResponseViewModel>>
+                return Ok(new ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>
                 {
                     Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()
                     {
-                        List = result.Data.List.Select(t => new SchoolsResponseViewModel
+                        List = result.Data.List.Select(t => new SchoolInfoResponseViewModel
                         {
                             Id = t.Id,
                             Name = t.Name,
-                            LocalName = t.LocalName,
+                            //Slug = t.Name.Slugify(),
+                            LastModifyDate = t.LastModifyDate,
+                            Score = t.Score,
+                            CityTitle = t.CityTitle,
+                            CountryTitle = t.CountryTitle,
+                            HasEmail = t.HasEmail,
+                            HasPhoneNumber = t.HasPhoneNumber,
+                            HasWebSite = t.HasWebSite,
+                            HasLocation = t.Latitude.HasValue && t.Longitude.HasValue,
+                            Latitude = t.Latitude,
+                            Longitude = t.Longitude,
+                            StateTitle = t.StateTitle,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
-                    }
+                    },
+                    Filters = [
+                        new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(SchoolInfoResponseViewModel.CityTitle)), request.CityId.HasValue ? result.Data.List?.FirstOrDefault()?.CityTitle : null),
+                        new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(SchoolInfoResponseViewModel.CountryTitle)), request.CountryId.HasValue ? result.Data.List?.FirstOrDefault()?.CountryTitle: null),
+                        new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(SchoolInfoResponseViewModel.StateTitle)), request.StateId.HasValue ? result.Data.List?.FirstOrDefault()?.StateTitle: null),
+                    ]
                 });
             }
             catch (Exception exc)

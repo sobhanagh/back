@@ -4,17 +4,19 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250222110211_Score")]
+    partial class Score
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -742,10 +744,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar")
                         .HasColumnName("LocalName");
-
-                    b.Property<Point>("Location")
-                        .HasColumnType("geometry")
-                        .HasColumnName("Location");
 
                     b.Property<double?>("Longitude")
                         .HasColumnType("float")

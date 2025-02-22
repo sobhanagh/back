@@ -6,7 +6,9 @@
     </PackageReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.13.2" />
+    <PackageVersion Include="Slugify.Core" Version="4.0.1" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.6.0.109712">
       <PrivateAssets>all</PrivateAssets>
@@ -54,9 +56,9 @@
     <PackageVersion Include="Serilog.Sinks.Http" Version="9.1.0" />
     <PackageVersion Include="Serilog.Sinks.PeriodicBatching" Version="5.0.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
-    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.1" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1">
+    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
