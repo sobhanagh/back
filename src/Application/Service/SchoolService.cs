@@ -61,9 +61,8 @@ namespace GamaEdtech.Application.Service
                     HasWebSite = t.WebSite != null,
                     HasEmail = t.Email != null,
                     HasPhoneNumber = t.PhoneNumber != null,
-                    Latitude = t.Latitude,
-                    Longitude = t.Longitude,
-                    Score = t.Score,
+                    Location = t.Location,
+                    Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : null,
                     CityTitle = t.City == null ? "" : t.City.Title,
                     CountryTitle = t.Country == null ? "" : t.Country.Title,
                     StateTitle = t.State == null ? "" : t.State.Title,
@@ -305,6 +304,14 @@ namespace GamaEdtech.Application.Service
                         return new(OperationResult.NotFound)
                         {
                             Errors = [new() { Message = Localizer.Value["SchoolCommentNotFound"] },],
+                        };
+                    }
+
+                    if (schoolComment.CreationUserId != requestDto.CreationUserId)
+                    {
+                        return new(OperationResult.NotValid)
+                        {
+                            Errors = [new() { Message = Localizer.Value["InvalidRequest"] },],
                         };
                     }
 

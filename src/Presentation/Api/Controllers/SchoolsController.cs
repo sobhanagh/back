@@ -10,7 +10,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
-
+    using GamaEdtech.Common.Identity;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
@@ -67,7 +67,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         {
                             Id = t.Id,
                             Name = t.Name,
-                            //Slug = t.Name.Slugify(),
+                            Slug = t.Name.Slugify(),
                             LastModifyDate = t.LastModifyDate,
                             Score = t.Score,
                             CityTitle = t.CityTitle,
@@ -75,9 +75,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             HasEmail = t.HasEmail,
                             HasPhoneNumber = t.HasPhoneNumber,
                             HasWebSite = t.HasWebSite,
-                            HasLocation = t.Latitude.HasValue && t.Longitude.HasValue,
-                            Latitude = t.Latitude,
-                            Longitude = t.Longitude,
+                            HasLocation = t.Location is not null,
+                            Latitude = t.Location?.Y,
+                            Longitude = t.Location?.X,
                             StateTitle = t.StateTitle,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
@@ -213,6 +213,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPost("{schoolId:int}/comments"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> CreateSchoolComment([FromRoute] int schoolId, [NotNull] ManageSchoolCommentRequestViewModel request)
         {
             try
@@ -247,6 +248,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPut("{schoolId:int}/comments/{commentId:long}"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> UpdateSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId, [NotNull, FromBody] ManageSchoolCommentRequestViewModel request)
         {
             try
@@ -282,6 +284,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPatch("{schoolId:int}/comments/{commentId:long}/like"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> LikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
         {
             try
@@ -304,6 +307,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPatch("{schoolId:int}/comments/{commentId:long}/dislike"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> DislikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
         {
             try

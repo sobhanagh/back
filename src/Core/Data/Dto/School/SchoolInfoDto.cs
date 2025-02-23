@@ -1,11 +1,12 @@
 namespace GamaEdtech.Data.Dto.School
 {
+    using NetTopologySuite.Geometries;
+
     public sealed class SchoolInfoDto
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
+        public Point? Location { get; set; }
         public string? CityTitle { get; set; }
         public string? CountryTitle { get; set; }
         public string? StateTitle { get; set; }
