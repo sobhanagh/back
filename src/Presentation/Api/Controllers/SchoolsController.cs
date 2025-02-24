@@ -1,6 +1,7 @@
 namespace GamaEdtech.Presentation.Api.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Text.Json;
 
     using Asp.Versioning;
 
@@ -9,7 +10,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
-
+    using GamaEdtech.Common.Identity;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
@@ -21,45 +22,71 @@ namespace GamaEdtech.Presentation.Api.Controllers
     public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
         : ApiControllerBase<SchoolsController>(logger)
     {
-        [HttpGet, Produces<ApiResponse<ListDataSource<SchoolsResponseViewModel>>>()]
-        public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolsRequestViewModel request)
+        [HttpGet, Produces<ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>>()]
+        public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolInfoRequestViewModel request)
         {
             try
             {
-                ISpecification<School>? specification = null;
-                if (request.CountryIds?.Any() == true)
+                ISpecification<School>? baseSpecification = null;
+                if (request.CountryId.HasValue)
                 {
-                    specification = new CountryIdsContainsSpecification(request.CountryIds);
+                    baseSpecification = new CountryIdEqualsSpecification(request.CountryId.Value);
                 }
-                if (request.StateIds?.Any() == true)
+                if (request.StateId.HasValue)
                 {
-                    var stateSpecification = new StateIdsContainsSpecification(request.StateIds);
-                    specification = specification is null ? stateSpecification : specification.And(stateSpecification);
+                    var specification = new StateIdEqualsSpecification(request.StateId.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
-                if (request.CityIds?.Any() == true)
+                if (request.CityId.HasValue)
                 {
-                    var citySpecification = new CityIdsContainsSpecification(request.CityIds);
-                    specification = specification is null ? citySpecification : specification.And(citySpecification);
+                    var specification = new CityIdEqualsSpecification(request.CityId.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+                if (!string.IsNullOrEmpty(request.Name))
+                {
+                    var specification = new NameContainsSpecification(request.Name);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+                if (request.Location is not null)
+                {
+                    var specification = new LocationIncludeSpecification(request.Location.Latitude!.Value, request.Location.Longitude!.Value, request.Location.Radius!.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
 
-                var result = await schoolService.Value.GetSchoolsAsync(new ListRequestDto<School>
+                var result = await schoolService.Value.GetSchoolsListAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = specification,
+                    Specification = baseSpecification,
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolsResponseViewModel>>
+                return Ok(new ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>
                 {
                     Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()
                     {
-                        List = result.Data.List.Select(t => new SchoolsResponseViewModel
+                        List = result.Data.List.Select(t => new SchoolInfoResponseViewModel
                         {
                             Id = t.Id,
                             Name = t.Name,
-                            LocalName = t.LocalName,
+                            Slug = t.Name.Slugify(),
+                            LastModifyDate = t.LastModifyDate,
+                            Score = t.Score,
+                            CityTitle = t.CityTitle,
+                            CountryTitle = t.CountryTitle,
+                            HasEmail = t.HasEmail,
+                            HasPhoneNumber = t.HasPhoneNumber,
+                            HasWebSite = t.HasWebSite,
+                            HasLocation = t.Location is not null,
+                            Latitude = t.Location?.Y,
+                            Longitude = t.Location?.X,
+                            StateTitle = t.StateTitle,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
-                    }
+                    },
+                    Filters = [
+                        new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(SchoolInfoResponseViewModel.CityTitle)), request.CityId.HasValue ? result.Data.List?.FirstOrDefault()?.CityTitle : null),
+                        new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(SchoolInfoResponseViewModel.CountryTitle)), request.CountryId.HasValue ? result.Data.List?.FirstOrDefault()?.CountryTitle: null),
+                        new(JsonNamingPolicy.KebabCaseLower.ConvertName(nameof(SchoolInfoResponseViewModel.StateTitle)), request.StateId.HasValue ? result.Data.List?.FirstOrDefault()?.StateTitle: null),
+                    ]
                 });
             }
             catch (Exception exc)
@@ -186,6 +213,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPost("{schoolId:int}/comments"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> CreateSchoolComment([FromRoute] int schoolId, [NotNull] ManageSchoolCommentRequestViewModel request)
         {
             try
@@ -220,6 +248,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPut("{schoolId:int}/comments/{commentId:long}"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> UpdateSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId, [NotNull, FromBody] ManageSchoolCommentRequestViewModel request)
         {
             try
@@ -255,6 +284,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPatch("{schoolId:int}/comments/{commentId:long}/like"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> LikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
         {
             try
@@ -277,6 +307,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPatch("{schoolId:int}/comments/{commentId:long}/dislike"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
         public async Task<IActionResult> DislikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
         {
             try

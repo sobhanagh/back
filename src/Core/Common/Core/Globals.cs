@@ -30,6 +30,8 @@ namespace GamaEdtech.Common.Core
 
     using NUlid;
 
+    using Slugify;
+
     public static partial class Globals
     {
         public static CultureInfo CurrentCulture => Thread.CurrentThread.CurrentUICulture;
@@ -484,12 +486,7 @@ namespace GamaEdtech.Common.Core
 
         public static string TrimEnd([NotNull] this string input, string? suffixToRemove, StringComparison comparisonType = StringComparison.CurrentCulture) => suffixToRemove is not null && input.EndsWith(suffixToRemove, comparisonType) ? input[..^suffixToRemove.Length] : input;
 
-        public static string? Slugify(this string? value) => value is null ? null : Regex.Replace(
-                value,
-                "([a-z])([A-Z])",
-                "$1-$2",
-                RegexOptions.CultureInvariant,
-                TimeSpan.FromMilliseconds(100)).ToLowerInvariant();
+        public static string? Slugify(this string? value) => new SlugHelper().GenerateSlug(value);
 
         public static async Task<string?> ConvertImageToBase64Async(IFormFile file)
         {

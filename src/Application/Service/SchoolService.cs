@@ -47,6 +47,35 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public async Task<ResultData<ListDataSource<SchoolInfoDto>>> GetSchoolsListAsync(ListRequestDto<School>? requestDto = null)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var result = await uow.GetRepository<School, int>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
+                var users = await result.List.Select(t => new SchoolInfoDto
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    LastModifyDate = t.LastModifyDate ?? t.CreationDate,
+                    HasWebSite = t.WebSite != null,
+                    HasEmail = t.Email != null,
+                    HasPhoneNumber = t.PhoneNumber != null,
+                    Location = t.Location,
+                    Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : null,
+                    CityTitle = t.City == null ? "" : t.City.Title,
+                    CountryTitle = t.Country == null ? "" : t.Country.Title,
+                    StateTitle = t.State == null ? "" : t.State.Title,
+                }).ToListAsync();
+                return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
         public async Task<ResultData<SchoolDto>> GetSchoolAsync([NotNull] ISpecification<School> specification)
         {
             try
@@ -61,7 +90,7 @@ namespace GamaEdtech.Application.Service
                     LocalAddress = t.LocalAddress,
                     Latitude = t.Latitude,
                     Longitude = t.Longitude,
-                    SchoolType = t.SchoolType!,
+                    SchoolType = t.SchoolType,
                     ZipCode = t.ZipCode,
                     CityId = t.CityId,
                     CityTitle = t.City != null ? t.City.Title : "",
@@ -275,6 +304,14 @@ namespace GamaEdtech.Application.Service
                         return new(OperationResult.NotFound)
                         {
                             Errors = [new() { Message = Localizer.Value["SchoolCommentNotFound"] },],
+                        };
+                    }
+
+                    if (schoolComment.CreationUserId != requestDto.CreationUserId)
+                    {
+                        return new(OperationResult.NotValid)
+                        {
+                            Errors = [new() { Message = Localizer.Value["InvalidRequest"] },],
                         };
                     }
 

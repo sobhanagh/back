@@ -13,6 +13,8 @@ namespace GamaEdtech.Domain.Entity
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+    using NetTopologySuite.Geometries;
+
     [Table(nameof(School))]
     public class School : VersionableEntity<ApplicationUser, int, int?>, IEntity<School, int>
     {
@@ -66,6 +68,9 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(Longitude), TypeName = "float")]
         public double? Longitude { get; set; }
 
+        [Column(nameof(Location), TypeName = "geometry")]
+        public Point? Location { get; set; }
+
         [Column(nameof(Quarter), DataType.UnicodeString)]
         [StringLength(100)]
         public string? Quarter { get; set; }
@@ -89,6 +94,9 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(Facilities), DataType.UnicodeMaxString)]
         public string? Facilities { get; set; }
 
+        [Column(nameof(Score), TypeName = "float")]
+        public double? Score { get; set; }
+
         public virtual ICollection<SchoolComment>? Comments { get; set; }
 
         public void Configure([NotNull] EntityTypeBuilder<School> builder)
@@ -97,9 +105,6 @@ namespace GamaEdtech.Domain.Entity
             _ = builder.HasOne(t => t.Country).WithMany().HasForeignKey(t => t.CountryId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.State).WithMany().HasForeignKey(t => t.StateId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.City).WithMany().HasForeignKey(t => t.CityId).OnDelete(DeleteBehavior.NoAction);
-
-            _ = builder.HasIndex(t => t.Latitude);
-            _ = builder.HasIndex(t => t.Longitude);
         }
     }
 }

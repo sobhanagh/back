@@ -4,21 +4,23 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250222110211_Score")]
+    partial class Score
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -743,10 +745,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("nvarchar")
                         .HasColumnName("LocalName");
 
-                    b.Property<Point>("Location")
-                        .HasColumnType("geometry")
-                        .HasColumnName("Location");
-
                     b.Property<double?>("Longitude")
                         .HasColumnType("float")
                         .HasColumnName("Longitude");
@@ -802,6 +800,10 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.HasIndex("CreationUserId");
 
                     b.HasIndex("LastModifyUserId");
+
+                    b.HasIndex("Latitude");
+
+                    b.HasIndex("Longitude");
 
                     b.HasIndex("StateId");
 

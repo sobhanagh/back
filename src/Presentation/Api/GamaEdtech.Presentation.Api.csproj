@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
     <Compile Remove="logs\**" />
@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
+    <PackageReference Include="NetTopologySuite" />
     <PackageReference Include="System.Configuration.ConfigurationManager" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>

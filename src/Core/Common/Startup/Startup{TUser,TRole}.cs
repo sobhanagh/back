@@ -8,6 +8,7 @@ namespace GamaEdtech.Common.Startup
     using System.Net.Http;
     using System.Reflection;
     using System.Text.Encodings.Web;
+    using System.Text.Json;
     using System.Text.Unicode;
 
     using GamaEdtech.Common.Converter;
@@ -210,6 +211,8 @@ namespace GamaEdtech.Common.Startup
 
             _ = mvcBuilder.AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower;
+
                 // options.JsonSerializerOptions.Converters.Add(new DictionaryEnumerationConverter<int>())
                 // options.JsonSerializerOptions.Converters.Add(new DictionaryEnumerationConverter<byte>())
                 options.JsonSerializerOptions.Converters.Add(new EnumerationConverterFactory());

@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Core\Resource\GamaEdtech.Resource.csproj">
       <Private>false</Private>
     </ProjectReference>
