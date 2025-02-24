@@ -18,7 +18,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         : ApiControllerBase<BoardsController>(logger)
     {
         [HttpGet, Produces<ApiResponse<ListDataSource<BoardsResponseViewModel>>>()]
-        public async Task<IActionResult> GetBoards([NotNull, FromQuery] BoardsRequestViewModel request)
+        public async Task<IActionResult<ListDataSource<BoardsResponseViewModel>>> GetBoards([NotNull, FromQuery] BoardsRequestViewModel request)
         {
             try
             {
@@ -26,9 +26,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     PagingDto = request.PagingDto,
                 });
-                return Ok(new ApiResponse<ListDataSource<BoardsResponseViewModel>>
+                return Ok<ListDataSource<BoardsResponseViewModel>>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()
                     {
                         List = result.Data.List.Select(t => new BoardsResponseViewModel
@@ -45,7 +44,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<BoardsResponseViewModel>> { Errors = [new() { Message = exc.Message }] });
+                return Ok<ListDataSource<BoardsResponseViewModel>>(new(new Error { Message = exc.Message }));
             }
         }
     }

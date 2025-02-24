@@ -58,7 +58,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     PagingDto = request.PagingDto,
                     Specification = baseSpecification,
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>
+                return Ok(new ApiResponseWithFilter<ListDataSource<SchoolInfoResponseViewModel>>
                 {
                     Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()

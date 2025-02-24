@@ -2,17 +2,16 @@ namespace GamaEdtech.Common.Data
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
 
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-    public struct ApiResponse<T>
+    public struct ApiResponseWithFilter<T>
     {
-        public ApiResponse()
+        public ApiResponseWithFilter()
         {
         }
 
-        public ApiResponse([NotNull] ModelStateDictionary modelState)
+        public ApiResponseWithFilter([NotNull] ModelStateDictionary modelState)
         {
             if (modelState.ErrorCount == 0)
             {
@@ -42,12 +41,14 @@ namespace GamaEdtech.Common.Data
             Errors = lst;
         }
 
-        public ApiResponse(params IEnumerable<Error>? errors) => Errors = errors;
+        public ApiResponseWithFilter(IEnumerable<Error>? errors) => Errors = errors;
 
         public T? Data { get; set; }
 
         public readonly bool Succeeded => Errors is null || !Errors.Any();
 
         public IEnumerable<Error>? Errors { get; set; }
+
+        public IEnumerable<KeyValuePair<string, object?>>? Filters { get; set; }
     }
 }

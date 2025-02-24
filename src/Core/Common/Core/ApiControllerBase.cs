@@ -34,7 +34,7 @@ namespace GamaEdtech.Common.Core
 
         public BadRequestObjectResult BadRequest<T>(ApiResponse<T> response) => base.BadRequest(response);
 
-        public OkObjectResult Ok<T>(ApiResponse<T> response) => base.Ok(response);
+        public OkObjectResult<T> Ok<T>(ApiResponse<T> response) => new(response);
 
         public override UnauthorizedResult Unauthorized() => base.Unauthorized();
 
