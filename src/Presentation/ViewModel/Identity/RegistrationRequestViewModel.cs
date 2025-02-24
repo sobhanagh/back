@@ -6,6 +6,7 @@ namespace GamaEdtech.Presentation.ViewModel.Identity
     {
         [Display]
         [Required]
+        [EmailAddress]
         public string? Email { get; set; }
 
         [Display]
