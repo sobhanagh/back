@@ -23,6 +23,8 @@ namespace GamaEdtech.Application.Interface
 
         Task<ResultData<AuthenticationResponseDto>> AuthenticateAsync([NotNull] AuthenticationRequestDto requestDto);
 
+        Task<ResultData<bool>> RegisterAsync([NotNull] RegistrationRequestDto requestDto);
+
         Task<ResultData<SignInResponseDto>> SignInAsync([NotNull] SignInRequestDto requestDto);
 
         Task<ResultData<Void>> SignOutAsync();

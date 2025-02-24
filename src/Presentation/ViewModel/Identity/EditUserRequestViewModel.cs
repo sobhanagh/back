@@ -1,24 +1,17 @@
-﻿namespace GamaEdtech.Presentation.ViewModel.Identity
+namespace GamaEdtech.Presentation.ViewModel.Identity
 {
+    using GamaEdtech.Common.Core;
     using GamaEdtech.Common.DataAnnotation;
 
-    public sealed class ManageUserRequestViewModel
+    using Microsoft.AspNetCore.Http;
+
+    public sealed class EditUserRequestViewModel
     {
         [Display]
         [Required]
         [StringLength(256)]
         [RegularExpression(@"^[a-zA-Z0-9]+$")]
         public required string Username { get; set; }
-
-        [Display]
-        public string? Domain { get; set; }
-
-        [Display]
-        public string? Password { get; set; }
-
-        [Display]
-        [Compare(nameof(Password))]
-        public string? ConfirmPassword { get; set; }
 
         [Display]
         [Required]
@@ -29,6 +22,17 @@
         [Required]
         [Phone]
         public required string PhoneNumber { get; set; }
+
+        [Display]
+        public string? FirstName { get; set; }
+
+        [Display]
+        public string? LastName { get; set; }
+
+        [Display]
+        [FileSize(1024 * 1024 * 2)]//2MB
+        [FileExtensions(Constants.ValidImageExtensions)]
+        public IFormFile? Avatar { get; set; }
 
         [Display]
         public IEnumerable<string>? AllowedIpAddressesList { get; set; }

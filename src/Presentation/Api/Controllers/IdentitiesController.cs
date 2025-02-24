@@ -32,7 +32,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var authenticateResult = await identityService.Value.AuthenticateAsync(new AuthenticationRequestDto { Domain = request.Domain, Password = request.Password!, Username = request.Username! });
+                var authenticateResult = await identityService.Value.AuthenticateAsync(new AuthenticationRequestDto { Password = request.Password!, Username = request.Username! });
                 if (authenticateResult.Data?.User is null)
                 {
                     return Ok(new ApiResponse<AuthenticationResponseViewModel>
@@ -54,6 +54,32 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Roles = signInResult.Data?.Roles?.ListToFlagsEnum<Role>(),
                         },
                     });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<AuthenticationResponseViewModel> { Errors = new[] { new Error { Message = exc.Message } } });
+            }
+        }
+
+        [HttpPost("register"), Produces(typeof(ApiResponse<Void>))]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([NotNull] RegistrationRequestViewModel request)
+        {
+            try
+            {
+                var result = await identityService.Value.RegisterAsync(new()
+                {
+                    Username = request.Email!,
+                    Password = request.Password!,
+                    Email = request.Email!,
+                });
+
+                return Ok(new ApiResponse<Void>
+                {
+                    Errors = result.Errors,
+                });
             }
             catch (Exception exc)
             {

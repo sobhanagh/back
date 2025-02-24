@@ -488,7 +488,7 @@ namespace GamaEdtech.Common.Core
 
         public static string? Slugify(this string? value) => new SlugHelper().GenerateSlug(value);
 
-        public static async Task<string?> ConvertImageToBase64Async(IFormFile file)
+        public static async Task<string?> ConvertImageToBase64Async(this IFormFile? file)
         {
             if (file is null)
             {

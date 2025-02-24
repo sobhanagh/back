@@ -1,4 +1,4 @@
-﻿namespace GamaEdtech.Presentation.ViewModel.Identity
+namespace GamaEdtech.Presentation.ViewModel.Identity
 {
     using System.ComponentModel.DataAnnotations;
 
@@ -11,8 +11,5 @@
         [Display]
         [Required]
         public string? Password { get; set; }
-
-        [Display]
-        public string? Domain { get; set; }
     }
 }

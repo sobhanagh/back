@@ -93,7 +93,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         [HttpPost, Produces(typeof(ApiResponse<Void>))]
         [Display(Name = "Create User")]
-        public async Task<IActionResult> Create([NotNull] ManageUserRequestViewModel request)
+        public async Task<IActionResult> Create([NotNull] CreateUserRequestViewModel request)
         {
             try
             {
@@ -103,6 +103,9 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     Password = request.Password,
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Avatar = await request.Avatar.ConvertImageToBase64Async(),
                 });
                 return Ok(new ApiResponse<Void>
                 {
@@ -119,7 +122,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         [HttpPut("{userId:int}"), Produces(typeof(ApiResponse<Void>))]
         [Display(Name = "Edit User")]
-        public async Task<IActionResult> Update([FromRoute] int userId, [NotNull, FromBody] ManageUserRequestViewModel request)
+        public async Task<IActionResult> Update([FromRoute] int userId, [NotNull, FromBody] EditUserRequestViewModel request)
         {
             try
             {
@@ -127,9 +130,11 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 {
                     Id = userId,
                     Username = request.Username,
-                    Password = request.Password,
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Avatar = await request.Avatar.ConvertImageToBase64Async(),
                 });
                 return Ok(new ApiResponse<Void>
                 {
