@@ -12,7 +12,7 @@ namespace GamaEdtech.Domain.Specification.School
         public override Expression<Func<School, bool>> Expression()
         {
             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-            var location = geometryFactory.CreatePoint(new NetTopologySuite.Geometries.Coordinate(latitude, longitude));
+            var location = geometryFactory.CreatePoint(new NetTopologySuite.Geometries.Coordinate(longitude, latitude));
 
             return (t) => t.Location != null && t.Location.Distance(location) < radius;
         }

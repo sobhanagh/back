@@ -88,8 +88,7 @@ namespace GamaEdtech.Application.Service
                     LocalName = t.LocalName,
                     Address = t.Address,
                     LocalAddress = t.LocalAddress,
-                    Latitude = t.Latitude,
-                    Longitude = t.Longitude,
+                    Location = t.Location,
                     SchoolType = t.SchoolType,
                     ZipCode = t.ZipCode,
                     CityId = t.CityId,
@@ -143,8 +142,7 @@ namespace GamaEdtech.Application.Service
                     school.Name = requestDto.Name;
                     school.LocalName = requestDto.LocalName;
                     school.Address = requestDto.Address;
-                    school.Latitude = requestDto.Latitude;
-                    school.Longitude = requestDto.Longitude;
+                    school.Location = requestDto.Location;
                     school.SchoolType = requestDto.SchoolType;
                     school.StateId = requestDto.StateId;
                     school.ZipCode = requestDto.ZipCode;
@@ -168,8 +166,7 @@ namespace GamaEdtech.Application.Service
                         Name = requestDto.Name,
                         LocalName = requestDto.LocalName,
                         Address = requestDto.Address,
-                        Latitude = requestDto.Latitude,
-                        Longitude = requestDto.Longitude,
+                        Location = requestDto.Location,
                         SchoolType = requestDto.SchoolType,
                         StateId = requestDto.StateId,
                         ZipCode = requestDto.ZipCode,

@@ -2,6 +2,8 @@ namespace GamaEdtech.Data.Dto.School
 {
     using GamaEdtech.Domain.Enumeration;
 
+    using NetTopologySuite.Geometries;
+
     public sealed class ManageSchoolRequestDto
     {
         public int? Id { get; set; }
@@ -11,8 +13,7 @@ namespace GamaEdtech.Data.Dto.School
         public string? ZipCode { get; set; }
         public string? Address { get; set; }
         public string? LocalAddress { get; set; }
-        public double? Latitude { get; set; }
-        public double? Longitude { get; set; }
+        public Point? Location { get; set; }
         public string? WebSite { get; set; }
         public string? Quarter { get; set; }
         public string? PhoneNumber { get; set; }
