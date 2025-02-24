@@ -20,7 +20,7 @@ namespace GamaEdtech.Common.Core
         public const int ForeignKeySqlException = 547;
         public const int DuplicatePrimaryKeySqlException = 2627;
         public const int DuplicateKeySqlException = 2601;
-        public const string ValidImageExtensions = "png,jpg,jpeg,gif";
+        public const string ValidImageExtensions = "png,jpg,jpeg,gif,webp,svg";
         public const string ValidDocumentExtensions = "pdf,doc,docx";
         public const string ValidVideoExtensions = "mpeg,avi";
         public const string ValidWebExtensions = "zip";

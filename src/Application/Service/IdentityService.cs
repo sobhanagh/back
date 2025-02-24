@@ -194,6 +194,33 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public async Task<ResultData<bool>> RegisterAsync([NotNull] RegistrationRequestDto requestDto)
+        {
+            try
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = requestDto.Username,
+                    Email = requestDto.Email,
+                    RegistrationDate = DateTime.UtcNow,
+                    Enabled = true,
+                };
+                var identityResult = await userManager.Value.CreateAsync(user, requestDto.Password);
+                return !identityResult.Succeeded
+                    ? new(OperationResult.NotValid) { Data = false, Errors = MapUserManagerErrors(identityResult) }
+                    : new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (UniqueConstraintException)
+            {
+                return new(OperationResult.NotValid) { Errors = new[] { new Error { Message = Localizer.Value["DuplicateUsername"], } } };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = new[] { new Error { Message = exc.Message }, } };
+            }
+        }
+
         public async Task<ResultData<SignInResponseDto>> SignInAsync([NotNull] SignInRequestDto requestDto)
         {
             try
@@ -251,11 +278,6 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                if (string.IsNullOrEmpty(requestDto.Password))
-                {
-                    return new(OperationResult.NotValid) { Errors = new[] { new Error { Message = Localizer.Value["PasswordIsRequired"], } } };
-                }
-
                 var user = new ApplicationUser
                 {
                     UserName = requestDto.Username,
@@ -265,6 +287,9 @@ namespace GamaEdtech.Application.Service
                     Enabled = true,
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true,
+                    Avatar = requestDto.Avatar,
+                    FirstName = requestDto.FirstName,
+                    LastName = requestDto.LastName,
                 };
                 var identityResult = await userManager.Value.CreateAsync(user, requestDto.Password);
                 return !identityResult.Succeeded
@@ -295,6 +320,9 @@ namespace GamaEdtech.Application.Service
                 user.Email = requestDto.Email;
                 user.PhoneNumber = requestDto.PhoneNumber;
                 user.UserName = requestDto.Username;
+                user.FirstName = requestDto.FirstName;
+                user.LastName = requestDto.LastName;
+                user.Avatar = requestDto.Avatar;
 
                 var updateUserResult = await userManager.Value.UpdateAsync(user);
                 return updateUserResult.Succeeded

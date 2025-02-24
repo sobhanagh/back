@@ -1,12 +1,10 @@
-﻿namespace GamaEdtech.Presentation.ViewModel.Identity
+namespace GamaEdtech.Presentation.ViewModel.Identity
 {
     public sealed class UserListResponseViewModel
     {
         public int Id { get; set; }
 
         public string? Username { get; set; }
-
-        public string? Domain { get; set; }
 
         public string? Email { get; set; }
 

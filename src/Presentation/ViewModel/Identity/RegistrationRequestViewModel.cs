@@ -2,17 +2,19 @@ namespace GamaEdtech.Presentation.ViewModel.Identity
 {
     using GamaEdtech.Common.DataAnnotation;
 
-    public sealed class AuthenticationRequestViewModel
+    public sealed class RegistrationRequestViewModel
     {
         [Display]
         [Required]
-        public string? Username { get; set; }
+        public string? Email { get; set; }
 
         [Display]
         [Required]
         public string? Password { get; set; }
 
         [Display]
-        public bool RememberMe { get; set; }
+        [Required]
+        [Compare(nameof(Password))]
+        public string? ConfirmPassword { get; set; }
     }
 }
