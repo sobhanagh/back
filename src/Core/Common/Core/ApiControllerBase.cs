@@ -36,6 +36,8 @@ namespace GamaEdtech.Common.Core
 
         public OkObjectResult<T> Ok<T>(ApiResponse<T> response) => new(response);
 
+        public OkObjectResult<T> Ok<T>(ApiResponseWithFilter<T> response) => new(response);
+
         public override UnauthorizedResult Unauthorized() => base.Unauthorized();
 
         public override ForbidResult Forbid() => base.Forbid();

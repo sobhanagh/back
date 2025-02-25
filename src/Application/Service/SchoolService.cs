@@ -21,6 +21,8 @@ namespace GamaEdtech.Application.Service
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
+    using NUlid;
+
     using static GamaEdtech.Common.Core.Constants;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
@@ -474,6 +476,22 @@ namespace GamaEdtech.Application.Service
                     SchoolName = t.School!.Name,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
+        public async Task<ResultData<IEnumerable<Ulid>>> GetSchoolImageFileIdsAsync([NotNull] ISpecification<SchoolImage> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var result = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
+                    .Select(t => t.FileId).ToListAsync();
+                return new(OperationResult.Succeeded) { Data = result };
             }
             catch (Exception exc)
             {

@@ -224,9 +224,9 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 var result = await schoolService.Value.GetSchoolCommentsAsync(new()
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new SchoolCommentStatusEqualsSpecification(Status.Draft),
+                    Specification = new StatusEqualsSpecification<SchoolComment>(Status.Draft),
                 });
-                return Ok<ListDataSource<SchoolCommentsResponseViewModel>>(new(result.Errors)
+                return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
                     {
@@ -247,7 +247,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<ListDataSource<SchoolCommentsResponseViewModel>>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>(new Error { Message = exc.Message }));
             }
         }
 
@@ -299,9 +299,9 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 var result = await schoolService.Value.GetSchoolImagesAsync(new()
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new SchoolImageStatusEqualsSpecification(Status.Draft),
+                    Specification = new StatusEqualsSpecification<SchoolImage>(Status.Draft),
                 });
-                return Ok<ListDataSource<SchoolImagesResponseViewModel>>(new(result.Errors)
+                return Ok(new ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
                     {
@@ -324,7 +324,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<ListDataSource<SchoolImagesResponseViewModel>>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>(new Error { Message = exc.Message }));
             }
         }
 

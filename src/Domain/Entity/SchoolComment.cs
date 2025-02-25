@@ -13,7 +13,7 @@ namespace GamaEdtech.Domain.Entity
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     [Table(nameof(SchoolComment))]
-    public class SchoolComment : VersionableEntity<ApplicationUser, int, int?>, IEntity<SchoolComment, long>
+    public class SchoolComment : VersionableEntity<ApplicationUser, int, int?>, IEntity<SchoolComment, long>, ISchoolId, IStatus
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]

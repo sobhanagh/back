@@ -15,7 +15,7 @@ namespace GamaEdtech.Domain.Entity
     using NUlid;
 
     [Table(nameof(SchoolImage))]
-    public class SchoolImage : VersionableEntity<ApplicationUser, int, int?>, IEntity<SchoolImage, long>
+    public class SchoolImage : VersionableEntity<ApplicationUser, int, int?>, IEntity<SchoolImage, long>, ISchoolId, IStatus
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]
