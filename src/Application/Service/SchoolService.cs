@@ -14,6 +14,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Enumeration;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -58,9 +59,9 @@ namespace GamaEdtech.Application.Service
                     Id = t.Id,
                     Name = t.Name,
                     LastModifyDate = t.LastModifyDate ?? t.CreationDate,
-                    HasWebSite = t.WebSite != null,
-                    HasEmail = t.Email != null,
-                    HasPhoneNumber = t.PhoneNumber != null,
+                    HasWebSite = string.IsNullOrEmpty(t.WebSite),
+                    HasEmail = string.IsNullOrEmpty(t.Email),
+                    HasPhoneNumber = string.IsNullOrEmpty(t.PhoneNumber),
                     Location = t.Location,
                     Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : null,
                     CityTitle = t.City == null ? "" : t.City.Title,
@@ -274,7 +275,6 @@ namespace GamaEdtech.Application.Service
                     LikeCount = t.LikeCount,
                     DislikeCount = t.DislikeCount,
                     AverageRate = t.AverageRate,
-
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
@@ -344,6 +344,7 @@ namespace GamaEdtech.Application.Service
                         ITTrainingRate = requestDto.ITTrainingRate,
                         SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate,
                         TuitionRatioRate = requestDto.TuitionRatioRate,
+                        Status = Status.Draft,
                     };
                     schoolComment.AverageRate = Calculate(schoolComment);
                     repository.Add(schoolComment);
@@ -403,6 +404,116 @@ namespace GamaEdtech.Application.Service
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
                     .ExecuteUpdateAsync(t => t.SetProperty(p => p.DislikeCount, p => p.DislikeCount + 1));
+
+                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> ConfirmSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t
+                        .SetProperty(p => p.Status, Status.Confirmed)
+                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
+                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
+                    );
+
+                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> RejectSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t
+                        .SetProperty(p => p.Status, Status.Rejected)
+                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
+                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
+                    );
+
+                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<ListDataSource<SchoolImageDto>>> GetSchoolImagesAsync(ListRequestDto<SchoolImage>? requestDto = null)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var result = await uow.GetRepository<SchoolImage>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
+                var users = await result.List.Select(t => new SchoolImageDto
+                {
+                    Id = t.Id,
+                    CreationUser = t.CreationUser!.FullName,
+                    CreationUserAvatar = t.CreationUser!.Avatar,
+                    CreationDate = t.CreationDate,
+                    FileId = t.FileId,
+                    FileType = t.FileType,
+                    SchoolId = t.SchoolId,
+                    SchoolName = t.School!.Name,
+                }).ToListAsync();
+                return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> ConfirmSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var updatedRows = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t
+                        .SetProperty(p => p.Status, Status.Confirmed)
+                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
+                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
+                    );
+
+                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> RejectSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var updatedRows = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t
+                        .SetProperty(p => p.Status, Status.Rejected)
+                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
+                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
+                    );
 
                 return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
             }

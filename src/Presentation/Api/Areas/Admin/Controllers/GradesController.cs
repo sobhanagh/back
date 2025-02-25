@@ -8,9 +8,10 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
-
+    using GamaEdtech.Common.Identity;
     using GamaEdtech.Data.Dto.Grade;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification.Grade;
     using GamaEdtech.Presentation.ViewModel.Grade;
 
@@ -19,7 +20,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     [Common.DataAnnotation.Area(nameof(Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
-    //[Permission(Roles = [nameof(Role.Admin)])]
+    [Permission(Roles = [nameof(Role.Admin)])]
     public class GradesController(Lazy<ILogger<GradesController>> logger, Lazy<IGradeService> gradeService)
         : ApiControllerBase<GradesController>(logger)
     {

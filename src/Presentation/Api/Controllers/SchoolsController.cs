@@ -12,6 +12,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
 
@@ -182,7 +183,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await schoolService.Value.GetSchoolCommentsAsync(new ListRequestDto<SchoolComment>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new SchoolIdEqualsSpecification(schoolId),
+                    Specification = new SchoolIdEqualsSpecification(schoolId).And(new SchoolCommentStatusEqualsSpecification(Status.Confirmed)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>
                 {

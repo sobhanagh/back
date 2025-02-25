@@ -13,6 +13,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
 
     using Microsoft.AspNetCore.Mvc;
@@ -201,6 +202,158 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             try
             {
                 var result = await schoolService.Value.RemoveSchoolAsync(new IdEqualsSpecification<School, int>(id));
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpGet("comments/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolCommentsResponseViewModel>>> GetPendingSchoolComments([NotNull, FromQuery] SchoolCommentsRequestViewModel request)
+        {
+            try
+            {
+                var result = await schoolService.Value.GetSchoolCommentsAsync(new()
+                {
+                    PagingDto = request.PagingDto,
+                    Specification = new SchoolCommentStatusEqualsSpecification(Status.Draft),
+                });
+                return Ok<ListDataSource<SchoolCommentsResponseViewModel>>(new(result.Errors)
+                {
+                    Data = result.Data.List is null ? new() : new()
+                    {
+                        List = result.Data.List.Select(t => new SchoolCommentsResponseViewModel
+                        {
+                            Id = t.Id,
+                            Comment = t.Comment,
+                            AverageRate = t.AverageRate,
+                            CreationDate = t.CreationDate,
+                            CreationUser = t.CreationUser,
+                            CreationUserAvatar = t.CreationUserAvatar,
+                        }),
+                        TotalRecordsCount = result.Data.TotalRecordsCount,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<ListDataSource<SchoolCommentsResponseViewModel>>(new(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPatch("commonts/{commentId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> ConfirmSchoolComment([FromRoute] long commentId)
+        {
+            try
+            {
+                var result = await schoolService.Value.ConfirmSchoolCommentAsync(new IdEqualsSpecification<SchoolComment, long>(commentId));
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpPatch("commonts/{commentId:long}/reject"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> RejectSchoolComment([FromRoute] long commentId)
+        {
+            try
+            {
+                var result = await schoolService.Value.RejectSchoolCommentAsync(new IdEqualsSpecification<SchoolComment, long>(commentId));
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpGet("images/pending"), Produces<ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolImagesResponseViewModel>>> GetPendingSchoolImages([NotNull, FromQuery] SchoolImagesRequestViewModel request)
+        {
+            try
+            {
+                var result = await schoolService.Value.GetSchoolImagesAsync(new()
+                {
+                    PagingDto = request.PagingDto,
+                    Specification = new SchoolImageStatusEqualsSpecification(Status.Draft),
+                });
+                return Ok<ListDataSource<SchoolImagesResponseViewModel>>(new(result.Errors)
+                {
+                    Data = result.Data.List is null ? new() : new()
+                    {
+                        List = result.Data.List.Select(t => new SchoolImagesResponseViewModel
+                        {
+                            Id = t.Id,
+                            CreationDate = t.CreationDate,
+                            CreationUser = t.CreationUser,
+                            CreationUserAvatar = t.CreationUserAvatar,
+                            FileId = t.FileId,
+                            FileType = t.FileType,
+                            SchoolId = t.SchoolId,
+                            SchoolName = t.SchoolName,
+                        }),
+                        TotalRecordsCount = result.Data.TotalRecordsCount,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<ListDataSource<SchoolImagesResponseViewModel>>(new(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPatch("images/{imageId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> ConfirmSchoolImage([FromRoute] long imageId)
+        {
+            try
+            {
+                var result = await schoolService.Value.ConfirmSchoolImageAsync(new IdEqualsSpecification<SchoolImage, long>(imageId));
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpPatch("images/{imageId:long}/reject"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> RejectSchoolImage([FromRoute] long imageId)
+        {
+            try
+            {
+                var result = await schoolService.Value.RejectSchoolImageAsync(new IdEqualsSpecification<SchoolImage, long>(imageId));
                 return Ok(new ApiResponse<bool>
                 {
                     Errors = result.Errors,
