@@ -19,6 +19,7 @@ namespace GamaEdtech.Application.Service
 
     using static GamaEdtech.Common.Core.Constants;
     using GamaEdtech.Application.Interface;
+    using GamaEdtech.Domain.Enumeration;
 
 #pragma warning disable CA1416 // Validate platform compatibility
     public class FileService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
@@ -58,12 +59,18 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public ResultData<Uri?> GetFileUri(string? id)
+        public ResultData<Uri?> GetFileUri(string? id, ContainerType containerType)
         {
             try
             {
                 var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
-                var container = configuration.Value.GetValue<string>("Azure:SchoolContainerName");
+
+                var key = "Azure:ContainerName";
+                if (containerType == ContainerType.School)
+                {
+                    key = "Azure:SchoolContainerName";
+                }
+                var container = configuration.Value.GetValue<string>(key);
 
                 var url = new Azure.Storage.Blobs.BlobClient(connection, container, id)
                     .GenerateSasUri(Azure.Storage.Sas.BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddMinutes(10));

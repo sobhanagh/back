@@ -18,8 +18,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     using Microsoft.AspNetCore.Mvc;
 
-    using NUlid;
-
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
