@@ -377,7 +377,7 @@ namespace GamaEdtech.Common.Core
         public static T? UserId<T>(this HttpContext? httpContext)
             where T : IEquatable<T> => (httpContext?.User).UserId<T>();
 
-        public static long UserId(this ClaimsPrincipal? claimsPrincipal) => claimsPrincipal.UserId<long>();
+        public static int UserId(this ClaimsPrincipal? claimsPrincipal) => claimsPrincipal.UserId<int>();
 
         public static T? UserId<T>(this ClaimsPrincipal? claimsPrincipal)
             where T : IEquatable<T> => claimsPrincipal is null ? default : claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier).ValueOf<T>();

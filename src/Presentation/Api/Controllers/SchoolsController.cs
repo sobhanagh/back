@@ -143,6 +143,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
+        #region Comments
+
         [HttpGet("{schoolId:int}/rate"), Produces<ApiResponse<SchoolRateResponseViewModel>>()]
         public async Task<IActionResult<SchoolRateResponseViewModel>> GetSchoolRate([FromRoute] int schoolId)
         {
@@ -233,7 +235,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     SchoolId = schoolId,
                     TuitionRatioRate = request.TuitionRatioRate,
                     CreationDate = DateTimeOffset.UtcNow,
-                    CreationUserId = User.UserId<int>(),
+                    CreationUserId = User.UserId(),
                 });
                 return Ok(new ApiResponse<ManageSchoolCommentResponseViewModel>
                 {
@@ -269,7 +271,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     SafetyAndHappinessRate = request.SafetyAndHappinessRate,
                     TuitionRatioRate = request.TuitionRatioRate,
                     CreationDate = DateTimeOffset.UtcNow,
-                    CreationUserId = User.UserId<int>(),
+                    CreationUserId = User.UserId(),
                 });
                 return Ok(new ApiResponse<ManageSchoolCommentResponseViewModel>
                 {
@@ -331,8 +333,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpGet("{schoolId:int}/images/{fileType}"), Produces<ApiResponse<IEnumerable<Ulid>>>()]
-        public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImages([FromRoute] int schoolId, [FromRoute] FileType fileType)
+        #endregion
+
+        #region Images
+
+        [HttpGet("{schoolId:int}/images/{fileType}"), Produces<ApiResponse<IEnumerable<string>>>()]
+        public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImagesPath([FromRoute] int schoolId, [FromRoute] FileType fileType)
         {
             try
             {
@@ -352,5 +358,35 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 return Ok(new ApiResponse<IEnumerable<string?>>(new Error { Message = exc.Message }));
             }
         }
+
+        [HttpPost("{schoolId:int}/images"), Produces<ApiResponse<CreateSchoolImageResponseViewModel>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] int schoolId, [NotNull] CreateSchoolImageRequestViewModel request)
+        {
+            try
+            {
+                var result = await schoolService.Value.CreateSchoolImageAsync(new Data.Dto.School.CreateSchoolImageRequestDto
+                {
+                    File = request.File!,
+                    FileType = request.FileType!,
+                    SchoolId = schoolId,
+                    CreationDate = DateTimeOffset.UtcNow,
+                    CreationUserId = User.UserId(),
+                });
+                return Ok(new ApiResponse<CreateSchoolImageResponseViewModel>
+                {
+                    Errors = result.Errors,
+                    Data = new() { Id = result.Data, },
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<CreateSchoolImageResponseViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        #endregion
     }
 }

@@ -738,7 +738,7 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId<int>();
+                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId();
                 if (!userId.HasValue)
                 {
                     return new(OperationResult.Failed)
@@ -766,7 +766,7 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId<int>();
+                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId();
                 if (!userId.HasValue)
                 {
                     return new(OperationResult.Failed)

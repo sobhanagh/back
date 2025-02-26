@@ -15,6 +15,8 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
+    using MetadataExtractor.Formats.Exif;
+    using MetadataExtractor;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,8 @@ namespace GamaEdtech.Application.Service
     using Microsoft.Extensions.Logging;
 
     using static GamaEdtech.Common.Core.Constants;
+    using NetTopologySuite.Geometries;
+    using NetTopologySuite;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService)
@@ -537,6 +541,53 @@ namespace GamaEdtech.Application.Service
             {
                 Logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<long>> CreateSchoolImageAsync([NotNull] CreateSchoolImageRequestDto requestDto)
+        {
+            try
+            {
+                var result = await fileService.Value.CreateFileAsync(new()
+                {
+                    File = requestDto.File,
+                });
+
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var imageRepository = uow.GetRepository<SchoolImage>();
+                var schoolImage = new SchoolImage
+                {
+                    SchoolId = requestDto.SchoolId,
+                    FileType = requestDto.FileType,
+                    CreationDate = requestDto.CreationDate,
+                    CreationUserId = requestDto.CreationUserId,
+                    Status = Status.Draft,
+                };
+
+                var gps = ImageMetadataReader.ReadMetadata(requestDto.File.OpenReadStream())
+                             .OfType<GpsDirectory>()
+                             .FirstOrDefault()?.GetGeoLocation();
+                if (gps is not null)
+                {
+                    var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
+                    var location = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
+
+                    var schoolRepository = uow.GetRepository<School, int>();
+                    var schoolLocation = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Location).FirstOrDefaultAsync();
+                    if (schoolLocation is not null && schoolLocation.Distance(location) < 2000)
+                    {
+                        schoolImage.Status = Status.Confirmed;
+                    }
+                }
+                imageRepository.Add(schoolImage);
+                _ = await uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = schoolImage.Id };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
         }
     }
