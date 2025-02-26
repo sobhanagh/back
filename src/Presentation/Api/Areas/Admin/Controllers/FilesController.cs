@@ -7,8 +7,9 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
-
+    using GamaEdtech.Common.Identity;
     using GamaEdtech.Data.Dto.File;
+    using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Presentation.ViewModel.File;
 
     using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     [Common.DataAnnotation.Area(nameof(Admin), "Admin")]
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
-    //[Permission(Roles = [nameof(Role.Admin)])]
+    [Permission(Roles = [nameof(Role.Admin)])]
     public class FilesController(Lazy<ILogger<FilesController>> logger, Lazy<IFileService> fileService) : ApiControllerBase<FilesController>(logger)
     {
         [HttpPost, Produces(typeof(ApiResponse<CreateFileResponseViewModel>))]

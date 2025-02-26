@@ -372,7 +372,7 @@ namespace GamaEdtech.Common.Core
 
         public static string? UserAgent(this HttpContext? httpContext) => httpContext?.Request.Headers.UserAgent.ToString();
 
-        public static long UserId(this HttpContext? httpContext) => httpContext.UserId<long>();
+        public static int UserId(this HttpContext? httpContext) => httpContext.UserId<int>();
 
         public static T? UserId<T>(this HttpContext? httpContext)
             where T : IEquatable<T> => (httpContext?.User).UserId<T>();

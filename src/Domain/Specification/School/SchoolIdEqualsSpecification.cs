@@ -5,8 +5,9 @@ namespace GamaEdtech.Domain.Specification.School
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Domain.Entity;
 
-    public sealed class SchoolIdEqualsSpecification(int schoolId) : SpecificationBase<SchoolComment>
+    public sealed class SchoolIdEqualsSpecification<TClass>(int schoolId) : SpecificationBase<TClass>
+        where TClass : ISchoolId
     {
-        public override Expression<Func<SchoolComment, bool>> Expression() => (t) => t.SchoolId == schoolId;
+        public override Expression<Func<TClass, bool>> Expression() => (t) => t.SchoolId.Equals(schoolId);
     }
 }

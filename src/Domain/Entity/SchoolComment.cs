@@ -7,12 +7,13 @@ namespace GamaEdtech.Domain.Entity
     using GamaEdtech.Common.DataAnnotation;
     using GamaEdtech.Common.DataAnnotation.Schema;
     using GamaEdtech.Domain.Entity.Identity;
+    using GamaEdtech.Domain.Enumeration;
 
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     [Table(nameof(SchoolComment))]
-    public class SchoolComment : IEntity<SchoolComment, long>
+    public class SchoolComment : VersionableEntity<ApplicationUser, int, int?>, IEntity<SchoolComment, long>, ISchoolId, IStatus
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]
@@ -24,15 +25,6 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public int SchoolId { get; set; }
         public School? School { get; set; }
-
-        [Column(nameof(CreationUserId), DataType.Int)]
-        [Required]
-        public int CreationUserId { get; set; }
-        public ApplicationUser? CreationUser { get; set; }
-
-        [Column(nameof(CreationDate), DataType.DateTimeOffset)]
-        [Required]
-        public DateTimeOffset CreationDate { get; set; }
 
         [Column(nameof(Comment), DataType.UnicodeMaxString)]
         public string? Comment { get; set; }
@@ -82,11 +74,16 @@ namespace GamaEdtech.Domain.Entity
         [Precision(3, 2)]
         public double AverageRate { get; set; }
 
+        [Column(nameof(Status), DataType.Byte)]
+        [Required]
+        public Status? Status { get; set; }
+
         public void Configure([NotNull] EntityTypeBuilder<SchoolComment> builder)
         {
             _ = builder.HasOne(t => t.School).WithMany(t => t.Comments).HasForeignKey(t => t.SchoolId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.CreationUser).WithMany().HasForeignKey(t => t.CreationUserId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasIndex(t => new { t.CreationUserId, t.SchoolId }).IsUnique(true);
+            _ = builder.HasIndex(t => new { t.Status });
         }
     }
 }

@@ -28,7 +28,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     {
         [HttpPost("login"), Produces(typeof(ApiResponse<AuthenticationResponseViewModel>))]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([NotNull] AuthenticationRequestViewModel request)
+        public async Task<IActionResult<AuthenticationResponseViewModel>> Login([NotNull] AuthenticationRequestViewModel request)
         {
             try
             {
@@ -42,30 +42,24 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 }
 
                 var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto { RememberMe = request.RememberMe, User = authenticateResult.Data.User });
-                return signInResult.OperationResult is not OperationResult.Succeeded
-                    ? Ok(new ApiResponse<AuthenticationResponseViewModel>
-                    {
-                        Errors = signInResult.Errors,
-                    })
-                    : Ok(new ApiResponse<AuthenticationResponseViewModel>
-                    {
-                        Data = new AuthenticationResponseViewModel
-                        {
-                            Roles = signInResult.Data?.Roles?.ListToFlagsEnum<Role>(),
-                        },
-                    });
+                return Ok(new ApiResponse<AuthenticationResponseViewModel>(signInResult.Errors)
+                {
+                    Data = signInResult.OperationResult is OperationResult.Succeeded ?
+                    new() { Roles = signInResult.Data?.Roles?.ListToFlagsEnum<Role>(), }
+                    : null,
+                });
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<AuthenticationResponseViewModel> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<AuthenticationResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpPost("register"), Produces(typeof(ApiResponse<Void>))]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([NotNull] RegistrationRequestViewModel request)
+        public async Task<IActionResult<Void>> Register([NotNull] RegistrationRequestViewModel request)
         {
             try
             {
@@ -76,44 +70,40 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Email = request.Email!,
                 });
 
-                return Ok(new ApiResponse<Void>
-                {
-                    Errors = result.Errors,
-                });
+                return Ok(new ApiResponse<Void>(result.Errors));
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<AuthenticationResponseViewModel> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpGet("logout"), Produces(typeof(ApiResponse<Void>))]
         [Permission(policy: null)]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult<Void>> Logout()
         {
             try
             {
                 var result = await identityService.Value.SignOutAsync();
 
-                return Ok(new ApiResponse<Void>
+                return Ok(new ApiResponse<Void>(result.Errors)
                 {
                     Data = result.Data,
-                    Errors = result.Errors,
                 });
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<Void> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpPut("password"), Produces(typeof(ApiResponse<Void>))]
         [Permission(policy: null)]
-        public async Task<IActionResult> ChangePassword([NotNull] ChangePasswordRequestViewModel request)
+        public async Task<IActionResult<Void>> ChangePassword([NotNull] ChangePasswordRequestViewModel request)
         {
             try
             {
@@ -122,50 +112,42 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     CurrentPassword = request.CurrentPassword,
                     NewPassword = request.NewPassword,
                 });
-                return Ok(new ApiResponse<Void>
-                {
-                    Errors = result.Errors,
-                });
+                return Ok(new ApiResponse<Void>(result.Errors));
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<Void> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpPost("tokens"), Produces(typeof(ApiResponse<GenerateTokenResponseViewModel>))]
-        public async Task<IActionResult> GenerateToken([NotNull] GenerateTokenRequestViewModel request)
+        public async Task<IActionResult<GenerateTokenResponseViewModel>> GenerateToken([NotNull] GenerateTokenRequestViewModel request)
         {
             try
             {
                 var authenticateResult = await identityService.Value.AuthenticateAsync(new AuthenticationRequestDto { Password = request.Password!, Username = request.Username! });
                 if (authenticateResult.Data?.User is null)
                 {
-                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>
-                    {
-                        Errors = authenticateResult.Errors,
-                    });
+                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(authenticateResult.Errors));
                 }
+
                 var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto { RememberMe = false, User = authenticateResult.Data.User });
                 if (signInResult.OperationResult is not OperationResult.Succeeded)
                 {
-                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>
-                    {
-                        Errors = signInResult.Errors,
-                    });
+                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(signInResult.Errors));
                 }
+
                 var result = await identityService.Value.GenerateUserTokenAsync(new GenerateUserTokenRequestDto
                 {
                     UserId = authenticateResult.Data.User.Id,
                     TokenProvider = PermissionConstants.ApiDataProtectorTokenProvider,
                     Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
                 });
-                return Ok(new ApiResponse<GenerateTokenResponseViewModel>
+                return Ok(new ApiResponse<GenerateTokenResponseViewModel>(result.Errors)
                 {
-                    Errors = result.Errors,
-                    Data = new GenerateTokenResponseViewModel
+                    Data = new()
                     {
                         Token = result.Data?.Token,
                         ExpirationTime = result.Data?.ExpirationTime,
@@ -176,13 +158,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<GenerateTokenResponseViewModel> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<GenerateTokenResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpPost("tokens/revoke"), Produces(typeof(ApiResponse<RevokeTokenResponseViewModel>))]
         [Permission(policy: null)]
-        public async Task<IActionResult> RevokeToken()
+        public async Task<IActionResult<RevokeTokenResponseViewModel>> RevokeToken()
         {
             try
             {
@@ -192,22 +174,22 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     TokenProvider = PermissionConstants.ApiDataProtectorTokenProvider,
                     Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
                 });
-                return Ok(new ApiResponse<RevokeTokenResponseViewModel>
+
+                return Ok(new ApiResponse<RevokeTokenResponseViewModel>(result.Errors)
                 {
-                    Errors = result.Errors,
-                    Data = new RevokeTokenResponseViewModel()
+                    Data = new()
                 });
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<RevokeTokenResponseViewModel> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<RevokeTokenResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpGet("authenticated"), Produces(typeof(ApiResponse<bool>))]
-        public IActionResult Authenticated()
+        public IActionResult<bool> Authenticated()
         {
             try
             {
@@ -220,38 +202,37 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<bool> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<bool>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpGet("profiles"), Produces(typeof(ApiResponse<ProfileSettingsResponseViewModel>))]
         [Permission(policy: null)]
-        public async Task<IActionResult> GetProfileSettings()
+        public async Task<IActionResult<ProfileSettingsResponseViewModel>> GetProfileSettings()
         {
             try
             {
                 var result = await identityService.Value.GetProfileSettingsAsync();
 
-                return Ok(new ApiResponse<ProfileSettingsResponseViewModel>
+                return Ok(new ApiResponse<ProfileSettingsResponseViewModel>(result.Errors)
                 {
                     Data = new ProfileSettingsResponseViewModel
                     {
                         TimeZoneId = result.Data?.TimeZoneId,
                     },
-                    Errors = result.Errors,
                 });
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ProfileSettingsResponseViewModel> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<ProfileSettingsResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
         [HttpPut("profiles"), Produces(typeof(ApiResponse<Void>))]
         [Permission(policy: null)]
-        public async Task<IActionResult> UpdateProfileSettings([NotNull] ProfileSettingsRequestViewModel request)
+        public async Task<IActionResult<Void>> UpdateProfileSettings([NotNull] ProfileSettingsRequestViewModel request)
         {
             try
             {
@@ -260,16 +241,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     TimeZoneId = request.TimeZoneId,
                 });
 
-                return Ok(new ApiResponse<Void>
-                {
-                    Errors = result.Errors,
-                });
+                return Ok(new ApiResponse<Void>(result.Errors));
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<Void> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
     }
