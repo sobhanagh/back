@@ -1,14 +1,12 @@
 namespace GamaEdtech.Application.Interface
 {
-    using GamaEdtech.Common.Data;
-    using GamaEdtech.Common.DataAccess.Specification;
     using System.Diagnostics.CodeAnalysis;
 
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAnnotation;
-
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
-    using NUlid;
 
     [Injectable]
     public interface ISchoolService
@@ -28,7 +26,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<bool>> RejectSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification);
 
         Task<ResultData<ListDataSource<SchoolImageDto>>> GetSchoolImagesAsync(ListRequestDto<SchoolImage>? requestDto = null);
-        Task<ResultData<IEnumerable<Ulid>>> GetSchoolImageFileIdsAsync([NotNull] ISpecification<SchoolImage> specification);
+        Task<ResultData<IEnumerable<string?>>> GetSchoolImagesPathAsync([NotNull] ISpecification<SchoolImage> specification);
         Task<ResultData<bool>> ConfirmSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification);
         Task<ResultData<bool>> RejectSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification);
     }

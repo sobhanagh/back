@@ -42,7 +42,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 }
 
                 var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto { RememberMe = request.RememberMe, User = authenticateResult.Data.User });
-                return Ok<AuthenticationResponseViewModel>(new(signInResult.Errors)
+                return Ok(new ApiResponse<AuthenticationResponseViewModel>(signInResult.Errors)
                 {
                     Data = signInResult.OperationResult is OperationResult.Succeeded ?
                     new() { Roles = signInResult.Data?.Roles?.ListToFlagsEnum<Role>(), }
@@ -53,7 +53,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<AuthenticationResponseViewModel>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<AuthenticationResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
@@ -70,13 +70,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Email = request.Email!,
                 });
 
-                return Ok<Void>(new(result.Errors));
+                return Ok(new ApiResponse<Void>(result.Errors));
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<Void>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
 
@@ -88,7 +88,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await identityService.Value.SignOutAsync();
 
-                return Ok<Void>(new(result.Errors)
+                return Ok(new ApiResponse<Void>(result.Errors)
                 {
                     Data = result.Data,
                 });
@@ -97,7 +97,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<Void>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
 
@@ -112,13 +112,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     CurrentPassword = request.CurrentPassword,
                     NewPassword = request.NewPassword,
                 });
-                return Ok<Void>(new(result.Errors));
+                return Ok(new ApiResponse<Void>(result.Errors));
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<Void>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
 
@@ -130,13 +130,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var authenticateResult = await identityService.Value.AuthenticateAsync(new AuthenticationRequestDto { Password = request.Password!, Username = request.Username! });
                 if (authenticateResult.Data?.User is null)
                 {
-                    return Ok<GenerateTokenResponseViewModel>(new(authenticateResult.Errors));
+                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(authenticateResult.Errors));
                 }
 
                 var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto { RememberMe = false, User = authenticateResult.Data.User });
                 if (signInResult.OperationResult is not OperationResult.Succeeded)
                 {
-                    return Ok<GenerateTokenResponseViewModel>(new(signInResult.Errors));
+                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(signInResult.Errors));
                 }
 
                 var result = await identityService.Value.GenerateUserTokenAsync(new GenerateUserTokenRequestDto
@@ -145,7 +145,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     TokenProvider = PermissionConstants.ApiDataProtectorTokenProvider,
                     Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
                 });
-                return Ok<GenerateTokenResponseViewModel>(new(result.Errors)
+                return Ok(new ApiResponse<GenerateTokenResponseViewModel>(result.Errors)
                 {
                     Data = new()
                     {
@@ -158,7 +158,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<GenerateTokenResponseViewModel>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<GenerateTokenResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
@@ -175,7 +175,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
                 });
 
-                return Ok<RevokeTokenResponseViewModel>(new(result.Errors)
+                return Ok(new ApiResponse<RevokeTokenResponseViewModel>(result.Errors)
                 {
                     Data = new()
                 });
@@ -184,7 +184,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<RevokeTokenResponseViewModel>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<RevokeTokenResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
@@ -193,7 +193,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                return Ok<bool>(new()
+                return Ok(new ApiResponse<bool>
                 {
                     Data = User.Identity?.IsAuthenticated is true,
                 });
@@ -202,7 +202,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<bool>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<bool>(new Error { Message = exc.Message }));
             }
         }
 
@@ -214,7 +214,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await identityService.Value.GetProfileSettingsAsync();
 
-                return Ok<ProfileSettingsResponseViewModel>(new(result.Errors)
+                return Ok(new ApiResponse<ProfileSettingsResponseViewModel>(result.Errors)
                 {
                     Data = new ProfileSettingsResponseViewModel
                     {
@@ -226,7 +226,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<ProfileSettingsResponseViewModel>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ProfileSettingsResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
@@ -241,13 +241,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     TimeZoneId = request.TimeZoneId,
                 });
 
-                return Ok<Void>(new(result.Errors));
+                return Ok(new ApiResponse<Void>(result.Errors));
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<Void>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<Void>(new Error { Message = exc.Message }));
             }
         }
     }

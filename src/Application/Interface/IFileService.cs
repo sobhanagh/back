@@ -11,5 +11,6 @@ namespace GamaEdtech.Application.Interface
     public interface IFileService
     {
         Task<ResultData<CreateFileResponseDto>> CreateFileAsync([NotNull] CreateFileRequestDto requestDto);
+        ResultData<Uri?> GetFileUri(string? id);
     }
 }

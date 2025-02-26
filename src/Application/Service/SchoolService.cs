@@ -21,12 +21,10 @@ namespace GamaEdtech.Application.Service
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
-    using NUlid;
-
     using static GamaEdtech.Common.Core.Constants;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
-        , Lazy<ILogger<FileService>> logger)
+        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ISchoolService
     {
         public async Task<ResultData<ListDataSource<SchoolsDto>>> GetSchoolsAsync(ListRequestDto<School>? requestDto = null)
@@ -484,14 +482,14 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<IEnumerable<Ulid>>> GetSchoolImageFileIdsAsync([NotNull] ISpecification<SchoolImage> specification)
+        public async Task<ResultData<IEnumerable<string?>>> GetSchoolImagesPathAsync([NotNull] ISpecification<SchoolImage> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var result = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
                     .Select(t => t.FileId).ToListAsync();
-                return new(OperationResult.Succeeded) { Data = result };
+                return new(OperationResult.Succeeded) { Data = result.Select(t => fileService.Value.GetFileUri(t.ToString()).Data?.ToString()) };
             }
             catch (Exception exc)
             {

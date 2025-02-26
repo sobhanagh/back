@@ -58,6 +58,25 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public ResultData<Uri?> GetFileUri(string? id)
+        {
+            try
+            {
+                var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
+                var container = configuration.Value.GetValue<string>("Azure:SchoolContainerName");
+
+                var url = new Azure.Storage.Blobs.BlobClient(connection, container, id)
+                    .GenerateSasUri(Azure.Storage.Sas.BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddMinutes(10));
+
+                return new(OperationResult.Succeeded) { Data = url };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
         private async Task<string?> UploadFileAsync(byte[]? file)
         {
             if (file is null)

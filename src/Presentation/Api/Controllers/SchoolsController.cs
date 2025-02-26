@@ -332,15 +332,15 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpGet("{schoolId:int}/images/{fileType}"), Produces<ApiResponse<IEnumerable<Ulid>>>()]
-        public async Task<IActionResult<IEnumerable<Ulid>>> GetSchoolImages([FromRoute] int schoolId, [FromRoute] FileType fileType)
+        public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImages([FromRoute] int schoolId, [FromRoute] FileType fileType)
         {
             try
             {
                 var specification = new StatusEqualsSpecification<SchoolImage>(Status.Confirmed)
                     .And(new SchoolIdEqualsSpecification<SchoolImage>(schoolId))
                     .And(new SchoolImageFileTypeEqualsSpecification(fileType));
-                var result = await schoolService.Value.GetSchoolImageFileIdsAsync(specification);
-                return Ok(new ApiResponse<IEnumerable<Ulid>>(result.Errors)
+                var result = await schoolService.Value.GetSchoolImagesPathAsync(specification);
+                return Ok(new ApiResponse<IEnumerable<string?>>(result.Errors)
                 {
                     Data = result.Data is null ? [] : result.Data,
                 });
@@ -349,7 +349,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<IEnumerable<Ulid>>(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<IEnumerable<string?>>(new Error { Message = exc.Message }));
             }
         }
     }
