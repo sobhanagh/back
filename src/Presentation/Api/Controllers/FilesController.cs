@@ -19,7 +19,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = fileService.Value.GetFileUri(id, ContainerType.School);
+                var result = fileService.Value.GetFileUri(id, ContainerType.Default);
                 return result.OperationResult is Constants.OperationResult.Succeeded
                     ? Redirect(result.Data!.ToString())
                     : Ok(new ApiResponse<string?>(result.Errors));
