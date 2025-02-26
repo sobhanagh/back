@@ -170,7 +170,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await identityService.Value.RemoveUserTokenAsync(new RemoveUserTokenRequestDto
                 {
-                    UserId = User.UserId<int>(),
+                    UserId = User.UserId(),
                     TokenProvider = PermissionConstants.ApiDataProtectorTokenProvider,
                     Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
                 });
