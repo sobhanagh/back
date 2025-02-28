@@ -20,32 +20,33 @@ namespace GamaEdtech.Application.Service
     using static GamaEdtech.Common.Core.Constants;
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Data.Dto.School;
 
 #pragma warning disable CA1416 // Validate platform compatibility
     public class FileService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger, Lazy<IConfiguration> configuration)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IFileService
     {
-        public async Task<ResultData<CreateFileResponseDto>> CreateFileAsync([NotNull] CreateFileRequestDto requestDto)
+        public async Task<ResultData<CreateFileResponseDto>> CreateFileWithPreviewAsync([NotNull] CreateFileRequestDto requestDto)
         {
             try
             {
                 using MemoryStream stream = new();
-                await requestDto.File!.CopyToAsync(stream);
+                await requestDto.File.CopyToAsync(stream);
                 var data = stream.ToArray();
 
                 var (preview1, preview2, preview3) = GeneratePreview(data, requestDto.File.FileName);
 
-                var fileId = await UploadFileAsync(data);
-                var previewId1 = await UploadFileAsync(preview1);
-                var previewId2 = await UploadFileAsync(preview2);
-                var previewId3 = await UploadFileAsync(preview3);
+                var fileId = await UploadFileAsync(new() { File = data, ContainerType = ContainerType.Default });
+                var previewId1 = preview1 is not null ? (await UploadFileAsync(new() { File = preview1, ContainerType = ContainerType.Default })).Data : null;
+                var previewId2 = preview2 is not null ? (await UploadFileAsync(new() { File = preview2, ContainerType = ContainerType.Default })).Data : null;
+                var previewId3 = preview3 is not null ? (await UploadFileAsync(new() { File = preview3, ContainerType = ContainerType.Default })).Data : null;
 
                 return new(OperationResult.Succeeded)
                 {
                     Data = new()
                     {
-                        FileId = fileId,
+                        FileId = fileId.Data,
                         PreviewId1 = previewId1,
                         PreviewId2 = previewId2,
                         PreviewId3 = previewId3,
@@ -84,21 +85,26 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        private async Task<string?> UploadFileAsync(byte[]? file)
+        public async Task<ResultData<string?>> UploadFileAsync([NotNull] UploadFileRequestDto requestDto)
         {
-            if (file is null)
+            try
             {
-                return null;
+                var name = Guid.NewGuid().ToString("N");
+                var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
+
+                var key = requestDto.ContainerType == ContainerType.School ? "Azure:SchoolContainerName" : "Azure:ContainerName";
+                var container = configuration.Value.GetValue<string>(key);
+
+                _ = await new Azure.Storage.Blobs.BlobClient(connection, container, name)
+                    .UploadAsync(new BinaryData(requestDto.File));
+
+                return new(OperationResult.Succeeded) { Data = name };
             }
-
-            var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
-            var container = configuration.Value.GetValue<string>("Azure:ContainerName");
-            var name = Guid.NewGuid().ToString("N");
-
-            _ = await new Azure.Storage.Blobs.BlobClient(connection, container, name)
-                .UploadAsync(new BinaryData(file));
-
-            return name;
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
         }
 
         private static (byte[]? PreviewId1, byte[]? PreviewId2, byte[]? PreviewId3) GeneratePreview(byte[] file, string fileName)

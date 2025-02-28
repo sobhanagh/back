@@ -550,15 +550,24 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                _ = await fileService.Value.CreateFileAsync(new()
+                using MemoryStream stream = new();
+                await requestDto.File.CopyToAsync(stream);
+
+                var fileId = await fileService.Value.UploadFileAsync(new()
                 {
-                    File = requestDto.File,
+                    File = stream.ToArray(),
+                    ContainerType = ContainerType.School,
                 });
+                if (fileId.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(fileId.OperationResult) { Errors = fileId.Errors, };
+                }
 
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var imageRepository = uow.GetRepository<SchoolImage>();
                 var schoolImage = new SchoolImage
                 {
+                    FileId = fileId.Data,
                     SchoolId = requestDto.SchoolId,
                     FileType = requestDto.FileType,
                     CreationDate = requestDto.CreationDate,
@@ -566,8 +575,6 @@ namespace GamaEdtech.Application.Service
                     Status = Status.Draft,
                 };
 
-                using MemoryStream stream = new();
-                await requestDto.File.CopyToAsync(stream);
                 var gps = ImageMetadataReader.ReadMetadata(stream)
                              .OfType<GpsDirectory>()
                              .FirstOrDefault()?.GetGeoLocation();
