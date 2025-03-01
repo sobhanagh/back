@@ -3,6 +3,7 @@ namespace GamaEdtech.Domain.Entity
     using System.Diagnostics.CodeAnalysis;
 
     using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.Data.Enumeration;
     using GamaEdtech.Common.DataAccess.Entities;
     using GamaEdtech.Common.DataAnnotation;
     using GamaEdtech.Common.DataAnnotation.Schema;
@@ -81,9 +82,9 @@ namespace GamaEdtech.Domain.Entity
         public void Configure([NotNull] EntityTypeBuilder<SchoolComment> builder)
         {
             _ = builder.HasOne(t => t.School).WithMany(t => t.Comments).HasForeignKey(t => t.SchoolId).OnDelete(DeleteBehavior.NoAction);
-            _ = builder.HasOne(t => t.CreationUser).WithMany().HasForeignKey(t => t.CreationUserId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasIndex(t => new { t.CreationUserId, t.SchoolId }).IsUnique(true);
             _ = builder.HasIndex(t => new { t.Status });
+            _ = builder.OwnEnumeration<SchoolComment, Status, byte>(t => t.Status);
         }
     }
 }

@@ -15,17 +15,19 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
-    using MetadataExtractor.Formats.Exif;
+
     using MetadataExtractor;
+    using MetadataExtractor.Formats.Exif;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
-    using static GamaEdtech.Common.Core.Constants;
-    using NetTopologySuite.Geometries;
     using NetTopologySuite;
+    using NetTopologySuite.Geometries;
+
+    using static GamaEdtech.Common.Core.Constants;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService)
@@ -495,7 +497,7 @@ namespace GamaEdtech.Application.Service
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var result = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
                     .Select(t => t.FileId).ToListAsync();
-                return new(OperationResult.Succeeded) { Data = result.Select(t => fileService.Value.GetFileUri(t.ToString()).Data?.ToString()) };
+                return new(OperationResult.Succeeded) { Data = result.Select(t => fileService.Value.GetFileUri(t, ContainerType.School).Data?.ToString()) };
             }
             catch (Exception exc)
             {
@@ -550,15 +552,24 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var result = await fileService.Value.CreateFileAsync(new()
+                using MemoryStream stream = new();
+                await requestDto.File.CopyToAsync(stream);
+
+                var fileId = await fileService.Value.UploadFileAsync(new()
                 {
-                    File = requestDto.File,
+                    File = stream.ToArray(),
+                    ContainerType = ContainerType.School,
                 });
+                if (fileId.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(fileId.OperationResult) { Errors = fileId.Errors, };
+                }
 
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var imageRepository = uow.GetRepository<SchoolImage>();
                 var schoolImage = new SchoolImage
                 {
+                    FileId = fileId.Data,
                     SchoolId = requestDto.SchoolId,
                     FileType = requestDto.FileType,
                     CreationDate = requestDto.CreationDate,
@@ -566,7 +577,7 @@ namespace GamaEdtech.Application.Service
                     Status = Status.Draft,
                 };
 
-                var gps = ImageMetadataReader.ReadMetadata(requestDto.File.OpenReadStream())
+                var gps = ImageMetadataReader.ReadMetadata(stream)
                              .OfType<GpsDirectory>()
                              .FirstOrDefault()?.GetGeoLocation();
                 if (gps is not null)
