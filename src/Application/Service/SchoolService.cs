@@ -52,12 +52,13 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<ListDataSource<SchoolInfoDto>>> GetSchoolsListAsync(ListRequestDto<School>? requestDto = null)
+        public async Task<ResultData<ListDataSource<SchoolInfoDto>>> GetSchoolsListAsync(ListRequestDto<School>? requestDto = null, Point? point = null)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var result = await uow.GetRepository<School, int>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
+
                 var users = await result.List.Select(t => new SchoolInfoDto
                 {
                     Id = t.Id,
@@ -71,7 +72,8 @@ namespace GamaEdtech.Application.Service
                     CityTitle = t.City == null ? "" : t.City.Title,
                     CountryTitle = t.Country == null ? "" : t.Country.Title,
                     StateTitle = t.State == null ? "" : t.State.Title,
-                }).ToListAsync();
+                    Distance = point != null && t.Location != null ? t.Location.Distance(point) : null,
+                }).OrderBy(t => t.Distance).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
             catch (Exception exc)

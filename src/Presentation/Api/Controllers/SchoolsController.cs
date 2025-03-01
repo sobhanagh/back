@@ -18,7 +18,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     using Microsoft.AspNetCore.Mvc;
 
-    using NUlid;
+    using NetTopologySuite.Geometries;
 
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
@@ -50,17 +50,22 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     var specification = new NameContainsSpecification(request.Name);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
+
+                Point? point = null;
                 if (request.Location is not null)
                 {
                     var specification = new LocationIncludeSpecification(request.Location.Latitude!.Value, request.Location.Longitude!.Value, request.Location.Radius!.Value);
+                    point = specification.Point;
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
 
+                request.PagingDto ??= new();
+                request.PagingDto!.SortFilter = [new SortFilter { Column = "", SortType = Constants.SortType.Asc }];
                 var result = await schoolService.Value.GetSchoolsListAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
                     Specification = baseSpecification,
-                });
+                }, point);
                 return Ok(new ApiResponseWithFilter<ListDataSource<SchoolInfoResponseViewModel>>(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
