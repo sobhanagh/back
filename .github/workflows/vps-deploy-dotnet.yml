@@ -60,4 +60,4 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd /var/www/gamacoreapp
-            sudo systemctl restart gamacoreapp.service
+            systemctl restart gamacoreapp.service
