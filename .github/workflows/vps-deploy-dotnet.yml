@@ -52,7 +52,7 @@ jobs:
           script: |
             # Remove old files from the target directory
             sudo rm -rf /var/www/gamacoreapp/*
-            sudo cp appsettings.Production.json gamacoreapp/appsettings.Production.json
+            sudo cp /var/www/appsettings.Production.json /var/www/gamacoreapp/appsettings.Production.json
 
       - name: Deploy to VPS via SSH
         uses: appleboy/scp-action@v0.1.4
