@@ -6,11 +6,16 @@ namespace GamaEdtech.Application.Service
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
 
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.Data.Enumeration;
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
-    using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Service.Factory;
     using GamaEdtech.Data.Dto.File;
+    using GamaEdtech.Data.Dto.School;
+    using GamaEdtech.Domain.Enumeration;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;
@@ -18,13 +23,10 @@ namespace GamaEdtech.Application.Service
     using Microsoft.Extensions.Logging;
 
     using static GamaEdtech.Common.Core.Constants;
-    using GamaEdtech.Application.Interface;
-    using GamaEdtech.Domain.Enumeration;
-    using GamaEdtech.Data.Dto.School;
 
 #pragma warning disable CA1416 // Validate platform compatibility
     public class FileService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
-        , Lazy<ILogger<FileService>> logger, Lazy<IConfiguration> configuration)
+        , Lazy<ILogger<FileService>> logger, Lazy<IConfiguration> configuration, Lazy<IGenericFactory<Infrastructure.Interface.IFileProvider, FileProviderType>> genericFactory)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IFileService
     {
         public async Task<ResultData<CreateFileResponseDto>> CreateFileWithPreviewAsync([NotNull] CreateFileRequestDto requestDto)
@@ -37,10 +39,10 @@ namespace GamaEdtech.Application.Service
 
                 var (preview1, preview2, preview3) = GeneratePreview(data, requestDto.File.FileName);
 
-                var fileId = await UploadFileAsync(new() { File = data, ContainerType = ContainerType.Default });
-                var previewId1 = preview1 is not null ? (await UploadFileAsync(new() { File = preview1, ContainerType = ContainerType.Default })).Data : null;
-                var previewId2 = preview2 is not null ? (await UploadFileAsync(new() { File = preview2, ContainerType = ContainerType.Default })).Data : null;
-                var previewId3 = preview3 is not null ? (await UploadFileAsync(new() { File = preview3, ContainerType = ContainerType.Default })).Data : null;
+                var fileId = await UploadFileAsync(new() { File = data, ContainerType = ContainerType.Default, FileExtension = Path.GetExtension(requestDto.File.FileName) });
+                var previewId1 = preview1 is not null ? (await UploadFileAsync(new() { File = preview1, ContainerType = ContainerType.Default, FileExtension = ".png" })).Data : null;
+                var previewId2 = preview2 is not null ? (await UploadFileAsync(new() { File = preview2, ContainerType = ContainerType.Default, FileExtension = ".png" })).Data : null;
+                var previewId3 = preview3 is not null ? (await UploadFileAsync(new() { File = preview3, ContainerType = ContainerType.Default, FileExtension = ".png" })).Data : null;
 
                 return new(OperationResult.Succeeded)
                 {
@@ -64,19 +66,8 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
-
-                var key = "Azure:ContainerName";
-                if (containerType == ContainerType.School)
-                {
-                    key = "Azure:SchoolContainerName";
-                }
-                var container = configuration.Value.GetValue<string>(key);
-
-                var url = new Azure.Storage.Blobs.BlobClient(connection, container, id)
-                    .GenerateSasUri(Azure.Storage.Sas.BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddMinutes(10));
-
-                return new(OperationResult.Succeeded) { Data = url };
+                var fileProviderType = configuration.Value.GetValue<FileProviderType>("FileProvider:Type");
+                return genericFactory.Value.GetProvider(fileProviderType!)!.GetFileUri(id, containerType);
             }
             catch (Exception exc)
             {
@@ -89,16 +80,8 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var name = Guid.NewGuid().ToString("N");
-                var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
-
-                var key = requestDto.ContainerType == ContainerType.School ? "Azure:SchoolContainerName" : "Azure:ContainerName";
-                var container = configuration.Value.GetValue<string>(key);
-
-                _ = await new Azure.Storage.Blobs.BlobClient(connection, container, name)
-                    .UploadAsync(new BinaryData(requestDto.File));
-
-                return new(OperationResult.Succeeded) { Data = name };
+                var fileProviderType = configuration.Value.GetValue<string>("FileProvider:Type")!.ToEnumeration<FileProviderType, byte>();
+                return await genericFactory.Value.GetProvider(fileProviderType!)!.UploadFileAsync(requestDto);
             }
             catch (Exception exc)
             {

@@ -559,6 +559,7 @@ namespace GamaEdtech.Application.Service
                 {
                     File = stream.ToArray(),
                     ContainerType = ContainerType.School,
+                    FileExtension = Path.GetExtension(requestDto.File.FileName),
                 });
                 if (fileId.OperationResult is not OperationResult.Succeeded)
                 {

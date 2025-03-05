@@ -6,14 +6,17 @@ namespace GamaEdtech.Infrastructure.Provider.File
     using GamaEdtech.Common.Data;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Infrastructure.Interface;
 
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
     using static GamaEdtech.Common.Core.Constants;
 
-    public sealed class AzureFileProvider(Lazy<ILogger<AzureFileProvider>> logger, Lazy<IConfiguration> configuration)
+    public sealed class AzureFileProvider(Lazy<ILogger<AzureFileProvider>> logger, Lazy<IConfiguration> configuration) : IFileProvider
     {
+        public FileProviderType ProviderType => FileProviderType.Azure;
+
         public ResultData<Uri?> GetFileUri(string? id, ContainerType containerType)
         {
             try
@@ -34,7 +37,7 @@ namespace GamaEdtech.Infrastructure.Provider.File
             }
             catch (Exception exc)
             {
-                Logger.Value.LogException(exc);
+                logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
         }
