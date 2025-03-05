@@ -644,6 +644,9 @@ namespace GamaEdtech.Common.Core
                 .Replace(".Infrastructure.", resourceAssembly + ".Infrastructure.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Infrastructure,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 
+                .Replace(".Infrastructure.Interface", resourceAssembly + ".Infrastructure.Interface", StringComparison.OrdinalIgnoreCase)
+                .Replace(".Infrastructure.Interface,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
+
                 .Replace(".Application.Service.", resourceAssembly + ".Application.Service.", StringComparison.OrdinalIgnoreCase)
                 .Replace(".Application.Service,", resourceAssembly + ",", StringComparison.OrdinalIgnoreCase)
 

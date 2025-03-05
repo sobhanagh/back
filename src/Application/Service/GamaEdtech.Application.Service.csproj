@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Data\GamaEdtech.Data.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Interface\GamaEdtech.Infrastructure.Interface.csproj" />
     <ProjectReference Include="..\Interface\GamaEdtech.Application.Interface.csproj" />
   </ItemGroup>
 </Project>
