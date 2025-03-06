@@ -19,6 +19,6 @@ namespace GamaEdtech.Domain.Specification.School
             }
         }
 
-        public override Expression<Func<School, bool>> Expression() => (t) => t.Location != null && t.Location.Distance(Point) < radius;
+        public override Expression<Func<School, bool>> Expression() => (t) => t.Coordinates != null && t.Coordinates.Distance(Point) < radius;
     }
 }
