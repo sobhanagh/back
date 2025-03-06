@@ -37,23 +37,17 @@ namespace GamaEdtech.Infrastructure.Provider.Authentication
                 var signinResult = await signInManager.Value.CheckPasswordSignInAsync(user!, requestDto.Password!, true);
                 if (signinResult.Succeeded)
                 {
-                    var securityStampResult = await signInManager.Value.UserManager.UpdateSecurityStampAsync(user!);
-                    if (!securityStampResult.Succeeded)
+                    return new(OperationResult.Succeeded)
                     {
-                        return new(OperationResult.NotValid)
-                        {
-                            Errors = securityStampResult.Errors.Select(t => new Error { Message = t.Description, Code = t.Code }),
-                        };
-                    }
+                        Data = new AuthenticationResponseDto { User = user!.AdaptData<ApplicationUser, ApplicationUserDto>() }
+                    };
                 }
 
                 var message = signinResult.IsLockedOut ? localizer.Value["UserLockedOut"] : localizer.Value["WrongUsernameOrPassword"];
-                return signinResult.Succeeded
-                    ? new(OperationResult.Succeeded) { Data = new AuthenticationResponseDto { User = user!.AdaptData<ApplicationUser, ApplicationUserDto>() } }
-                    : new(OperationResult.NotValid)
-                    {
-                        Errors = new[] { new Error { Message = message } },
-                    };
+                return new(OperationResult.NotValid)
+                {
+                    Errors = new[] { new Error { Message = message } },
+                };
             }
             catch (Exception exc)
             {

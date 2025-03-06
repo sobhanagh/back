@@ -85,16 +85,11 @@ namespace GamaEdtech.Infrastructure.Provider.Authentication
                     return validationResult;
                 }
 
-                var securityStampResult = await signInManager.Value.UserManager.UpdateSecurityStampAsync(user);
-                return securityStampResult.Succeeded
-                    ? new(OperationResult.Succeeded)
-                    {
-                        Data = new() { User = user!.AdaptData<ApplicationUser, ApplicationUserDto>() }
-                    }
-                    : new(OperationResult.NotValid)
-                    {
-                        Errors = securityStampResult.Errors.Select(t => new Error { Message = t.Description, Code = t.Code }),
-                    };
+                var dto = user!.AdaptData<ApplicationUser, ApplicationUserDto>();
+                return new(OperationResult.Succeeded)
+                {
+                    Data = new() { User = dto, }
+                };
             }
             catch (Exception exc)
             {
