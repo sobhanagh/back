@@ -22,6 +22,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Common.Mapping;
     using GamaEdtech.Common.Service;
+    using GamaEdtech.Common.Service.Factory;
     using GamaEdtech.Data.Dto.Identity;
     using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
@@ -43,7 +44,7 @@ namespace GamaEdtech.Application.Service
     using Void = Common.Data.Void;
 
     public class IdentityService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<IdentityService>> localizer, Lazy<ILogger<IdentityService>> logger
-            , Lazy<UserManager<ApplicationUser>> userManager
+            , Lazy<UserManager<ApplicationUser>> userManager, Lazy<IGenericFactory<Infrastructure.Interface.IAuthenticationProvider, AuthenticationProvider>> genericFactory
             , Lazy<SignInManager<ApplicationUser>> signInManager, Lazy<ICacheProvider> cacheProvider, Lazy<IConfiguration> configuration)
         : LocalizableServiceBase<IdentityService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IIdentityService, ITokenService
     {
@@ -157,35 +158,7 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var username = requestDto.Username;
-                var user = await signInManager.Value.UserManager.FindByNameAsync(username);
-                var validationResult = ValidateUser<AuthenticationResponseDto>(user);
-
-                if (validationResult.OperationResult is not OperationResult.Succeeded)
-                {
-                    return validationResult;
-                }
-
-                var signinResult = await signInManager.Value.CheckPasswordSignInAsync(user!, requestDto.Password!, true);
-                if (signinResult.Succeeded)
-                {
-                    var securityStampResult = await userManager.Value.UpdateSecurityStampAsync(user!);
-                    if (!securityStampResult.Succeeded)
-                    {
-                        return new(OperationResult.NotValid)
-                        {
-                            Errors = securityStampResult.Errors.Select(t => new Error { Message = t.Description, Code = t.Code }),
-                        };
-                    }
-                }
-
-                var message = signinResult.IsLockedOut ? Localizer.Value["UserLockedOut"] : Localizer.Value["WrongUsernameOrPassword"];
-                return signinResult.Succeeded
-                    ? new(OperationResult.Succeeded) { Data = new AuthenticationResponseDto { User = user!.AdaptData<ApplicationUser, ApplicationUserDto>() } }
-                    : new(OperationResult.NotValid)
-                    {
-                        Errors = new[] { new Error { Message = message } },
-                    };
+                return await genericFactory.Value.GetProvider(requestDto.AuthenticationProvider)!.AuthenticateAsync(requestDto);
             }
             catch (Exception exc)
             {

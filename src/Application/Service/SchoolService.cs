@@ -299,6 +299,7 @@ namespace GamaEdtech.Application.Service
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var repository = uow.GetRepository<SchoolComment>();
+                var schoolRepository = uow.GetRepository<School, int>();
                 SchoolComment? schoolComment = null;
 
                 if (requestDto.Id.HasValue)
@@ -320,6 +321,10 @@ namespace GamaEdtech.Application.Service
                         };
                     }
 
+                    if (schoolComment.Comment != requestDto.Comment)
+                    {
+                        schoolComment.Status = Status.Draft;
+                    }
                     schoolComment.Comment = requestDto.Comment;
                     schoolComment.CreationDate = requestDto.CreationDate;
                     schoolComment.CreationUserId = requestDto.CreationUserId;
@@ -352,13 +357,16 @@ namespace GamaEdtech.Application.Service
                         ITTrainingRate = requestDto.ITTrainingRate,
                         SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate,
                         TuitionRatioRate = requestDto.TuitionRatioRate,
-                        Status = Status.Draft,
+                        //Status = Status.Draft,
+                        Status = Status.Confirmed,
                     };
                     schoolComment.AverageRate = Calculate(schoolComment);
                     repository.Add(schoolComment);
                 }
 
                 _ = await uow.SaveChangesAsync();
+                _ = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId)
+                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow));
 
                 return new(OperationResult.Succeeded) { Data = schoolComment.Id };
 
