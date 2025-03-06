@@ -69,12 +69,12 @@ namespace GamaEdtech.Application.Service
                     HasWebSite = !string.IsNullOrEmpty(t.WebSite),
                     HasEmail = !string.IsNullOrEmpty(t.Email),
                     HasPhoneNumber = !string.IsNullOrEmpty(t.PhoneNumber),
-                    Location = t.Location,
+                    Coordinates = t.Coordinates,
                     Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : null,
                     CityTitle = t.City == null ? "" : t.City.Title,
                     CountryTitle = t.Country == null ? "" : t.Country.Title,
                     StateTitle = t.State == null ? "" : t.State.Title,
-                    Distance = point != null && t.Location != null ? t.Location.Distance(point) : null,
+                    Distance = point != null && t.Coordinates != null ? t.Coordinates.Distance(point) : null,
                 }).OrderBy(t => t.Distance).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
@@ -97,7 +97,7 @@ namespace GamaEdtech.Application.Service
                     LocalName = t.LocalName,
                     Address = t.Address,
                     LocalAddress = t.LocalAddress,
-                    Location = t.Location,
+                    Coordinates = t.Coordinates,
                     SchoolType = t.SchoolType,
                     ZipCode = t.ZipCode,
                     CityId = t.CityId,
@@ -151,7 +151,7 @@ namespace GamaEdtech.Application.Service
                     school.Name = requestDto.Name;
                     school.LocalName = requestDto.LocalName;
                     school.Address = requestDto.Address;
-                    school.Location = requestDto.Location;
+                    school.Coordinates = requestDto.Coordinates;
                     school.SchoolType = requestDto.SchoolType;
                     school.StateId = requestDto.StateId;
                     school.ZipCode = requestDto.ZipCode;
@@ -175,7 +175,7 @@ namespace GamaEdtech.Application.Service
                         Name = requestDto.Name,
                         LocalName = requestDto.LocalName,
                         Address = requestDto.Address,
-                        Location = requestDto.Location,
+                        Coordinates = requestDto.Coordinates,
                         SchoolType = requestDto.SchoolType,
                         StateId = requestDto.StateId,
                         ZipCode = requestDto.ZipCode,
@@ -370,7 +370,7 @@ namespace GamaEdtech.Application.Service
 
                 return new(OperationResult.Succeeded) { Data = schoolComment.Id };
 
-                static double Calculate(SchoolComment comment) => (double)(
+                static double Calculate(SchoolComment comment) => (
                         comment.ArtisticActivitiesRate +
                         comment.BehaviorRate +
                         comment.ClassesQualityRate +
@@ -592,11 +592,11 @@ namespace GamaEdtech.Application.Service
                 if (gps is not null)
                 {
                     var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-                    var location = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
+                    var point = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
 
                     var schoolRepository = uow.GetRepository<School, int>();
-                    var schoolLocation = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Location).FirstOrDefaultAsync();
-                    if (schoolLocation is not null && schoolLocation.Distance(location) < 2000)
+                    var schoolCoordinates = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Coordinates).FirstOrDefaultAsync();
+                    if (schoolCoordinates is not null && schoolCoordinates.Distance(point) < 2000)
                     {
                         schoolImage.Status = Status.Confirmed;
                     }

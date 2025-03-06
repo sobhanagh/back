@@ -9,35 +9,35 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public string? Comment { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte ClassesQualityRate { get; set; }
+        [Range(0, 5.0)]
+        public double ClassesQualityRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte EducationRate { get; set; }
+        [Range(0, 5.0)]
+        public double EducationRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte ITTrainingRate { get; set; }
+        [Range(0, 5.0)]
+        public double ITTrainingRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte SafetyAndHappinessRate { get; set; }
+        [Range(0, 5.0)]
+        public double SafetyAndHappinessRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte BehaviorRate { get; set; }
+        [Range(0, 5.0)]
+        public double BehaviorRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte TuitionRatioRate { get; set; }
+        [Range(0, 5.0)]
+        public double TuitionRatioRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte FacilitiesRate { get; set; }
+        [Range(0, 5.0)]
+        public double FacilitiesRate { get; set; }
 
         [Display]
-        [Range(typeof(byte), "0", "5")]
-        public byte ArtisticActivitiesRate { get; set; }
+        [Range(0, 5.0)]
+        public double ArtisticActivitiesRate { get; set; }
     }
 }

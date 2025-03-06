@@ -30,37 +30,37 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(Comment), DataType.UnicodeMaxString)]
         public string? Comment { get; set; }
 
-        [Column(nameof(ClassesQualityRate), DataType.Byte)]
+        [Column(nameof(ClassesQualityRate), TypeName = "float")]
         [Required]
-        public byte ClassesQualityRate { get; set; }
+        public double ClassesQualityRate { get; set; }
 
-        [Column(nameof(EducationRate), DataType.Byte)]
+        [Column(nameof(EducationRate), TypeName = "float")]
         [Required]
-        public byte EducationRate { get; set; }
+        public double EducationRate { get; set; }
 
-        [Column(nameof(ITTrainingRate), DataType.Byte)]
+        [Column(nameof(ITTrainingRate), TypeName = "float")]
         [Required]
-        public byte ITTrainingRate { get; set; }
+        public double ITTrainingRate { get; set; }
 
-        [Column(nameof(SafetyAndHappinessRate), DataType.Byte)]
+        [Column(nameof(SafetyAndHappinessRate), TypeName = "float")]
         [Required]
-        public byte SafetyAndHappinessRate { get; set; }
+        public double SafetyAndHappinessRate { get; set; }
 
-        [Column(nameof(BehaviorRate), DataType.Byte)]
+        [Column(nameof(BehaviorRate), TypeName = "float")]
         [Required]
-        public byte BehaviorRate { get; set; }
+        public double BehaviorRate { get; set; }
 
-        [Column(nameof(TuitionRatioRate), DataType.Byte)]
+        [Column(nameof(TuitionRatioRate), TypeName = "float")]
         [Required]
-        public byte TuitionRatioRate { get; set; }
+        public double TuitionRatioRate { get; set; }
 
-        [Column(nameof(FacilitiesRate), DataType.Byte)]
+        [Column(nameof(FacilitiesRate), TypeName = "float")]
         [Required]
-        public byte FacilitiesRate { get; set; }
+        public double FacilitiesRate { get; set; }
 
-        [Column(nameof(ArtisticActivitiesRate), DataType.Byte)]
+        [Column(nameof(ArtisticActivitiesRate), TypeName = "float")]
         [Required]
-        public byte ArtisticActivitiesRate { get; set; }
+        public double ArtisticActivitiesRate { get; set; }
 
         [Column(nameof(LikeCount), DataType.Int)]
         [Required]
