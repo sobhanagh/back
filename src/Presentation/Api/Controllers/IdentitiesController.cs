@@ -143,11 +143,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     return Ok(new ApiResponse<GenerateTokenResponseViewModel>(authenticateResult.Errors));
                 }
 
-                var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto { RememberMe = false, User = authenticateResult.Data.User });
-                if (signInResult.OperationResult is not OperationResult.Succeeded)
-                {
-                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(signInResult.Errors));
-                }
+#pragma warning disable S125 // Sections of code should not be commented out
+                //var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto { RememberMe = false, User = authenticateResult.Data.User })
+                //if (signInResult.OperationResult is not OperationResult.Succeeded)
+                //{
+                //    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(signInResult.Errors))
+                //}
+#pragma warning restore S125 // Sections of code should not be commented out
 
                 var result = await identityService.Value.GenerateUserTokenAsync(new GenerateUserTokenRequestDto
                 {
