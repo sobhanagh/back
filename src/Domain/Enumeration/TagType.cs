@@ -12,7 +12,7 @@ namespace GamaEdtech.Domain.Enumeration
         public static readonly TagType Service = new(nameof(Service), 1);
 
         [Display]
-        public static readonly TagType Feature = new(nameof(Feature), 1);
+        public static readonly TagType Feature = new(nameof(Feature), 2);
 
         public TagType()
         {
