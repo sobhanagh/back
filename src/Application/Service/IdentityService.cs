@@ -540,6 +540,8 @@ namespace GamaEdtech.Application.Service
             var systemClaim = context.Principal?.FindFirstValue(ClaimTypes.System);
             if (string.IsNullOrEmpty(systemClaim))
             {
+                Logger.Value.LogException(new Exception($"step1-"));
+
                 await handleUnauthorizedRequestAsync();
                 return;
             }
@@ -547,6 +549,7 @@ namespace GamaEdtech.Application.Service
             var hash = GenerateDeviceHash(context.HttpContext);
             if (!systemClaim.Equals(hash, StringComparison.OrdinalIgnoreCase))
             {
+                Logger.Value.LogException(new Exception($"step3-"));
                 await handleUnauthorizedRequestAsync();
             }
 
@@ -556,6 +559,7 @@ namespace GamaEdtech.Application.Service
             var securityStampClaim = context.Principal?.FindFirstValue(userManager.Value.Options.ClaimsIdentity.SecurityStampClaimType);
             if (currentSecurityStamp != securityStampClaim)
             {
+                Logger.Value.LogException(new Exception($"step4- currentSecurityStamp: {currentSecurityStamp} - securityStampClaim: {securityStampClaim}"));
                 await handleUnauthorizedRequestAsync();
             }
 
@@ -809,14 +813,19 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        private static string? GenerateDeviceHash(HttpContext? httpContext)
+        private string? GenerateDeviceHash(HttpContext? httpContext)
         {
             var ip = httpContext.GetClientIpAddress();
             var userAgent = httpContext.UserAgent();
 
+
             var byteValue = Encoding.UTF8.GetBytes(ip + userAgent);
             var byteHash = SHA256.HashData(byteValue);
-            return Convert.ToBase64String(byteHash);
+            var result = Convert.ToBase64String(byteHash);
+
+            Logger.Value.LogException(new Exception($"step2- ip: {ip} - userAgent: {userAgent} - result: {result}"));
+
+            return result;
         }
 
         private ResultData<T> ValidateUser<T>(ApplicationUser? user)
