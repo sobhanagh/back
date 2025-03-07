@@ -201,7 +201,7 @@ namespace GamaEdtech.Application.Service
                 var timeZoneId = await GetTimeZoneIdAsync(requestDto.User.Id);
                 List<Claim> claims = [
                     new Claim(ClaimTypes.Email, requestDto.User.EmailConfirmed ? requestDto.User.Email! : string.Empty),
-                    new Claim(ClaimTypes.MobilePhone, requestDto.User.PhoneNumberConfirmed ? requestDto.User.PhoneNumber! : string.Empty),
+                    new Claim(ClaimTypes.MobilePhone, (requestDto.User.PhoneNumberConfirmed && !string.IsNullOrEmpty(requestDto.User.PhoneNumber)) ? requestDto.User.PhoneNumber : string.Empty),
                     new Claim(ClaimTypes.System, GenerateDeviceHash(HttpContextAccessor.Value.HttpContext) ?? string.Empty),
                     new Claim(TimeZoneIdClaim, timeZoneId),
                 ];
@@ -433,6 +433,11 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var user = await userManager.Value.FindByIdAsync(request.UserId!);
+                if (user is null)
+                {
+                    return null;
+                }
+
                 var validationResult = ValidateUser<VerifyTokenResponse>(user);
                 if (validationResult.OperationResult is not OperationResult.Succeeded)
                 {
@@ -447,11 +452,11 @@ namespace GamaEdtech.Application.Service
 
                 var timeZoneId = await GetTimeZoneIdAsync(user!.Id);
                 List<Claim> claims = [
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.UserName!),
-                    new Claim(ClaimTypes.Email, user.Email!),
-                    new Claim(ClaimTypes.MobilePhone, user.PhoneNumber!),
-                    new Claim(TimeZoneIdClaim, timeZoneId),
+                    new Claim(ClaimTypes.NameIdentifier, request.UserId ?? string.Empty),
+                    new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim(ClaimTypes.MobilePhone, (user.PhoneNumberConfirmed && !string.IsNullOrEmpty(user.PhoneNumber)) ? user.PhoneNumber : string.Empty),
+                    new Claim(TimeZoneIdClaim, timeZoneId ?? string.Empty),
                 ];
 
                 var roles = await GetUserRolesAsync(user.Id);
@@ -540,8 +545,6 @@ namespace GamaEdtech.Application.Service
             var systemClaim = context.Principal?.FindFirstValue(ClaimTypes.System);
             if (string.IsNullOrEmpty(systemClaim))
             {
-                Logger.Value.LogException(new Exception($"step1-"));
-
                 await handleUnauthorizedRequestAsync();
                 return;
             }
@@ -549,7 +552,6 @@ namespace GamaEdtech.Application.Service
             var hash = GenerateDeviceHash(context.HttpContext);
             if (!systemClaim.Equals(hash, StringComparison.OrdinalIgnoreCase))
             {
-                Logger.Value.LogException(new Exception($"step3-"));
                 await handleUnauthorizedRequestAsync();
             }
 
@@ -559,7 +561,6 @@ namespace GamaEdtech.Application.Service
             var securityStampClaim = context.Principal?.FindFirstValue(userManager.Value.Options.ClaimsIdentity.SecurityStampClaimType);
             if (currentSecurityStamp != securityStampClaim)
             {
-                Logger.Value.LogException(new Exception($"step4- currentSecurityStamp: {currentSecurityStamp} - securityStampClaim: {securityStampClaim}"));
                 await handleUnauthorizedRequestAsync();
             }
 
@@ -813,19 +814,14 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        private string? GenerateDeviceHash(HttpContext? httpContext)
+        private static string? GenerateDeviceHash(HttpContext? httpContext)
         {
             var ip = httpContext.GetClientIpAddress();
             var userAgent = httpContext.UserAgent();
 
-
             var byteValue = Encoding.UTF8.GetBytes(ip + userAgent);
             var byteHash = SHA256.HashData(byteValue);
-            var result = Convert.ToBase64String(byteHash);
-
-            Logger.Value.LogException(new Exception($"step2- ip: {ip} - userAgent: {userAgent} - result: {result}"));
-
-            return result;
+            return Convert.ToBase64String(byteHash);
         }
 
         private ResultData<T> ValidateUser<T>(ApplicationUser? user)
