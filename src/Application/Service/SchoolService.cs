@@ -256,6 +256,7 @@ namespace GamaEdtech.Application.Service
                         ClassesQualityRate = t.Average(c => c.ClassesQualityRate),
                         BehaviorRate = t.Average(c => c.BehaviorRate),
                         ArtisticActivitiesRate = t.Average(c => c.ArtisticActivitiesRate),
+                        TotalCount = t.Count(),
                     }).FirstOrDefaultAsync();
 
                 return new(OperationResult.Succeeded) { Data = result };
