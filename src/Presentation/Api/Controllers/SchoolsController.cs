@@ -171,6 +171,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         ITTrainingRate = result.Data.ITTrainingRate,
                         SafetyAndHappinessRate = result.Data.SafetyAndHappinessRate,
                         TuitionRatioRate = result.Data.TuitionRatioRate,
+                        TotalCount = result.Data.TotalCount,
                     }
                 });
             }
