@@ -50,6 +50,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     var specification = new NameContainsSpecification(request.Name);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
+                if (request.HasScore.HasValue)
+                {
+                    var specification = new HasScoreEqualsSpecification(request.HasScore.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
 
                 Point? point = null;
                 if (request.Location is not null)
