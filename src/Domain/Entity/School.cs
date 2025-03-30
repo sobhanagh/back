@@ -62,7 +62,7 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(LocalAddress), DataType.UnicodeMaxString)]
         public string? LocalAddress { get; set; }
 
-        [Column(nameof(Coordinates), TypeName = "geometry")]
+        [Column(nameof(Coordinates), TypeName = "geography")]
         public Point? Coordinates { get; set; }
 
         [Column(nameof(Quarter), DataType.UnicodeString)]
