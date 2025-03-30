@@ -60,7 +60,9 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var lst = uow.GetRepository<School, int>().GetManyQueryable(requestDto?.Specification).Select(t => new
+                var lst = uow.GetRepository<School, int>().GetManyQueryable(requestDto?.Specification);
+                int? total = requestDto?.PagingDto?.PageFilter?.ReturnTotalRecordsCount == true ? await lst.CountAsync() : null;
+                var query = lst.Select(t => new
                 {
                     t.Id,
                     t.Name,
@@ -74,11 +76,15 @@ namespace GamaEdtech.Application.Service
                     CityTitle = t.City == null ? "" : t.City.Title,
                     CountryTitle = t.Country == null ? "" : t.Country.Title,
                     StateTitle = t.State == null ? "" : t.State.Title,
-                    Distance = t.Coordinates!.Distance(point),
-                }).OrderBy(t => t.Distance);
-
-                int? total = requestDto?.PagingDto?.PageFilter?.ReturnTotalRecordsCount == true ? await lst.CountAsync() : null;
-                var data = await (requestDto?.PagingDto?.PageFilter is null ? lst : lst.Skip(requestDto.PagingDto.PageFilter.Skip).Take(requestDto.PagingDto.PageFilter.Size)).ToListAsync();
+                    Distance = point != null && t.Coordinates != null ? t.Coordinates!.Distance(point) : (double?)null,
+                });
+                query = point is null ? query.OrderBy(t => t.Distance) : query.OrderBy(t => t.Id);
+                if (requestDto?.PagingDto?.PageFilter is not null)
+                {
+                    query = query.Skip(requestDto.PagingDto.PageFilter.Skip)
+                        .Take(requestDto.PagingDto.PageFilter.Size);
+                }
+                var data = await query.ToListAsync();
 
                 var result = data.Select(t => new SchoolInfoDto
                 {
@@ -93,7 +99,7 @@ namespace GamaEdtech.Application.Service
                     CityTitle = t.CityTitle,
                     CountryTitle = t.CountryTitle,
                     StateTitle = t.StateTitle,
-                    Distance = point != null && t.Coordinates != null ? t.Coordinates.Distance(point) : null,
+                    Distance = t.Distance,
                 });
                 return new(OperationResult.Succeeded) { Data = new() { List = result, TotalRecordsCount = total } };
             }
