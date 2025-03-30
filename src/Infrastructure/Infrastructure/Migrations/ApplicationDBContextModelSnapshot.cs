@@ -620,7 +620,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnName("Code");
 
                     b.Property<Point>("Coordinates")
-                        .HasColumnType("geometry")
+                        .HasColumnType("geography")
                         .HasColumnName("Coordinates");
 
                     b.Property<DateTimeOffset>("CreationDate")
@@ -693,7 +693,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnName("CityId");
 
                     b.Property<Point>("Coordinates")
-                        .HasColumnType("geometry")
+                        .HasColumnType("geography")
                         .HasColumnName("Coordinates");
 
                     b.Property<int?>("CountryId")
