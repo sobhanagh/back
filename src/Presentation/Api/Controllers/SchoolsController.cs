@@ -11,6 +11,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Common.Identity;
+    using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
@@ -436,6 +437,97 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 Logger.Value.LogException(exc);
 
                 return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpGet("{schoolId:int}/contributions/{contributionId:long}"), Produces<ApiResponse<SchoolContributionViewModel>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<SchoolContributionViewModel>> GetSchoolContribution([FromRoute] int schoolId, [FromRoute] long contributionId)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
+                    .And(new IdentifierIdEqualsSpecification(schoolId))
+                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
+                    .And(new ContributionTypeEqualsSpecification(ContributionType.School));
+                var result = await contributionService.Value.GetContributionAsync(specification);
+                return Ok(new ApiResponse<SchoolContributionViewModel>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data?.Data is null ? null : JsonSerializer.Deserialize<SchoolContributionViewModel>(result.Data.Data),
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<SchoolContributionViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPost("{schoolId:int}/contributions"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> CreateSchoolContribution([FromRoute] int schoolId, [NotNull] SchoolContributionViewModel request)
+        {
+            try
+            {
+                var result = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                {
+                    ContributionType = ContributionType.School,
+                    IdentifierId = schoolId,
+                    Status = Status.Draft,
+                    Data = JsonSerializer.Serialize(request),
+                });
+                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
+                {
+                    Errors = result.Errors,
+                    Data = new() { Id = result.Data, },
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPut("{schoolId:int}/contributions/{contributionId:long}"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> UpdateSchoolContribution([FromRoute] int schoolId, [FromRoute] long contributionId, [NotNull, FromBody] SchoolContributionViewModel request)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
+                    .And(new IdentifierIdEqualsSpecification(schoolId))
+                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
+                    .And(new ContributionTypeEqualsSpecification(ContributionType.School))
+                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
+                var data = await contributionService.Value.ExistContributionAsync(specification);
+                if (!data.Data)
+                {
+                    return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = "Invalid Request" }));
+                }
+
+                var result = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                {
+                    Id = contributionId,
+                    ContributionType = ContributionType.School,
+                    IdentifierId = schoolId,
+                    Status = Status.Draft,
+                    Data = JsonSerializer.Serialize(request),
+                });
+                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
+                {
+                    Errors = result.Errors,
+                    Data = new() { Id = result.Data, },
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = exc.Message }));
             }
         }
 
