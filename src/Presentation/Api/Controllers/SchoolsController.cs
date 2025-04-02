@@ -439,42 +439,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpGet("{schoolId:int}/contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
-        [Permission(policy: null)]
-        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([FromRoute] int schoolId, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
-        {
-            try
-            {
-                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
-                {
-                    PagingDto = request.PagingDto,
-                    Specification = new IdentifierIdEqualsSpecification(schoolId)
-                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
-                });
-                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
-                {
-                    Errors = result.Errors,
-                    Data = result.Data.List is null ? new() : new()
-                    {
-                        List = result.Data.List.Select(t => new SchoolContributionListResponseViewModel
-                        {
-                            Id = t.Id,
-                            Comment = t.Comment,
-                            Status = t.Status,
-                        }),
-                        TotalRecordsCount = result.Data.TotalRecordsCount,
-                    }
-                });
-            }
-            catch (Exception exc)
-            {
-                Logger.Value.LogException(exc);
-
-                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>(new Error { Message = exc.Message }));
-            }
-        }
-
         #endregion
     }
 }
