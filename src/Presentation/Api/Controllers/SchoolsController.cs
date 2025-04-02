@@ -13,6 +13,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
 
@@ -22,7 +24,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
+    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService, Lazy<IContributionService> contributionService)
         : ApiControllerBase<SchoolsController>(logger)
     {
         [HttpGet, Produces<ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>>()]
@@ -65,7 +67,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 }
 
                 request.PagingDto ??= new();
-                request.PagingDto!.SortFilter = [new SortFilter { Column = "", SortType = Constants.SortType.Asc }];
                 var result = await schoolService.Value.GetSchoolsListAsync(new ListRequestDto<School>
                 {
                     PagingDto = request.PagingDto,
@@ -348,7 +349,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #region Images
 
-        [HttpGet("{schoolId:int}/images/{fileType}"), Produces<ApiResponse<IEnumerable<string>>>()]
+        [HttpGet("{schoolId:int}/images/{fileType:FileType}"), Produces<ApiResponse<IEnumerable<string>>>()]
         public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImagesPath([FromRoute] int schoolId, [FromRoute] FileType fileType)
         {
             try
@@ -372,7 +373,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         [HttpPost("{schoolId:int}/images"), Produces<ApiResponse<CreateSchoolImageResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] int schoolId, [NotNull] CreateSchoolImageRequestViewModel request)
+        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] int schoolId, [NotNull, FromBody] CreateSchoolImageRequestViewModel request)
         {
             try
             {
@@ -395,6 +396,44 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 Logger.Value.LogException(exc);
 
                 return Ok(new ApiResponse<CreateSchoolImageResponseViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        #endregion
+
+        #region Contributions
+
+        [HttpGet("{schoolId:int}/contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([FromRoute] int schoolId, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
+        {
+            try
+            {
+                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
+                {
+                    PagingDto = request.PagingDto,
+                    Specification = new IdentifierIdEqualsSpecification(schoolId)
+                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>())),
+                });
+                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data.List is null ? new() : new()
+                    {
+                        List = result.Data.List.Select(t => new SchoolContributionListResponseViewModel
+                        {
+                            Id = t.Id,
+                            Comment = t.Comment,
+                        }),
+                        TotalRecordsCount = result.Data.TotalRecordsCount,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>(new Error { Message = exc.Message }));
             }
         }
 

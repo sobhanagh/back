@@ -11,12 +11,16 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Data.Enumeration;
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Data.Dto.Identity;
+    using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Presentation.ViewModel.Identity;
 
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.JsonWebTokens;
+    using Microsoft.IdentityModel.Tokens;
 
     using static GamaEdtech.Common.Core.Constants;
 
@@ -24,7 +28,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    public class IdentitiesController(Lazy<ILogger<IdentitiesController>> logger, Lazy<IIdentityService> identityService) : ApiControllerBase<IdentitiesController>(logger)
+    public class IdentitiesController(Lazy<ILogger<IdentitiesController>> logger, Lazy<IIdentityService> identityService, UserManager<ApplicationUser> userManager) : ApiControllerBase<IdentitiesController>(logger)
     {
         [HttpPost("login"), Produces(typeof(ApiResponse<AuthenticationResponseViewModel>))]
         [AllowAnonymous]
@@ -146,6 +150,59 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await identityService.Value.GenerateUserTokenAsync(new GenerateUserTokenRequestDto
                 {
                     UserId = authenticateResult.Data.User.Id,
+                    TokenProvider = PermissionConstants.ApiDataProtectorTokenProvider,
+                    Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
+                });
+                return Ok(new ApiResponse<GenerateTokenResponseViewModel>(result.Errors)
+                {
+                    Data = new()
+                    {
+                        Token = result.Data?.Token,
+                        ExpirationTime = result.Data?.ExpirationTime,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<GenerateTokenResponseViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPost("tokens/old"), Produces(typeof(ApiResponse<GenerateTokenResponseViewModel>))]
+        public async Task<IActionResult<GenerateTokenResponseViewModel>> GenerateTokenWithOld([NotNull] string token)
+        {
+            try
+            {
+                const string endpoint = "https://core.gamatrain.com/";
+                var data = await new JsonWebTokenHandler().ValidateTokenAsync(token, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = endpoint,
+                    RequireExpirationTime = true,
+                    ValidateActor = false,
+                    ValidateIssuerSigningKey = false,
+                    ValidateSignatureLast = false,
+                    SignatureValidator = (string token, TokenValidationParameters parameters) => new JsonWebToken(token),
+                    ValidAudience = endpoint,
+                });
+                if (!data.IsValid)
+                {
+                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(new Error { Message = "Invalid Token" }));
+                }
+
+                _ = data.Claims.TryGetValue("identity", out var email);
+
+                var user = await userManager.FindByEmailAsync(email?.ToString()!);
+                if (user is null)
+                {
+                    return Ok(new ApiResponse<GenerateTokenResponseViewModel>(new Error { Message = "Invalid Token" }));
+                }
+
+                var result = await identityService.Value.GenerateUserTokenAsync(new GenerateUserTokenRequestDto
+                {
+                    UserId = user.Id,
                     TokenProvider = PermissionConstants.ApiDataProtectorTokenProvider,
                     Purpose = PermissionConstants.ApiDataProtectorTokenProviderAccessToken,
                 });

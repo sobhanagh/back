@@ -3,7 +3,7 @@ namespace GamaEdtech.Domain.Enumeration
     using GamaEdtech.Common.Data.Enumeration;
     using GamaEdtech.Common.DataAnnotation;
 
-    public sealed class ContainerType : Enumeration<byte>
+    public sealed class ContainerType : Enumeration<ContainerType, byte>
     {
         [Display]
         public static readonly ContainerType Default = new(nameof(Default), 0);
