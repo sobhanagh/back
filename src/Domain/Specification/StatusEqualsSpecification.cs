@@ -1,4 +1,4 @@
-namespace GamaEdtech.Domain.Specification.School
+namespace GamaEdtech.Domain.Specification
 {
     using System.Linq.Expressions;
 

@@ -1,10 +1,9 @@
 namespace GamaEdtech.Common.Swagger
 {
-    using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Reflection;
 
+    using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data.Enumeration;
 
     using Microsoft.OpenApi.Any;
@@ -16,17 +15,18 @@ namespace GamaEdtech.Common.Swagger
     {
         public void Apply([NotNull] OpenApiSchema schema, [NotNull] SchemaFilterContext context)
         {
-            var isEnumeration = IsSubclassOf(typeof(Enumeration<>), context.Type);
-            if (!isEnumeration && !IsSubclassOf(typeof(FlagsEnumeration<>), context.Type))
+            var isEnumeration = Globals.IsSubclassOf(context.Type, typeof(Enumeration<,>));
+            if (!isEnumeration && !Globals.IsSubclassOf(context.Type, typeof(FlagsEnumeration<>)))
             {
                 return;
             }
 
-            var fields = context.Type.GetFields(BindingFlags.Static | BindingFlags.Public);
+            var names = EnumerationExtensions.GetNames(context.Type)!
+                            .Select(t => new OpenApiString(t)).ToList<IOpenApiAny>();
 
             if (isEnumeration)
             {
-                schema.Enum = [.. fields.Select(t => new OpenApiString(t.Name)).Cast<IOpenApiAny>()];
+                schema.Enum = names;
                 schema.Type = "string";
                 schema.Properties = null;
                 schema.AllOf = null;
@@ -38,28 +38,12 @@ namespace GamaEdtech.Common.Swagger
                 schema.Type = "array";
                 schema.Items = new OpenApiSchema
                 {
-                    Enum = [.. fields.Select(t => new OpenApiString(t.Name)).Cast<IOpenApiAny>()],
+                    Enum = names,
                     Type = "string",
                     Properties = null,
                     AllOf = null,
                 };
             }
-        }
-
-        private static bool IsSubclassOf(Type? generic, Type? toCheck)
-        {
-            while (toCheck != null && toCheck != typeof(object))
-            {
-                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
-                if (generic == cur)
-                {
-                    return true;
-                }
-
-                toCheck = toCheck.BaseType;
-            }
-
-            return false;
         }
     }
 }

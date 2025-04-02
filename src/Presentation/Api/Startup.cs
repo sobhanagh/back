@@ -60,7 +60,7 @@ namespace GamaEdtech.Presentation.Api
                 setup.SubstituteApiVersionInUrl = true;
             });
 
-            _ = services.ConfigureSwagger(options =>
+            _ = services.ConfigureSwagger(DefaultNamespace, options =>
             {
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

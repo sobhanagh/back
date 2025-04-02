@@ -3,7 +3,7 @@ namespace GamaEdtech.Domain.Enumeration
     using GamaEdtech.Common.Data.Enumeration;
     using GamaEdtech.Common.DataAnnotation;
 
-    public sealed class TagType : Enumeration<byte>
+    public sealed class TagType : Enumeration<TagType, byte>
     {
         [Display]
         public static readonly TagType Facility = new(nameof(Facility), 0);

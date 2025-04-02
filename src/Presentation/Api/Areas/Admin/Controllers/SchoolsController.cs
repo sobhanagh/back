@@ -13,7 +13,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
-    using GamaEdtech.Domain.Specification.School;
+    using GamaEdtech.Domain.Specification;
     using GamaEdtech.Presentation.ViewModel.School;
 
     using Microsoft.AspNetCore.Mvc;
