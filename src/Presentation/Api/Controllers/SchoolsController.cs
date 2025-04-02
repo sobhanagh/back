@@ -413,7 +413,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     PagingDto = request.PagingDto,
                     Specification = new IdentifierIdEqualsSpecification(schoolId)
-                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>())),
+                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
+                        .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
                 {
@@ -424,6 +425,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         {
                             Id = t.Id,
                             Comment = t.Comment,
+                            Status = t.Status,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
