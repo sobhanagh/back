@@ -171,12 +171,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         [HttpPost("tokens/old"), Produces(typeof(ApiResponse<GenerateTokenResponseViewModel>))]
-        public async Task<IActionResult<GenerateTokenResponseViewModel>> GenerateTokenWithOld([NotNull] string token)
+        public async Task<IActionResult<GenerateTokenResponseViewModel>> GenerateTokenWithOld([NotNull, FromBody] GenerateTokenWithOldRequestViewModel request)
         {
             try
             {
                 const string endpoint = "https://core.gamatrain.com/";
-                var data = await new JsonWebTokenHandler().ValidateTokenAsync(token, new TokenValidationParameters
+                var data = await new JsonWebTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidIssuer = endpoint,
