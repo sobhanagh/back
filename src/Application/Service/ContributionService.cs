@@ -52,19 +52,19 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var board = await uow.GetRepository<Contribution>().GetManyQueryable(specification).Select(t => new ContributionDto
+                var contribution = await uow.GetRepository<Contribution>().GetManyQueryable(specification).Select(t => new ContributionDto
                 {
                     Id = t.Id,
                     Comment = t.Comment,
                     Data = t.Data,
                 }).FirstOrDefaultAsync();
 
-                return board is null
+                return contribution is null
                     ? new(OperationResult.NotFound)
                     {
                         Errors = [new() { Message = Localizer.Value["ContributionNotFound"] },],
                     }
-                    : new(OperationResult.Succeeded) { Data = board };
+                    : new(OperationResult.Succeeded) { Data = contribution };
             }
             catch (Exception exc)
             {
@@ -116,6 +116,22 @@ namespace GamaEdtech.Application.Service
                 _ = await uow.SaveChangesAsync();
 
                 return new(OperationResult.Succeeded) { Data = contribution.Id };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<bool>> ExistContributionAsync([NotNull] ISpecification<Contribution> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Contribution>();
+
+                return new(OperationResult.Succeeded) { Data = await repository.AnyAsync(specification) };
             }
             catch (Exception exc)
             {
