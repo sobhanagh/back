@@ -374,14 +374,14 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         [HttpPost("{schoolId:int}/images"), Produces<ApiResponse<CreateSchoolImageResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] int schoolId, [NotNull, FromBody] CreateSchoolImageRequestViewModel request)
+        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] int schoolId, [NotNull, FromForm] CreateSchoolImageRequestFileViewModel request1, [NotNull, FromQuery] CreateSchoolImageRequestViewModel request2)
         {
             try
             {
                 var result = await schoolService.Value.CreateSchoolImageAsync(new Data.Dto.School.CreateSchoolImageRequestDto
                 {
-                    File = request.File!,
-                    FileType = request.FileType!,
+                    File = request1.File!,
+                    FileType = request2.FileType!,
                     SchoolId = schoolId,
                     CreationDate = DateTimeOffset.UtcNow,
                     CreationUserId = User.UserId(),

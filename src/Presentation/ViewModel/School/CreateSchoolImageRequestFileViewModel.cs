@@ -1,0 +1,15 @@
+namespace GamaEdtech.Presentation.ViewModel.School
+{
+    using GamaEdtech.Common.DataAnnotation;
+
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+
+    public sealed class CreateSchoolImageRequestFileViewModel
+    {
+        [Display]
+        [Required]
+        [FromForm]
+        public IFormFile? File { get; set; }
+    }
+}
