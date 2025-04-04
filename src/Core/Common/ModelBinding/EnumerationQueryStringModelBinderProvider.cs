@@ -20,7 +20,7 @@ namespace GamaEdtech.Common.ModelBinding
             {
                 modelType = modelType.GetElementType()!;
             }
-            else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(modelType))
+            else if (modelType.IsGenericType && typeof(System.Collections.IEnumerable).IsAssignableFrom(modelType))
             {
                 modelType = modelType.GenericTypeArguments[0];
             }
