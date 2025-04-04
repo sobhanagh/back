@@ -1,19 +1,22 @@
 namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Text.Json;
 
     using Asp.Versioning;
 
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Common.Identity;
-
+    using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Presentation.ViewModel.School;
 
     using Microsoft.AspNetCore.Mvc;
@@ -25,9 +28,11 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
     [Permission(Roles = [nameof(Role.Admin)])]
-    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService)
+    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService, Lazy<IContributionService> contributionService)
         : ApiControllerBase<SchoolsController>(logger)
     {
+        #region Schools
+
         [HttpGet, Produces<ApiResponse<ListDataSource<SchoolsResponseViewModel>>>()]
         public async Task<IActionResult> GetSchools([NotNull, FromQuery] SchoolsRequestViewModel request)
         {
@@ -69,31 +74,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 return Ok(new ApiResponse<SchoolResponseViewModel>
                 {
                     Errors = result.Errors,
-                    Data = result.Data is null ? null : new()
-                    {
-                        Id = result.Data.Id,
-                        Address = result.Data.Address,
-                        LocalAddress = result.Data.LocalAddress,
-                        Name = result.Data.Name,
-                        LocalName = result.Data.LocalName,
-                        SchoolType = result.Data.SchoolType,
-                        StateId = result.Data.StateId,
-                        StateTitle = result.Data.StateTitle,
-                        ZipCode = result.Data.ZipCode,
-                        Latitude = result.Data.Coordinates?.Y,
-                        Longitude = result.Data.Coordinates?.X,
-                        Facilities = result.Data.Facilities,
-                        WebSite = result.Data.WebSite,
-                        Email = result.Data.Email,
-                        CityId = result.Data.CityId,
-                        CityTitle = result.Data.CityTitle,
-                        CountryId = result.Data.CountryId,
-                        CountryTitle = result.Data.CountryTitle,
-                        FaxNumber = result.Data.FaxNumber,
-                        PhoneNumber = result.Data.PhoneNumber,
-                        Quarter = result.Data.Quarter,
-                        OsmId = result.Data.OsmId,
-                    }
+                    Data = result.Data is null ? null : MapFrom(result.Data)
                 });
             }
             catch (Exception exc)
@@ -215,6 +196,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
             }
         }
+
+        #endregion
 
         #region Comments
 
@@ -375,5 +358,157 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         }
 
         #endregion
+
+        #region Contributions
+
+        [HttpGet("contributions/pending"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([NotNull, FromQuery] SchoolContributionListRequestViewModel request)
+        {
+            try
+            {
+                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
+                {
+                    PagingDto = request.PagingDto,
+                    Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
+                        .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
+                });
+                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data.List is null ? new() : new()
+                    {
+                        List = result.Data.List.Select(t => new SchoolContributionListResponseViewModel
+                        {
+                            Id = t.Id,
+                            Comment = t.Comment,
+                            CreationUser = t.CreationUser,
+                            CreationDate = t.CreationDate,
+                            IdentifierId = t.IdentifierId,
+                        }),
+                        TotalRecordsCount = result.Data.TotalRecordsCount,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpGet("contributions/{contributionId:long}"), Produces<ApiResponse<SchoolContributionReviewViewModel>>()]
+        public async Task<IActionResult<SchoolContributionReviewViewModel>> GetSchoolContribution([FromRoute] long contributionId)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
+                    .And(new ContributionTypeEqualsSpecification(ContributionType.School));
+                var contributionResult = await contributionService.Value.GetContributionAsync(specification);
+                if (contributionResult.Data?.Data is null)
+                {
+                    return Ok(new ApiResponse<SchoolContributionReviewViewModel>(contributionResult.Errors));
+                }
+
+                var schoolResult = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, int>((int)contributionResult.Data.IdentifierId.GetValueOrDefault()));
+                if (schoolResult.OperationResult is not Constants.OperationResult.Succeeded)
+                {
+                    return Ok(new ApiResponse<SchoolContributionReviewViewModel>(schoolResult.Errors));
+                }
+
+                SchoolContributionReviewViewModel result = new()
+                {
+                    NewValues = Api.Controllers.SchoolsController.MapFrom(JsonSerializer.Deserialize<SchoolContributionDto>(contributionResult.Data.Data)!),
+                    OldValues = MapFrom(schoolResult.Data!),
+                };
+
+                return Ok(new ApiResponse<SchoolContributionReviewViewModel>
+                {
+                    Data = result,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<SchoolContributionReviewViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPatch("contributions/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult<bool>> ConfirmSchoolContribution([FromRoute] long contributionId, [NotNull, FromBody] ConfirmSchoolContributionRequestViewModel request)
+        {
+            try
+            {
+                var result = await schoolService.Value.ConfirmSchoolContributionAsync(new ConfirmContributionRequestDto
+                {
+                    ContributionId = contributionId,
+                    IdentifierId = request.SchoolId.GetValueOrDefault(),
+                    ContributionType = ContributionType.School,
+                });
+
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpPatch("contributions/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult<bool>> RejectSchoolContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
+        {
+            try
+            {
+                var result = await contributionService.Value.RejectContributionAsync(new RejectContributionRequestDto
+                {
+                    Id = contributionId,
+                    Comment = request.Comment,
+                });
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool>(new Error { Message = exc.Message }));
+            }
+        }
+
+        #endregion
+
+        private static SchoolResponseViewModel MapFrom(SchoolDto dto) => new()
+        {
+            Id = dto.Id,
+            Address = dto.Address,
+            LocalAddress = dto.LocalAddress,
+            Name = dto.Name,
+            LocalName = dto.LocalName,
+            SchoolType = dto.SchoolType,
+            StateId = dto.StateId,
+            StateTitle = dto.StateTitle,
+            ZipCode = dto.ZipCode,
+            Latitude = dto.Coordinates?.Y,
+            Longitude = dto.Coordinates?.X,
+            Facilities = dto.Facilities,
+            WebSite = dto.WebSite,
+            Email = dto.Email,
+            CityId = dto.CityId,
+            CityTitle = dto.CityTitle,
+            CountryId = dto.CountryId,
+            CountryTitle = dto.CountryTitle,
+            FaxNumber = dto.FaxNumber,
+            PhoneNumber = dto.PhoneNumber,
+            Quarter = dto.Quarter,
+            OsmId = dto.OsmId,
+        };
     }
 }

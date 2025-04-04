@@ -13,6 +13,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
+    using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
@@ -31,9 +32,11 @@ namespace GamaEdtech.Application.Service
     using static GamaEdtech.Common.Core.Constants;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
-        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService)
+        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ISchoolService
     {
+        #region Schools
+
         public async Task<ResultData<ListDataSource<SchoolsDto>>> GetSchoolsAsync(ListRequestDto<School>? requestDto = null)
         {
             try
@@ -263,6 +266,25 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public async Task<ResultData<bool>> ExistSchoolAsync([NotNull] ISpecification<School> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var exist = await uow.GetRepository<School, int>().AnyAsync(specification);
+                return new(OperationResult.Succeeded) { Data = exist };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
+        #endregion
+
+        #region Rate and Comments
+
         public async Task<ResultData<SchoolRateDto>> GetSchoolRateAsync([NotNull] ISpecification<SchoolComment> specification)
         {
             try
@@ -303,7 +325,7 @@ namespace GamaEdtech.Application.Service
                 {
                     Id = t.Id,
                     Comment = t.Comment,
-                    CreationUser = t.CreationUser!.FullName,
+                    CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
                     CreationUserAvatar = t.CreationUser!.Avatar,
                     CreationDate = t.CreationDate,
                     LikeCount = t.LikeCount,
@@ -498,6 +520,10 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        #endregion
+
+        #region Images
+
         public async Task<ResultData<ListDataSource<SchoolImageDto>>> GetSchoolImagesAsync(ListRequestDto<SchoolImage>? requestDto = null)
         {
             try
@@ -507,7 +533,7 @@ namespace GamaEdtech.Application.Service
                 var users = await result.List.Select(t => new SchoolImageDto
                 {
                     Id = t.Id,
-                    CreationUser = t.CreationUser!.FullName,
+                    CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
                     CreationUserAvatar = t.CreationUser!.Avatar,
                     CreationDate = t.CreationDate,
                     FileId = t.FileId,
@@ -638,5 +664,39 @@ namespace GamaEdtech.Application.Service
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
         }
+
+        #endregion
+
+        #region Contribution
+
+        public async Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmContributionRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var school = await uow.GetRepository<School, int>().GetAsync((int)requestDto.IdentifierId);
+                if (school is null)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+                }
+
+                var result = await contributionService.Value.ConfirmContributionAsync(requestDto);
+                if (result.Data is null)
+                {
+                    return new(OperationResult.Failed) { Errors = result.Errors };
+                }
+
+                _ = school.Id;
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        #endregion
     }
 }

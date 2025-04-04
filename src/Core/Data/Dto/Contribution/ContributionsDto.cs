@@ -1,5 +1,7 @@
 namespace GamaEdtech.Data.Dto.Contribution
 {
+    using System;
+
     using GamaEdtech.Domain.Enumeration;
 
     public sealed class ContributionsDto
@@ -9,5 +11,7 @@ namespace GamaEdtech.Data.Dto.Contribution
         public ContributionType? ContributionType { get; set; }
         public Status? Status { get; set; }
         public long? IdentifierId { get; set; }
+        public string? CreationUser { get; set; }
+        public DateTimeOffset CreationDate { get; set; }
     }
 }

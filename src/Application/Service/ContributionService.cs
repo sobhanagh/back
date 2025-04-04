@@ -12,6 +12,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Enumeration;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,8 @@ namespace GamaEdtech.Application.Service
                     ContributionType = t.ContributionType,
                     IdentifierId = t.IdentifierId,
                     Status = t.Status,
+                    CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
+                    CreationDate = t.CreationDate,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
@@ -57,6 +60,8 @@ namespace GamaEdtech.Application.Service
                     Id = t.Id,
                     Comment = t.Comment,
                     Data = t.Data,
+                    IdentifierId = t.IdentifierId,
+                    ContributionType = t.ContributionType,
                 }).FirstOrDefaultAsync();
 
                 return contribution is null
@@ -132,6 +137,64 @@ namespace GamaEdtech.Application.Service
                 var repository = uow.GetRepository<Contribution>();
 
                 return new(OperationResult.Succeeded) { Data = await repository.AnyAsync(specification) };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<ContributionDto>> ConfirmContributionAsync([NotNull] ConfirmContributionRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Contribution>();
+                var contribution = await repository.GetAsync(requestDto.ContributionId);
+                if (contribution is null)
+                {
+                    return new(OperationResult.NotFound)
+                    {
+                        Errors = [new() { Message = Localizer.Value["ContributionNotFound"] },],
+                    };
+                }
+
+                contribution.Status = Status.Confirmed;
+                _ = repository.Update(contribution);
+                _ = await uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded)
+                {
+                    Data = new ContributionDto
+                    {
+                        Id = contribution.Id,
+                        Data = contribution.Data,
+                        Comment = contribution.Comment,
+                    }
+                };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<bool>> RejectContributionAsync([NotNull] RejectContributionRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Contribution>();
+                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId<int>();
+                var affectedRows = await repository.GetManyQueryable(t => t.Id == requestDto.Id).ExecuteUpdateAsync(t => t
+                    .SetProperty(p => p.Status, Status.Rejected)
+                    .SetProperty(p => p.Comment, requestDto.Comment)
+                    .SetProperty(p => p.LastModifyUserId, userId)
+                    .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow));
+
+                return new(OperationResult.Succeeded) { Data = affectedRows > 0 };
             }
             catch (Exception exc)
             {
