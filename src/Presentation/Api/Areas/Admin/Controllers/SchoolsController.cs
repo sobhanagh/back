@@ -216,6 +216,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
+        #region Comments
+
         [HttpGet("comments/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>>()]
         public async Task<IActionResult<ListDataSource<SchoolCommentsResponseViewModel>>> GetPendingSchoolComments([NotNull, FromQuery] SchoolCommentsRequestViewModel request)
         {
@@ -290,6 +292,10 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
             }
         }
+
+        #endregion
+
+        #region Images
 
         [HttpGet("images/pending"), Produces<ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>>()]
         public async Task<IActionResult<ListDataSource<SchoolImagesResponseViewModel>>> GetPendingSchoolImages([NotNull, FromQuery] SchoolImagesRequestViewModel request)
@@ -367,5 +373,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
             }
         }
+
+        #endregion
     }
 }

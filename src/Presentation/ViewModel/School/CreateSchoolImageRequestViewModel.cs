@@ -6,17 +6,14 @@ namespace GamaEdtech.Presentation.ViewModel.School
     using GamaEdtech.Common.DataAnnotation;
     using GamaEdtech.Domain.Enumeration;
 
-    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
 
     public sealed class CreateSchoolImageRequestViewModel
     {
         [Display]
         [Required]
-        public IFormFile? File { get; set; }
-
-        [Display]
-        [Required]
         [JsonConverter(typeof(EnumerationConverter<FileType, byte>))]
+        [FromQuery]
         public FileType? FileType { get; set; }
     }
 }
