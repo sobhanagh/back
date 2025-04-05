@@ -12,6 +12,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Data.Dto.Contribution;
+    using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
@@ -235,7 +236,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await schoolService.Value.ManageSchoolCommentAsync(new Data.Dto.School.ManageSchoolCommentRequestDto
+                var result = await schoolService.Value.ManageSchoolCommentAsync(new ManageSchoolCommentRequestDto
                 {
                     ArtisticActivitiesRate = request.ArtisticActivitiesRate,
                     BehaviorRate = request.BehaviorRate,
@@ -270,7 +271,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await schoolService.Value.ManageSchoolCommentAsync(new Data.Dto.School.ManageSchoolCommentRequestDto
+                var result = await schoolService.Value.ManageSchoolCommentAsync(new ManageSchoolCommentRequestDto
                 {
                     Id = commentId,
                     SchoolId = schoolId,
@@ -378,7 +379,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await schoolService.Value.CreateSchoolImageAsync(new Data.Dto.School.CreateSchoolImageRequestDto
+                var result = await schoolService.Value.CreateSchoolImageAsync(new CreateSchoolImageRequestDto
                 {
                     File = request1.File!,
                     FileType = request2.FileType!,
@@ -404,9 +405,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #region Contributions
 
-        [HttpGet("{schoolId:int}/contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
+        [HttpGet("{schoolId:int}/contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([FromRoute] int schoolId, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
+        public async Task<IActionResult<ListDataSource<SchoolContributionInfoListResponseViewModel>>> GetSchoolContributionList([FromRoute] int schoolId, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
         {
             try
             {
@@ -417,12 +418,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
                         .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
+                return Ok(new ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>
                 {
                     Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()
                     {
-                        List = result.Data.List.Select(t => new SchoolContributionListResponseViewModel
+                        List = result.Data.List.Select(t => new SchoolContributionInfoListResponseViewModel
                         {
                             Id = t.Id,
                             Comment = t.Comment,
@@ -436,7 +437,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new Error { Message = exc.Message }));
             }
         }
 
@@ -451,10 +452,18 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
                     .And(new ContributionTypeEqualsSpecification(ContributionType.School));
                 var result = await contributionService.Value.GetContributionAsync(specification);
+
+                SchoolContributionViewModel? viewModel = null;
+                if (result.Data?.Data is not null)
+                {
+                    var dto = JsonSerializer.Deserialize<SchoolContributionDto>(result.Data.Data);
+                    viewModel = dto is null ? null : MapFrom(dto);
+                }
+
                 return Ok(new ApiResponse<SchoolContributionViewModel>
                 {
                     Errors = result.Errors,
-                    Data = result.Data?.Data is null ? null : JsonSerializer.Deserialize<SchoolContributionViewModel>(result.Data.Data),
+                    Data = viewModel,
                 });
             }
             catch (Exception exc)
@@ -471,12 +480,19 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
+                var exist = await schoolService.Value.ExistSchoolAsync(new IdEqualsSpecification<School, int>(schoolId));
+                if (!exist.Data)
+                {
+                    return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = "School not found" }));
+                }
+
+                var dto = MapTo(request, schoolId);
                 var result = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
                 {
                     ContributionType = ContributionType.School,
                     IdentifierId = schoolId,
                     Status = Status.Draft,
-                    Data = JsonSerializer.Serialize(request),
+                    Data = JsonSerializer.Serialize(dto),
                 });
                 return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
                 {
@@ -509,13 +525,14 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = "Invalid Request" }));
                 }
 
+                var dto = MapTo(request, schoolId);
                 var result = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
                 {
                     Id = contributionId,
                     ContributionType = ContributionType.School,
                     IdentifierId = schoolId,
                     Status = Status.Draft,
-                    Data = JsonSerializer.Serialize(request),
+                    Data = JsonSerializer.Serialize(dto),
                 });
                 return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
                 {
@@ -532,5 +549,48 @@ namespace GamaEdtech.Presentation.Api.Controllers
         }
 
         #endregion
+
+        internal static SchoolContributionDto MapTo(SchoolContributionViewModel request, int schoolId) => new()
+        {
+            Address = request.Address,
+            CityId = request.CityId,
+            CountryId = request.CountryId,
+            Email = request.Email,
+            Facilities = request.Facilities,
+            FaxNumber = request.FaxNumber,
+            Id = schoolId,
+            LocalAddress = request.LocalAddress,
+            LocalName = request.LocalName,
+            Name = request.Name,
+            PhoneNumber = request.PhoneNumber,
+            Quarter = request.Quarter,
+            SchoolType = request.SchoolType,
+            StateId = request.StateId,
+            WebSite = request.WebSite,
+            ZipCode = request.ZipCode,
+            Latitude = request.Latitude,
+            Longitude = request.Longitude,
+        };
+
+        internal static SchoolContributionViewModel MapFrom(SchoolContributionDto dto) => new()
+        {
+            Address = dto.Address,
+            CityId = dto.CityId,
+            CountryId = dto.CountryId,
+            Email = dto.Email,
+            Facilities = dto.Facilities,
+            FaxNumber = dto.FaxNumber,
+            Latitude = dto.Latitude,
+            LocalAddress = dto.LocalAddress,
+            LocalName = dto.LocalName,
+            Longitude = dto.Longitude,
+            Name = dto.Name,
+            PhoneNumber = dto.PhoneNumber,
+            Quarter = dto.Quarter,
+            SchoolType = dto.SchoolType,
+            StateId = dto.StateId,
+            WebSite = dto.WebSite,
+            ZipCode = dto.ZipCode,
+        };
     }
 }
