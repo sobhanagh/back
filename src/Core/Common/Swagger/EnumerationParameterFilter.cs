@@ -20,7 +20,7 @@ namespace GamaEdtech.Common.Swagger
                 if (lst is not null)
                 {
                     parameter.Schema.Enum = [.. lst.Select(t => new OpenApiString(t))];
-                    parameter.Schema.Type = type.Name;
+                    parameter.Schema.Type = "string";
                     parameter.Schema.Properties = null;
                     parameter.Schema.AllOf = null;
                 }
