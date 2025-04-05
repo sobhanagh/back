@@ -638,25 +638,37 @@ namespace GamaEdtech.Application.Service
                     Status = Status.Draft,
                 };
 
-                var gps = ImageMetadataReader.ReadMetadata(stream)
-                             .OfType<GpsDirectory>()
-                             .FirstOrDefault()?.GetGeoLocation();
-                if (gps is not null)
-                {
-                    var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-                    var point = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
-
-                    var schoolRepository = uow.GetRepository<School, int>();
-                    var schoolCoordinates = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Coordinates).FirstOrDefaultAsync();
-                    if (schoolCoordinates is not null && schoolCoordinates.Distance(point) < 2000)
-                    {
-                        schoolImage.Status = Status.Confirmed;
-                    }
-                }
+                await TryExtractGpsDataAsync();
                 imageRepository.Add(schoolImage);
                 _ = await uow.SaveChangesAsync();
 
                 return new(OperationResult.Succeeded) { Data = schoolImage.Id };
+
+                async Task TryExtractGpsDataAsync()
+                {
+                    try
+                    {
+                        var gps = ImageMetadataReader.ReadMetadata(stream)
+                             .OfType<GpsDirectory>()
+                             .FirstOrDefault()?.GetGeoLocation();
+                        if (gps is not null)
+                        {
+                            var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
+                            var point = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
+
+                            var schoolRepository = uow.GetRepository<School, int>();
+                            var schoolCoordinates = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Coordinates).FirstOrDefaultAsync();
+                            if (schoolCoordinates is not null && schoolCoordinates.Distance(point) < 2000)
+                            {
+                                schoolImage.Status = Status.Confirmed;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        //ignore
+                    }
+                }
             }
             catch (Exception exc)
             {
