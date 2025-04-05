@@ -12,7 +12,7 @@ namespace GamaEdtech.Common.Converter
     public class FlagsEnumerationConverter<TEnum> : JsonConverter<TEnum>
         where TEnum : FlagsEnumeration<TEnum>, new()
     {
-        public override bool CanConvert([NotNull] Type typeToConvert) => Globals.IsSubclassOf(typeToConvert, typeof(FlagsEnumeration<TEnum>));
+        public override bool CanConvert([NotNull] Type typeToConvert) => typeToConvert.IsSubclassOf(typeof(FlagsEnumeration<TEnum>));
 
         public override TEnum? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
