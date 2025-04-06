@@ -70,7 +70,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         {
             try
             {
-                var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, int>(id));
+                var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(id));
                 return Ok(new ApiResponse<SchoolResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -116,7 +116,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     LocalAddress = request.LocalAddress,
                     WebSite = request.WebSite,
                     OsmId = request.OsmId,
-                });
+                }, false);
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -162,7 +162,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     PhoneNumber = request.PhoneNumber,
                     Quarter = request.Quarter,
                     OsmId = request.OsmId,
-                });
+                }, false);
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -177,12 +177,12 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpDelete("{id:int}"), Produces<ApiResponse<bool>>()]
-        public async Task<IActionResult> RemoveSchool([FromRoute] int id)
+        [HttpDelete("{id:long}"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> RemoveSchool([FromRoute] long id)
         {
             try
             {
-                var result = await schoolService.Value.RemoveSchoolAsync(new IdEqualsSpecification<School, int>(id));
+                var result = await schoolService.Value.RemoveSchoolAsync(new IdEqualsSpecification<School, long>(id));
                 return Ok(new ApiResponse<bool>
                 {
                     Errors = result.Errors,
@@ -410,7 +410,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     return Ok(new ApiResponse<SchoolContributionReviewViewModel>(contributionResult.Errors));
                 }
 
-                var schoolResult = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, int>((int)contributionResult.Data.IdentifierId.GetValueOrDefault()));
+                var schoolResult = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(contributionResult.Data.IdentifierId.GetValueOrDefault()));
                 if (schoolResult.OperationResult is not Constants.OperationResult.Succeeded)
                 {
                     return Ok(new ApiResponse<SchoolContributionReviewViewModel>(schoolResult.Errors));
@@ -440,11 +440,17 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         {
             try
             {
-                var result = await schoolService.Value.ConfirmSchoolContributionAsync(new ConfirmContributionRequestDto
+                var contribution = await contributionService.Value.GetContributionAsync(new IdEqualsSpecification<Contribution, long>(contributionId));
+                if (contribution.Data is null)
+                {
+                    return Ok(new ApiResponse<bool>(contribution.Errors));
+                }
+
+                var result = await schoolService.Value.ConfirmSchoolContributionAsync(new ConfirmSchoolContributionRequestDto
                 {
                     ContributionId = contributionId,
-                    IdentifierId = request.SchoolId.GetValueOrDefault(),
-                    ContributionType = ContributionType.School,
+                    SchoolId = request.SchoolId.GetValueOrDefault(),
+                    Data = JsonSerializer.Deserialize<SchoolContributionDto>(contribution.Data.Data!)!,
                 });
 
                 return Ok(new ApiResponse<bool>(result.Errors)

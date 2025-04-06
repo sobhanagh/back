@@ -5,7 +5,6 @@ namespace GamaEdtech.Application.Interface
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAnnotation;
-    using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
 
@@ -17,7 +16,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<ListDataSource<SchoolsDto>>> GetSchoolsAsync(ListRequestDto<School>? requestDto = null);
         Task<ResultData<ListDataSource<SchoolInfoDto>>> GetSchoolsListAsync(ListRequestDto<School>? requestDto = null, Point? point = null);
         Task<ResultData<SchoolDto>> GetSchoolAsync([NotNull] ISpecification<School> specification);
-        Task<ResultData<int>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto);
+        Task<ResultData<long>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto, bool ignoreNullValues);
         Task<ResultData<bool>> RemoveSchoolAsync([NotNull] ISpecification<School> specification);
         Task<ResultData<bool>> ExistSchoolAsync([NotNull] ISpecification<School> specification);
 
@@ -35,6 +34,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<bool>> RejectSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification);
         Task<ResultData<long>> CreateSchoolImageAsync([NotNull] CreateSchoolImageRequestDto requestDto);
 
-        Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmContributionRequestDto requestDto);
+        Task<ResultData<long>> ManageSchoolContributionAsync([NotNull] ManageSchoolContributionRequestDto requestDto);
+        Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmSchoolContributionRequestDto requestDto);
     }
 }

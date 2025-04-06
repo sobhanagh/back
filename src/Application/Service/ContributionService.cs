@@ -187,7 +187,7 @@ namespace GamaEdtech.Application.Service
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var repository = uow.GetRepository<Contribution>();
-                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId<int>();
+                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId();
                 var affectedRows = await repository.GetManyQueryable(t => t.Id == requestDto.Id).ExecuteUpdateAsync(t => t
                     .SetProperty(p => p.Status, Status.Rejected)
                     .SetProperty(p => p.Comment, requestDto.Comment)

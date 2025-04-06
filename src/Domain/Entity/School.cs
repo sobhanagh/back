@@ -16,13 +16,13 @@ namespace GamaEdtech.Domain.Entity
     using NetTopologySuite.Geometries;
 
     [Table(nameof(School))]
-    public class School : VersionableEntity<ApplicationUser, int, int?>, IEntity<School, int>
+    public class School : VersionableEntity<ApplicationUser, int, int?>, IEntity<School, long>
     {
         [System.ComponentModel.DataAnnotations.Key]
-        [Column(nameof(Id), DataType.Int)]
+        [Column(nameof(Id), DataType.Long)]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Column(nameof(OsmId), DataType.Long)]
         public long? OsmId { get; set; }

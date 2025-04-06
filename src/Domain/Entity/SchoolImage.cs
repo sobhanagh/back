@@ -21,9 +21,9 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public long Id { get; set; }
 
-        [Column(nameof(SchoolId), DataType.Int)]
+        [Column(nameof(SchoolId), DataType.Long)]
         [Required]
-        public int SchoolId { get; set; }
+        public long SchoolId { get; set; }
         public School? School { get; set; }
 
         [Column(nameof(FileId), DataType.String)]

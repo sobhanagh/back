@@ -3,6 +3,7 @@ namespace GamaEdtech.Application.Service
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Text.Json;
 
     using EntityFramework.Exceptions.Common;
 
@@ -11,12 +12,15 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Core.Extensions.Linq;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
+    using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Domain.Specification.Contribution;
+    using GamaEdtech.Domain.Specification;
 
     using MetadataExtractor;
     using MetadataExtractor.Formats.Exif;
@@ -32,7 +36,7 @@ namespace GamaEdtech.Application.Service
     using static GamaEdtech.Common.Core.Constants;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
-        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService)
+        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService, Lazy<IIdentityService> identityService)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ISchoolService
     {
         #region Schools
@@ -42,7 +46,7 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var result = await uow.GetRepository<School, int>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
+                var result = await uow.GetRepository<School, long>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
                 var users = await result.List.Select(t => new SchoolsDto
                 {
                     Id = t.Id,
@@ -63,7 +67,7 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var lst = uow.GetRepository<School, int>().GetManyQueryable(requestDto?.Specification);
+                var lst = uow.GetRepository<School, long>().GetManyQueryable(requestDto?.Specification);
                 int? total = requestDto?.PagingDto?.PageFilter?.ReturnTotalRecordsCount == true ? await lst.CountAsync() : null;
                 var query = lst.Select(t => new
                 {
@@ -118,7 +122,7 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var school = await uow.GetRepository<School, int>().GetManyQueryable(specification).Select(t => new SchoolDto
+                var school = await uow.GetRepository<School, long>().GetManyQueryable(specification).Select(t => new SchoolDto
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -157,12 +161,12 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<int>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto)
+        public async Task<ResultData<long>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto, bool ignoreNullValues)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var repository = uow.GetRepository<School, int>();
+                var repository = uow.GetRepository<School, long>();
                 School? school = null;
 
                 if (requestDto.Id.HasValue)
@@ -176,23 +180,23 @@ namespace GamaEdtech.Application.Service
                         };
                     }
 
-                    school.Name = requestDto.Name;
-                    school.LocalName = requestDto.LocalName;
-                    school.Address = requestDto.Address;
-                    school.Coordinates = requestDto.Coordinates;
-                    school.SchoolType = requestDto.SchoolType;
-                    school.StateId = requestDto.StateId;
-                    school.ZipCode = requestDto.ZipCode;
-                    school.WebSite = requestDto.WebSite;
-                    school.Quarter = requestDto.Quarter;
-                    school.PhoneNumber = requestDto.PhoneNumber;
-                    school.LocalAddress = requestDto.LocalAddress;
-                    school.FaxNumber = requestDto.FaxNumber;
-                    school.Facilities = requestDto.Facilities;
-                    school.Email = requestDto.Email;
-                    school.CityId = requestDto.CityId;
-                    school.CountryId = requestDto.CountryId;
-                    school.OsmId = requestDto.OsmId;
+                    school.Name = Get(requestDto.Name, school.Name);
+                    school.LocalName = Get(requestDto.LocalName, school.LocalName);
+                    school.Address = Get(requestDto.Address, school.Address);
+                    school.Coordinates = Get(requestDto.Coordinates, school.Coordinates);
+                    school.SchoolType = Get(requestDto.SchoolType, school.SchoolType);
+                    school.StateId = Get(requestDto.StateId, school.StateId);
+                    school.ZipCode = Get(requestDto.ZipCode, school.ZipCode);
+                    school.WebSite = Get(requestDto.WebSite, school.WebSite);
+                    school.Quarter = Get(requestDto.Quarter, school.Quarter);
+                    school.PhoneNumber = Get(requestDto.PhoneNumber, school.PhoneNumber);
+                    school.LocalAddress = Get(requestDto.LocalAddress, school.LocalAddress);
+                    school.FaxNumber = Get(requestDto.FaxNumber, school.FaxNumber);
+                    school.Facilities = Get(requestDto.Facilities, school.Facilities);
+                    school.Email = Get(requestDto.Email, school.Email);
+                    school.CityId = Get(requestDto.CityId, school.CityId);
+                    school.CountryId = Get(requestDto.CountryId, school.CountryId);
+                    school.OsmId = Get(requestDto.OsmId, school.OsmId);
 
                     _ = repository.Update(school);
                 }
@@ -224,6 +228,10 @@ namespace GamaEdtech.Application.Service
                 _ = await uow.SaveChangesAsync();
 
                 return new(OperationResult.Succeeded) { Data = school.Id };
+
+                T Get<T>(T newValue, T oldValue) => !ignoreNullValues && !string.IsNullOrEmpty(newValue?.ToString())
+                    ? newValue
+                    : oldValue;
             }
             catch (ReferenceConstraintException)
             {
@@ -241,7 +249,7 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var school = await uow.GetRepository<School, int>().GetAsync(specification);
+                var school = await uow.GetRepository<School, long>().GetAsync(specification);
                 if (school is null)
                 {
                     return new(OperationResult.NotFound)
@@ -251,7 +259,7 @@ namespace GamaEdtech.Application.Service
                     };
                 }
 
-                uow.GetRepository<School, int>().Remove(school);
+                uow.GetRepository<School, long>().Remove(school);
                 _ = await uow.SaveChangesAsync();
                 return new(OperationResult.Succeeded) { Data = true };
             }
@@ -271,7 +279,7 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var exist = await uow.GetRepository<School, int>().AnyAsync(specification);
+                var exist = await uow.GetRepository<School, long>().AnyAsync(specification);
                 return new(OperationResult.Succeeded) { Data = exist };
             }
             catch (Exception exc)
@@ -347,7 +355,7 @@ namespace GamaEdtech.Application.Service
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var repository = uow.GetRepository<SchoolComment>();
-                var schoolRepository = uow.GetRepository<School, int>();
+                var schoolRepository = uow.GetRepository<School, long>();
                 SchoolComment? schoolComment = null;
 
                 if (requestDto.Id.HasValue)
@@ -656,7 +664,7 @@ namespace GamaEdtech.Application.Service
                             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
                             var point = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
 
-                            var schoolRepository = uow.GetRepository<School, int>();
+                            var schoolRepository = uow.GetRepository<School, long>();
                             var schoolCoordinates = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Coordinates).FirstOrDefaultAsync();
                             if (schoolCoordinates is not null && schoolCoordinates.Distance(point) < 2000)
                             {
@@ -681,26 +689,107 @@ namespace GamaEdtech.Application.Service
 
         #region Contribution
 
-        public async Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmContributionRequestDto requestDto)
+        public async Task<ResultData<long>> ManageSchoolContributionAsync([NotNull] ManageSchoolContributionRequestDto requestDto)
+        {
+            var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+            var exist = await uow.GetRepository<School, long>().AnyAsync(t => t.Id == requestDto.SchoolId);
+            if (!exist)
+            {
+                return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+            }
+
+            if (requestDto.Id.HasValue)
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(requestDto.Id.Value)
+                    .And(new IdentifierIdEqualsSpecification(requestDto.SchoolId))
+                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(requestDto.UserId))
+                    .And(new ContributionTypeEqualsSpecification(ContributionType.School))
+                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
+                var data = await contributionService.Value.ExistContributionAsync(specification);
+                if (!data.Data)
+                {
+                    return new(data.OperationResult) { Errors = data.Errors };
+                }
+            }
+
+            var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+            {
+                ContributionType = ContributionType.School,
+                IdentifierId = requestDto.SchoolId,
+                Status = Status.Draft,
+                Data = JsonSerializer.Serialize(requestDto.Data),
+                Id = requestDto.Id,
+            });
+            if (contributionResult.OperationResult is not OperationResult.Succeeded)
+            {
+                return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
+            }
+
+            var hasAutoConfirmSchoolContribution = await identityService.Value.HasClaimAsync(requestDto.UserId, SystemClaim.AutoConfirmSchoolContribution);
+            if (hasAutoConfirmSchoolContribution.Data)
+            {
+                _ = await ConfirmSchoolContributionAsync(new()
+                {
+                    ContributionId = contributionResult.Data,
+                    SchoolId = requestDto.SchoolId,
+                    Data = requestDto.Data,
+                });
+            }
+
+            return new(OperationResult.Succeeded) { Data = contributionResult.Data };
+        }
+
+        public async Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmSchoolContributionRequestDto requestDto)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var school = await uow.GetRepository<School, int>().GetAsync((int)requestDto.IdentifierId);
+                var school = await uow.GetRepository<School, long>().GetAsync(requestDto.SchoolId);
                 if (school is null)
                 {
                     return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
                 }
 
-                var result = await contributionService.Value.ConfirmContributionAsync(requestDto);
-                if (result.Data is null)
+                var result = await contributionService.Value.ConfirmContributionAsync(new()
+                {
+                    ContributionId = requestDto.ContributionId,
+                    ContributionType = ContributionType.School,
+                    IdentifierId = requestDto.SchoolId,
+                });
+                if (result.OperationResult is not OperationResult.Succeeded)
                 {
                     return new(OperationResult.Failed) { Errors = result.Errors };
                 }
 
-                _ = school.Id;
+                ManageSchoolRequestDto manageSchoolRequestDto = new()
+                {
+                    Address = requestDto.Data.Address,
+                    CityId = requestDto.Data.CityId,
+                    CountryId = requestDto.Data.CountryId,
+                    Email = requestDto.Data.Email,
+                    Facilities = requestDto.Data.Facilities,
+                    FaxNumber = requestDto.Data.FaxNumber,
+                    LocalAddress = requestDto.Data.LocalAddress,
+                    LocalName = requestDto.Data.LocalName,
+                    Name = requestDto.Data.Name,
+                    PhoneNumber = requestDto.Data.PhoneNumber,
+                    Quarter = requestDto.Data.Quarter,
+                    SchoolType = requestDto.Data.SchoolType,
+                    StateId = requestDto.Data.StateId,
+                    WebSite = requestDto.Data.WebSite,
+                    ZipCode = requestDto.Data.ZipCode,
+                    Id = requestDto.SchoolId,
+                };
+                if (requestDto.Data.Latitude.HasValue && requestDto.Data.Longitude.HasValue)
+                {
+                    var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
+                    manageSchoolRequestDto.Coordinates = geometryFactory.CreatePoint(new Coordinate(requestDto.Data.Longitude.Value, requestDto.Data.Latitude.Value));
+                }
+                var manageSchoolResult = await ManageSchoolAsync(manageSchoolRequestDto, true);
 
-                return new(OperationResult.Succeeded) { Data = true };
+                return manageSchoolResult.OperationResult is OperationResult.Succeeded
+                    ? new(OperationResult.Failed) { Errors = result.Errors }
+                    : new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
             {
