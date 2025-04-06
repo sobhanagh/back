@@ -322,21 +322,21 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 var result = await identityService.Value.GetUserPermissionsAsync(new UserPermissionsRequestDto { UserId = userId });
 
                 var areas = endpoints.Where(t => t.Controller.HasValue).GroupBy(t => t.Area);
-                List<ClaimsResponseViewModel> items = new(areas.Count());
+                List<PermissionsResponseViewModel> items = new(areas.Count());
                 foreach (var area in areas)
                 {
                     var controllers = area.GroupBy(t => t.Controller);
-                    var areaItem = new ClaimsResponseViewModel
+                    var areaItem = new PermissionsResponseViewModel
                     {
                         Text = area.Key?.Value ?? Localizer.Value["Root"],
-                        Items = controllers.Select(t => new ClaimsResponseViewModel
+                        Items = controllers.Select(t => new PermissionsResponseViewModel
                         {
                             Text = t.Key?.Value,
-                            Items = t.Select(c => new ClaimsResponseViewModel
+                            Items = t.Select(c => new PermissionsResponseViewModel
                             {
                                 Text = c.Action?.Value,
                                 Value = c.EndpointName,
-                                HasPermission = result.Data?.Claims?.Contains(c.EndpointName) is true,
+                                HasPermission = result.Data?.Permissions?.Contains(c.EndpointName) is true,
                             }),
                         }),
                     };
@@ -348,8 +348,9 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 {
                     Data = new UserPermissionsResponseViewModel
                     {
-                        Claims = items,
+                        Permissions = items,
                         Roles = result.Data?.Roles,
+                        SystemClaims = result.Data?.SystemClaims,
                     }
                 });
             }
@@ -357,7 +358,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<ClaimsResponseViewModel>> { Errors = new[] { new Error { Message = exc.Message } } });
+                return Ok(new ApiResponse<ListDataSource<PermissionsResponseViewModel>> { Errors = new[] { new Error { Message = exc.Message } } });
             }
         }
 
@@ -370,8 +371,9 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 var result = await identityService.Value.UpdateUserPermissionsAsync(new UpdateUserPermissionsRequestDto
                 {
                     UserId = userId,
-                    Claims = request.Claims,
-                    Roles = request.Roles
+                    Permissions = request.Permissions ?? [],
+                    Roles = request.Roles,
+                    SystemClaims = request.SystemClaims,
                 });
 
                 return Ok(new ApiResponse<Void>

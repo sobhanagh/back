@@ -9,6 +9,7 @@ namespace GamaEdtech.Application.Interface
     using System.Diagnostics.CodeAnalysis;
     using GamaEdtech.Data.Dto.Identity;
     using GamaEdtech.Domain.Entity.Identity;
+    using GamaEdtech.Domain.Enumeration;
 
     [Injectable]
     public interface IIdentityService
@@ -56,5 +57,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<ProfileSettingsDto>> GetProfileSettingsAsync();
 
         Task<ResultData<Void>> UpdateProfileSettingsAsync([NotNull] ProfileSettingsDto requestDto);
+
+        Task<ResultData<bool>> HasClaimAsync(int userId, SystemClaim claims);
     }
 }

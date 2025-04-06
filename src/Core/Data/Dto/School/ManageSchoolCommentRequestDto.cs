@@ -3,7 +3,7 @@ namespace GamaEdtech.Data.Dto.School
     public sealed class ManageSchoolCommentRequestDto
     {
         public long? Id { get; set; }
-        public int SchoolId { get; set; }
+        public long SchoolId { get; set; }
         public int CreationUserId { get; set; }
         public DateTimeOffset CreationDate { get; set; }
         public string? Comment { get; set; }

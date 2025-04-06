@@ -11,7 +11,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Common.Identity;
-    using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
@@ -112,12 +111,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpGet("{id:int}"), Produces<ApiResponse<SchoolResponseViewModel>>()]
-        public async Task<IActionResult<SchoolResponseViewModel>> GetSchool([FromRoute] int id)
+        [HttpGet("{id:long}"), Produces<ApiResponse<SchoolResponseViewModel>>()]
+        public async Task<IActionResult<SchoolResponseViewModel>> GetSchool([FromRoute] long id)
         {
             try
             {
-                var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, int>(id));
+                var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(id));
 
                 return Ok(new ApiResponse<SchoolResponseViewModel>(result.Errors)
                 {
@@ -158,8 +157,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #region Comments
 
-        [HttpGet("{schoolId:int}/rate"), Produces<ApiResponse<SchoolRateResponseViewModel>>()]
-        public async Task<IActionResult<SchoolRateResponseViewModel>> GetSchoolRate([FromRoute] int schoolId)
+        [HttpGet("{schoolId:long}/rate"), Produces<ApiResponse<SchoolRateResponseViewModel>>()]
+        public async Task<IActionResult<SchoolRateResponseViewModel>> GetSchoolRate([FromRoute] long schoolId)
         {
             try
             {
@@ -191,8 +190,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpGet("{schoolId:int}/comments"), Produces<ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolCommentsResponseViewModel>>> GetSchoolComments([FromRoute] int schoolId, [NotNull, FromQuery] SchoolCommentsRequestViewModel request)
+        [HttpGet("{schoolId:long}/comments"), Produces<ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolCommentsResponseViewModel>>> GetSchoolComments([FromRoute] long schoolId, [NotNull, FromQuery] SchoolCommentsRequestViewModel request)
         {
             try
             {
@@ -230,9 +229,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPost("{schoolId:int}/comments"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
+        [HttpPost("{schoolId:long}/comments"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolCommentResponseViewModel>> CreateSchoolComment([FromRoute] int schoolId, [NotNull] ManageSchoolCommentRequestViewModel request)
+        public async Task<IActionResult<ManageSchoolCommentResponseViewModel>> CreateSchoolComment([FromRoute] long schoolId, [NotNull] ManageSchoolCommentRequestViewModel request)
         {
             try
             {
@@ -265,9 +264,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPut("{schoolId:int}/comments/{commentId:long}"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
+        [HttpPut("{schoolId:long}/comments/{commentId:long}"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolCommentResponseViewModel>> UpdateSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId, [NotNull, FromBody] ManageSchoolCommentRequestViewModel request)
+        public async Task<IActionResult<ManageSchoolCommentResponseViewModel>> UpdateSchoolComment([FromRoute] long schoolId, [FromRoute] long commentId, [NotNull, FromBody] ManageSchoolCommentRequestViewModel request)
         {
             try
             {
@@ -301,9 +300,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPatch("{schoolId:int}/comments/{commentId:long}/like"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("{schoolId:long}/comments/{commentId:long}/like"), Produces<ApiResponse<bool>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<bool>> LikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
+        public async Task<IActionResult<bool>> LikeSchoolComment([FromRoute] long schoolId, [FromRoute] long commentId)
         {
             try
             {
@@ -324,9 +323,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPatch("{schoolId:int}/comments/{commentId:long}/dislike"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("{schoolId:long}/comments/{commentId:long}/dislike"), Produces<ApiResponse<bool>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<bool>> DislikeSchoolComment([FromRoute] int schoolId, [FromRoute] long commentId)
+        public async Task<IActionResult<bool>> DislikeSchoolComment([FromRoute] long schoolId, [FromRoute] long commentId)
         {
             try
             {
@@ -351,8 +350,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #region Images
 
-        [HttpGet("{schoolId:int}/images/{fileType:FileType}"), Produces<ApiResponse<IEnumerable<string>>>()]
-        public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImagesPath([FromRoute] int schoolId, [FromRoute] FileType fileType)
+        [HttpGet("{schoolId:long}/images/{fileType:FileType}"), Produces<ApiResponse<IEnumerable<string>>>()]
+        public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImagesPath([FromRoute] long schoolId, [FromRoute] FileType fileType)
         {
             try
             {
@@ -373,9 +372,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPost("{schoolId:int}/images/{fileType:FileType}"), Produces<ApiResponse<CreateSchoolImageResponseViewModel>>()]
+        [HttpPost("{schoolId:long}/images/{fileType:FileType}"), Produces<ApiResponse<CreateSchoolImageResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] int schoolId, [FromRoute] FileType fileType, [NotNull, FromForm] CreateSchoolImageRequestViewModel request)
+        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] long schoolId, [FromRoute] FileType fileType, [NotNull, FromForm] CreateSchoolImageRequestViewModel request)
         {
             try
             {
@@ -405,9 +404,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #region Contributions
 
-        [HttpGet("{schoolId:int}/contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>>()]
+        [HttpGet("{schoolId:long}/contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ListDataSource<SchoolContributionInfoListResponseViewModel>>> GetSchoolContributionList([FromRoute] int schoolId, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
+        public async Task<IActionResult<ListDataSource<SchoolContributionInfoListResponseViewModel>>> GetSchoolContributionList([FromRoute] long schoolId, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
         {
             try
             {
@@ -415,7 +414,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     PagingDto = request.PagingDto,
                     Specification = new IdentifierIdEqualsSpecification(schoolId)
-                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
+                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId()))
                         .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>
@@ -441,15 +440,15 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpGet("{schoolId:int}/contributions/{contributionId:long}"), Produces<ApiResponse<SchoolContributionViewModel>>()]
+        [HttpGet("{schoolId:long}/contributions/{contributionId:long}"), Produces<ApiResponse<SchoolContributionViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<SchoolContributionViewModel>> GetSchoolContribution([FromRoute] int schoolId, [FromRoute] long contributionId)
+        public async Task<IActionResult<SchoolContributionViewModel>> GetSchoolContribution([FromRoute] long schoolId, [FromRoute] long contributionId)
         {
             try
             {
                 var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
                     .And(new IdentifierIdEqualsSpecification(schoolId))
-                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
+                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId()))
                     .And(new ContributionTypeEqualsSpecification(ContributionType.School));
                 var result = await contributionService.Value.GetContributionAsync(specification);
 
@@ -474,26 +473,22 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPost("{schoolId:int}/contributions"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
+        [HttpPost("{schoolId:long}/contributions"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> CreateSchoolContribution([FromRoute] int schoolId, [NotNull] SchoolContributionViewModel request)
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> CreateSchoolContribution([FromRoute] long schoolId, [NotNull] SchoolContributionViewModel request)
         {
             try
             {
-                var exist = await schoolService.Value.ExistSchoolAsync(new IdEqualsSpecification<School, int>(schoolId));
-                if (!exist.Data)
-                {
-                    return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = "School not found" }));
-                }
-
+                var userId = User.UserId();
                 var dto = MapTo(request, schoolId);
-                var result = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                var result = await schoolService.Value.ManageSchoolContributionAsync(new ManageSchoolContributionRequestDto
                 {
-                    ContributionType = ContributionType.School,
-                    IdentifierId = schoolId,
+                    UserId = userId,
+                    SchoolId = schoolId,
                     Status = Status.Draft,
-                    Data = JsonSerializer.Serialize(dto),
+                    Data = dto,
                 });
+
                 return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -508,32 +503,21 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPut("{schoolId:int}/contributions/{contributionId:long}"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
+        [HttpPut("{schoolId:long}/contributions/{contributionId:long}"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> UpdateSchoolContribution([FromRoute] int schoolId, [FromRoute] long contributionId, [NotNull, FromBody] SchoolContributionViewModel request)
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> UpdateSchoolContribution([FromRoute] long schoolId, [FromRoute] long contributionId, [NotNull, FromBody] SchoolContributionViewModel request)
         {
             try
             {
-                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new IdentifierIdEqualsSpecification(schoolId))
-                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId<int>()))
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.School))
-                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
-                var data = await contributionService.Value.ExistContributionAsync(specification);
-                if (!data.Data)
-                {
-                    return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = "Invalid Request" }));
-                }
-
                 var dto = MapTo(request, schoolId);
-                var result = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                var result = await schoolService.Value.ManageSchoolContributionAsync(new ManageSchoolContributionRequestDto
                 {
                     Id = contributionId,
-                    ContributionType = ContributionType.School,
-                    IdentifierId = schoolId,
+                    SchoolId = schoolId,
                     Status = Status.Draft,
-                    Data = JsonSerializer.Serialize(dto),
+                    Data = dto,
                 });
+
                 return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -550,7 +534,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #endregion
 
-        internal static SchoolContributionDto MapTo(SchoolContributionViewModel request, int schoolId) => new()
+        internal static SchoolContributionDto MapTo(SchoolContributionViewModel request, long schoolId) => new()
         {
             Address = request.Address,
             CityId = request.CityId,
