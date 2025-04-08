@@ -14,7 +14,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
-    using GamaEdtech.Domain.Specification;
     using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
@@ -198,8 +197,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await schoolService.Value.GetSchoolCommentsAsync(new ListRequestDto<SchoolComment>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new SchoolIdEqualsSpecification<SchoolComment>(schoolId)
-                        .And(new StatusEqualsSpecification<SchoolComment>(Status.Confirmed)),
+                    Specification = new SchoolIdEqualsSpecification<SchoolComment>(schoolId),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>
                 {
@@ -235,7 +233,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await schoolService.Value.ManageSchoolCommentAsync(new ManageSchoolCommentRequestDto
+                var result = await schoolService.Value.ManageSchoolCommentContributionAsync(new ManageSchoolCommentContributionRequestDto
                 {
                     ArtisticActivitiesRate = request.ArtisticActivitiesRate,
                     BehaviorRate = request.BehaviorRate,
@@ -246,42 +244,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     ITTrainingRate = request.ITTrainingRate,
                     SafetyAndHappinessRate = request.SafetyAndHappinessRate,
                     SchoolId = schoolId,
-                    TuitionRatioRate = request.TuitionRatioRate,
-                    CreationDate = DateTimeOffset.UtcNow,
-                    CreationUserId = User.UserId(),
-                });
-                return Ok(new ApiResponse<ManageSchoolCommentResponseViewModel>
-                {
-                    Errors = result.Errors,
-                    Data = new() { Id = result.Data, },
-                });
-            }
-            catch (Exception exc)
-            {
-                Logger.Value.LogException(exc);
-
-                return Ok(new ApiResponse<ManageSchoolCommentResponseViewModel>(new Error { Message = exc.Message }));
-            }
-        }
-
-        [HttpPut("{schoolId:long}/comments/{commentId:long}"), Produces<ApiResponse<ManageSchoolCommentResponseViewModel>>()]
-        [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolCommentResponseViewModel>> UpdateSchoolComment([FromRoute] long schoolId, [FromRoute] long commentId, [NotNull, FromBody] ManageSchoolCommentRequestViewModel request)
-        {
-            try
-            {
-                var result = await schoolService.Value.ManageSchoolCommentAsync(new ManageSchoolCommentRequestDto
-                {
-                    Id = commentId,
-                    SchoolId = schoolId,
-                    ArtisticActivitiesRate = request.ArtisticActivitiesRate,
-                    BehaviorRate = request.BehaviorRate,
-                    ClassesQualityRate = request.ClassesQualityRate,
-                    Comment = request.Comment,
-                    EducationRate = request.EducationRate,
-                    FacilitiesRate = request.FacilitiesRate,
-                    ITTrainingRate = request.ITTrainingRate,
-                    SafetyAndHappinessRate = request.SafetyAndHappinessRate,
                     TuitionRatioRate = request.TuitionRatioRate,
                     CreationDate = DateTimeOffset.UtcNow,
                     CreationUserId = User.UserId(),
@@ -355,8 +317,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var specification = new StatusEqualsSpecification<SchoolImage>(Status.Confirmed)
-                    .And(new SchoolIdEqualsSpecification<SchoolImage>(schoolId))
+                var specification = new SchoolIdEqualsSpecification<SchoolImage>(schoolId)
                     .And(new SchoolImageFileTypeEqualsSpecification(fileType));
                 var result = await schoolService.Value.GetSchoolImagesPathAsync(specification);
                 return Ok(new ApiResponse<IEnumerable<string?>>(result.Errors)
@@ -374,11 +335,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         [HttpPost("{schoolId:long}/images/{fileType:FileType}"), Produces<ApiResponse<CreateSchoolImageResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImage([FromRoute] long schoolId, [FromRoute] FileType fileType, [NotNull, FromForm] CreateSchoolImageRequestViewModel request)
+        public async Task<IActionResult<CreateSchoolImageResponseViewModel>> CreateSchoolImageContribution([FromRoute] long schoolId, [FromRoute] FileType fileType, [NotNull, FromForm] CreateSchoolImageRequestViewModel request)
         {
             try
             {
-                var result = await schoolService.Value.CreateSchoolImageAsync(new CreateSchoolImageRequestDto
+                var result = await schoolService.Value.ManageSchoolImageContributionAsync(new ManageSchoolImageContributionRequestDto
                 {
                     File = request.File!,
                     FileType = fileType,

@@ -125,6 +125,7 @@ namespace GamaEdtech.Common.Core
             Modified = 4,
         }
 
+        [JsonConverter(typeof(EnumStringConverter<SortType>))]
         public enum SortType
         {
             Asc,

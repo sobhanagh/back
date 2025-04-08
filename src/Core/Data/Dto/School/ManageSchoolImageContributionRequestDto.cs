@@ -4,7 +4,7 @@ namespace GamaEdtech.Data.Dto.School
 
     using Microsoft.AspNetCore.Http;
 
-    public sealed class CreateSchoolImageRequestDto
+    public sealed class ManageSchoolImageContributionRequestDto
     {
         public required IFormFile File { get; set; }
         public required FileType FileType { get; set; }
