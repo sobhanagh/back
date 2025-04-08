@@ -201,28 +201,27 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Comments
 
-        [HttpGet("comments/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolCommentsResponseViewModel>>> GetPendingSchoolComments([NotNull, FromQuery] SchoolCommentsRequestViewModel request)
+        [HttpGet("comments/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
         {
             try
             {
-                var result = await schoolService.Value.GetSchoolCommentsAsync(new()
+                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<SchoolComment>(Status.Draft),
+                    Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
+                        .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolComment)),
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>(result.Errors)
+                return Ok(new ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
                     {
-                        List = result.Data.List.Select(t => new SchoolCommentsResponseViewModel
+                        List = result.Data.List.Select(t => new SchoolCommentContributionListResponseViewModel
                         {
                             Id = t.Id,
-                            Comment = t.Comment,
-                            AverageRate = t.AverageRate,
-                            CreationDate = t.CreationDate,
                             CreationUser = t.CreationUser,
-                            CreationUserAvatar = t.CreationUserAvatar,
+                            CreationDate = t.CreationDate,
+                            SchoolId = t.IdentifierId.GetValueOrDefault(),
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -232,20 +231,75 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>(new Error { Message = exc.Message }));
             }
         }
 
-        [HttpPatch("commonts/{commentId:long}/confirm"), Produces<ApiResponse<bool>>()]
-        public async Task<IActionResult> ConfirmSchoolComment([FromRoute] long commentId)
+        [HttpGet("comments/{contributionId:long}"), Produces<ApiResponse<SchoolCommentContributionReviewViewModel>>()]
+        public async Task<IActionResult<SchoolCommentContributionReviewViewModel>> GetSchoolCommentContribution([FromRoute] long contributionId)
         {
             try
             {
-                var result = await schoolService.Value.ConfirmSchoolCommentAsync(new IdEqualsSpecification<SchoolComment, long>(commentId));
-                return Ok(new ApiResponse<bool>
+                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
+                    .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolComment));
+                var contributionResult = await contributionService.Value.GetContributionAsync(specification);
+                if (contributionResult.Data?.Data is null)
                 {
-                    Errors = result.Errors,
-                    Data = result.Data
+                    return Ok(new ApiResponse<SchoolCommentContributionReviewViewModel>(contributionResult.Errors));
+                }
+
+                var schoolResult = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(contributionResult.Data.IdentifierId.GetValueOrDefault()));
+                if (schoolResult.OperationResult is not Constants.OperationResult.Succeeded)
+                {
+                    return Ok(new ApiResponse<SchoolCommentContributionReviewViewModel>(schoolResult.Errors));
+                }
+
+                var dto = JsonSerializer.Deserialize<SchoolCommentContributionDto>(contributionResult.Data.Data)!;
+
+                SchoolCommentContributionReviewViewModel result = new()
+                {
+                    Id = contributionResult.Data.Id,
+                    SchoolId = dto.SchoolId,
+                    SchoolName = schoolResult.Data?.Name,
+                    ArtisticActivitiesRate = dto.ArtisticActivitiesRate,
+                    AverageRate = dto.AverageRate,
+                    BehaviorRate = dto.BehaviorRate,
+                    ClassesQualityRate = dto.ClassesQualityRate,
+                    Comment = dto.Comment,
+                    EducationRate = dto.EducationRate,
+                    FacilitiesRate = dto.FacilitiesRate,
+                    ITTrainingRate = dto.ITTrainingRate,
+                    SafetyAndHappinessRate = dto.SafetyAndHappinessRate,
+                    TuitionRatioRate = dto.TuitionRatioRate,
+                };
+
+                return Ok(new ApiResponse<SchoolCommentContributionReviewViewModel>
+                {
+                    Data = result,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<SchoolCommentContributionReviewViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+
+        [HttpPatch("comments/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> ConfirmSchoolCommentContribution([FromRoute] long contributionId)
+        {
+            try
+            {
+                var result = await schoolService.Value.ConfirmSchoolCommentContributionAsync(new ConfirmSchoolCommentContributionRequestDto
+                {
+                    ContributionId = contributionId,
+                });
+
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
                 });
             }
             catch (Exception exc)
@@ -256,16 +310,19 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpPatch("commonts/{commentId:long}/reject"), Produces<ApiResponse<bool>>()]
-        public async Task<IActionResult> RejectSchoolComment([FromRoute] long commentId)
+        [HttpPatch("comments/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> RejectSchoolCommentContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
         {
             try
             {
-                var result = await schoolService.Value.RejectSchoolCommentAsync(new IdEqualsSpecification<SchoolComment, long>(commentId));
-                return Ok(new ApiResponse<bool>
+                var result = await contributionService.Value.RejectContributionAsync(new RejectContributionRequestDto
                 {
-                    Errors = result.Errors,
-                    Data = result.Data
+                    Id = contributionId,
+                    Comment = request.Comment,
+                });
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
                 });
             }
             catch (Exception exc)
@@ -280,30 +337,27 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Images
 
-        [HttpGet("images/pending"), Produces<ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolImagesResponseViewModel>>> GetPendingSchoolImages([NotNull, FromQuery] SchoolImagesRequestViewModel request)
+        [HttpGet("images/pending"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
         {
             try
             {
-                var result = await schoolService.Value.GetSchoolImagesAsync(new()
+                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<SchoolImage>(Status.Draft),
+                    Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
+                        .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolImage)),
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>(result.Errors)
+                return Ok(new ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
                     {
-                        List = result.Data.List.Select(t => new SchoolImagesResponseViewModel
+                        List = result.Data.List.Select(t => new SchoolImageContributionListResponseViewModel
                         {
                             Id = t.Id,
-                            CreationDate = t.CreationDate,
                             CreationUser = t.CreationUser,
-                            CreationUserAvatar = t.CreationUserAvatar,
-                            FileId = t.FileId,
-                            FileType = t.FileType,
-                            SchoolId = t.SchoolId,
-                            SchoolName = t.SchoolName,
+                            CreationDate = t.CreationDate,
+                            SchoolId = t.IdentifierId.GetValueOrDefault(),
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -313,20 +367,66 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<SchoolImagesResponseViewModel>>(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>(new Error { Message = exc.Message }));
             }
         }
 
-        [HttpPatch("images/{imageId:long}/confirm"), Produces<ApiResponse<bool>>()]
-        public async Task<IActionResult> ConfirmSchoolImage([FromRoute] long imageId)
+        [HttpGet("images/{contributionId:long}"), Produces<ApiResponse<SchoolImageContributionReviewViewModel>>()]
+        public async Task<IActionResult<SchoolImageContributionReviewViewModel>> GetSchoolImageContribution([FromRoute] long contributionId)
         {
             try
             {
-                var result = await schoolService.Value.ConfirmSchoolImageAsync(new IdEqualsSpecification<SchoolImage, long>(imageId));
-                return Ok(new ApiResponse<bool>
+                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
+                    .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolImage));
+                var contributionResult = await contributionService.Value.GetContributionAsync(specification);
+                if (contributionResult.Data?.Data is null)
                 {
-                    Errors = result.Errors,
-                    Data = result.Data
+                    return Ok(new ApiResponse<SchoolImageContributionReviewViewModel>(contributionResult.Errors));
+                }
+
+                var schoolResult = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(contributionResult.Data.IdentifierId.GetValueOrDefault()));
+                if (schoolResult.OperationResult is not Constants.OperationResult.Succeeded)
+                {
+                    return Ok(new ApiResponse<SchoolImageContributionReviewViewModel>(schoolResult.Errors));
+                }
+
+                var dto = JsonSerializer.Deserialize<SchoolImageContributionDto>(contributionResult.Data.Data)!;
+
+                SchoolImageContributionReviewViewModel result = new()
+                {
+                    Id = contributionResult.Data.Id,
+                    FileId = dto.FileId,
+                    FileType = dto.FileType,
+                    SchoolId = dto.SchoolId,
+                    SchoolName = schoolResult.Data?.Name,
+                };
+
+                return Ok(new ApiResponse<SchoolImageContributionReviewViewModel>
+                {
+                    Data = result,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<SchoolImageContributionReviewViewModel>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPatch("images/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> ConfirmSchoolImageContribution([FromRoute] long contributionId)
+        {
+            try
+            {
+                var result = await schoolService.Value.ConfirmSchoolImageContributionAsync(new ConfirmSchoolImageContributionRequestDto
+                {
+                    ContributionId = contributionId,
+                });
+
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
                 });
             }
             catch (Exception exc)
@@ -337,16 +437,19 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpPatch("images/{imageId:long}/reject"), Produces<ApiResponse<bool>>()]
-        public async Task<IActionResult> RejectSchoolImage([FromRoute] long imageId)
+        [HttpPatch("images/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> RejectSchoolImageContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
         {
             try
             {
-                var result = await schoolService.Value.RejectSchoolImageAsync(new IdEqualsSpecification<SchoolImage, long>(imageId));
-                return Ok(new ApiResponse<bool>
+                var result = await contributionService.Value.RejectContributionAsync(new RejectContributionRequestDto
                 {
-                    Errors = result.Errors,
-                    Data = result.Data
+                    Id = contributionId,
+                    Comment = request.Comment,
+                });
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
                 });
             }
             catch (Exception exc)

@@ -34,9 +34,11 @@ namespace GamaEdtech.Application.Service
     using NetTopologySuite.Geometries;
 
     using static GamaEdtech.Common.Core.Constants;
+    using Microsoft.Extensions.Configuration;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
-        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService, Lazy<IIdentityService> identityService)
+        , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService, Lazy<IIdentityService> identityService
+        , Lazy<IConfiguration> configuration)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ISchoolService
     {
         #region Schools
@@ -349,109 +351,6 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<long>> ManageSchoolCommentAsync([NotNull] ManageSchoolCommentRequestDto requestDto)
-        {
-            try
-            {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var repository = uow.GetRepository<SchoolComment>();
-                var schoolRepository = uow.GetRepository<School, long>();
-                SchoolComment? schoolComment = null;
-
-                if (requestDto.Id.HasValue)
-                {
-                    schoolComment = await repository.GetAsync(requestDto.Id.Value);
-                    if (schoolComment is null)
-                    {
-                        return new(OperationResult.NotFound)
-                        {
-                            Errors = [new() { Message = Localizer.Value["SchoolCommentNotFound"] },],
-                        };
-                    }
-
-                    if (schoolComment.CreationUserId != requestDto.CreationUserId)
-                    {
-                        return new(OperationResult.NotValid)
-                        {
-                            Errors = [new() { Message = Localizer.Value["InvalidRequest"] },],
-                        };
-                    }
-
-                    if (schoolComment.Comment != requestDto.Comment)
-                    {
-                        schoolComment.Status = Status.Draft;
-                    }
-                    schoolComment.Comment = requestDto.Comment;
-                    schoolComment.CreationDate = requestDto.CreationDate;
-                    schoolComment.CreationUserId = requestDto.CreationUserId;
-
-                    schoolComment.ArtisticActivitiesRate = requestDto.ArtisticActivitiesRate;
-                    schoolComment.BehaviorRate = requestDto.BehaviorRate;
-                    schoolComment.ClassesQualityRate = requestDto.ClassesQualityRate;
-                    schoolComment.EducationRate = requestDto.EducationRate;
-                    schoolComment.FacilitiesRate = requestDto.FacilitiesRate;
-                    schoolComment.ITTrainingRate = requestDto.ITTrainingRate;
-                    schoolComment.SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate;
-                    schoolComment.TuitionRatioRate = requestDto.TuitionRatioRate;
-                    schoolComment.AverageRate = Calculate(schoolComment);
-
-                    _ = repository.Update(schoolComment);
-                }
-                else
-                {
-                    schoolComment = new SchoolComment
-                    {
-                        SchoolId = requestDto.SchoolId,
-                        ArtisticActivitiesRate = requestDto.ArtisticActivitiesRate,
-                        BehaviorRate = requestDto.BehaviorRate,
-                        ClassesQualityRate = requestDto.ClassesQualityRate,
-                        Comment = requestDto.Comment,
-                        CreationDate = requestDto.CreationDate,
-                        CreationUserId = requestDto.CreationUserId,
-                        EducationRate = requestDto.EducationRate,
-                        FacilitiesRate = requestDto.FacilitiesRate,
-                        ITTrainingRate = requestDto.ITTrainingRate,
-                        SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate,
-                        TuitionRatioRate = requestDto.TuitionRatioRate,
-                        //Status = Status.Draft,
-                        Status = Status.Confirmed,
-                    };
-                    schoolComment.AverageRate = Calculate(schoolComment);
-                    repository.Add(schoolComment);
-                }
-
-                _ = await uow.SaveChangesAsync();
-                _ = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId)
-                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow));
-
-                return new(OperationResult.Succeeded) { Data = schoolComment.Id };
-
-                static double Calculate(SchoolComment comment) => (
-                        comment.ArtisticActivitiesRate +
-                        comment.BehaviorRate +
-                        comment.ClassesQualityRate +
-                        comment.EducationRate +
-                        comment.FacilitiesRate +
-                        comment.ITTrainingRate +
-                        comment.SafetyAndHappinessRate +
-                        comment.TuitionRatioRate
-                        ) / 8;
-            }
-            catch (ReferenceConstraintException)
-            {
-                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InvalidData"], }] };
-            }
-            catch (UniqueConstraintException)
-            {
-                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["DuplicateData"], }] };
-            }
-            catch (Exception exc)
-            {
-                Logger.Value.LogException(exc);
-                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
-            }
-        }
-
         public async Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
         {
             try
@@ -486,40 +385,105 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> ConfirmSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        public async Task<ResultData<long>> ManageSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto)
         {
             try
             {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
-                    .ExecuteUpdateAsync(t => t
-                        .SetProperty(p => p.Status, Status.Confirmed)
-                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
-                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
-                    );
+                SchoolCommentContributionDto dto = new()
+                {
+                    SchoolId = requestDto.SchoolId,
+                    Comment = requestDto.Comment,
+                    CreationDate = requestDto.CreationDate,
+                    CreationUserId = requestDto.CreationUserId,
+                    ArtisticActivitiesRate = requestDto.ArtisticActivitiesRate,
+                    BehaviorRate = requestDto.BehaviorRate,
+                    ClassesQualityRate = requestDto.ClassesQualityRate,
+                    EducationRate = requestDto.EducationRate,
+                    FacilitiesRate = requestDto.FacilitiesRate,
+                    ITTrainingRate = requestDto.ITTrainingRate,
+                    SafetyAndHappinessRate = requestDto.SafetyAndHappinessRate,
+                    TuitionRatioRate = requestDto.TuitionRatioRate,
+                    AverageRate = CalculateAverageRate(requestDto),
+                };
 
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+                var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                {
+                    ContributionType = ContributionType.SchoolComment,
+                    IdentifierId = requestDto.SchoolId,
+                    Status = Status.Draft,
+                    Data = JsonSerializer.Serialize(dto),
+                });
+                if (contributionResult.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
+                }
+
+                var hasAutoConfirmSchoolComment = await identityService.Value.HasClaimAsync(requestDto.CreationUserId, SystemClaim.AutoConfirmSchoolComment);
+                if (hasAutoConfirmSchoolComment.Data || configuration.Value.GetValue<bool>("AutoConfirmComments"))
+                {
+                    _ = await ConfirmSchoolCommentContributionAsync(new()
+                    {
+                        ContributionId = contributionResult.Data,
+                    });
+                }
+
+                return new(OperationResult.Succeeded) { Data = contributionResult.Data };
+
+                static double CalculateAverageRate(ManageSchoolCommentContributionRequestDto dto) => (
+                        dto.ArtisticActivitiesRate +
+                        dto.BehaviorRate +
+                        dto.ClassesQualityRate +
+                        dto.EducationRate +
+                        dto.FacilitiesRate +
+                        dto.ITTrainingRate +
+                        dto.SafetyAndHappinessRate +
+                        dto.TuitionRatioRate
+                        ) / 8;
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
-                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
         }
 
-        public async Task<ResultData<bool>> RejectSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        public async Task<ResultData<bool>> ConfirmSchoolCommentContributionAsync([NotNull] ConfirmSchoolCommentContributionRequestDto requestDto)
         {
             try
             {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
-                    .ExecuteUpdateAsync(t => t
-                        .SetProperty(p => p.Status, Status.Rejected)
-                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
-                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
-                    );
+                var result = await contributionService.Value.ConfirmContributionAsync(new()
+                {
+                    ContributionId = requestDto.ContributionId,
+                    ContributionType = ContributionType.SchoolComment,
+                });
+                if (result.Data is null)
+                {
+                    return new(OperationResult.Failed) { Errors = result.Errors };
+                }
 
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+
+                var dto = JsonSerializer.Deserialize<SchoolCommentContributionDto>(result.Data.Data!)!;
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var schoolImageRepository = uow.GetRepository<SchoolComment>();
+                schoolImageRepository.Add(new()
+                {
+                    SchoolId = dto.SchoolId,
+                    Comment = dto.Comment,
+                    AverageRate = dto.AverageRate,
+                    ArtisticActivitiesRate = dto.ArtisticActivitiesRate,
+                    BehaviorRate = dto.BehaviorRate,
+                    ClassesQualityRate = dto.ClassesQualityRate,
+                    EducationRate = dto.EducationRate,
+                    FacilitiesRate = dto.FacilitiesRate,
+                    ITTrainingRate = dto.ITTrainingRate,
+                    SafetyAndHappinessRate = dto.SafetyAndHappinessRate,
+                    TuitionRatioRate = dto.TuitionRatioRate,
+                    CreationUserId = dto.CreationUserId,
+                    CreationDate = dto.CreationDate,
+                });
+                _ = uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
             {
@@ -574,49 +538,7 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> ConfirmSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification)
-        {
-            try
-            {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
-                    .ExecuteUpdateAsync(t => t
-                        .SetProperty(p => p.Status, Status.Confirmed)
-                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
-                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
-                    );
-
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
-            }
-            catch (Exception exc)
-            {
-                Logger.Value.LogException(exc);
-                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
-            }
-        }
-
-        public async Task<ResultData<bool>> RejectSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification)
-        {
-            try
-            {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
-                    .ExecuteUpdateAsync(t => t
-                        .SetProperty(p => p.Status, Status.Rejected)
-                        .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow)
-                        .SetProperty(p => p.LastModifyUserId, HttpContextAccessor.Value.HttpContext.UserId())
-                    );
-
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
-            }
-            catch (Exception exc)
-            {
-                Logger.Value.LogException(exc);
-                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
-            }
-        }
-
-        public async Task<ResultData<long>> CreateSchoolImageAsync([NotNull] CreateSchoolImageRequestDto requestDto)
+        public async Task<ResultData<long>> ManageSchoolImageContributionAsync([NotNull] ManageSchoolImageContributionRequestDto requestDto)
         {
             try
             {
@@ -634,25 +556,36 @@ namespace GamaEdtech.Application.Service
                     return new(fileId.OperationResult) { Errors = fileId.Errors, };
                 }
 
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var imageRepository = uow.GetRepository<SchoolImage>();
-                var schoolImage = new SchoolImage
+                SchoolImageContributionDto dto = new()
                 {
                     FileId = fileId.Data,
-                    SchoolId = requestDto.SchoolId,
                     FileType = requestDto.FileType,
-                    CreationDate = requestDto.CreationDate,
-                    CreationUserId = requestDto.CreationUserId,
-                    Status = Status.Draft,
+                    SchoolId = requestDto.SchoolId,
                 };
+                var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                {
+                    ContributionType = ContributionType.SchoolImage,
+                    IdentifierId = requestDto.SchoolId,
+                    Status = Status.Draft,
+                    Data = JsonSerializer.Serialize(dto),
+                });
+                if (contributionResult.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
+                }
 
-                await TryExtractGpsDataAsync();
-                imageRepository.Add(schoolImage);
-                _ = await uow.SaveChangesAsync();
+                var hasAutoConfirmSchoolImage = await identityService.Value.HasClaimAsync(requestDto.CreationUserId, SystemClaim.AutoConfirmSchoolImage);
+                if (hasAutoConfirmSchoolImage.Data || await IsImageLocationNearSchoolAsync())
+                {
+                    _ = await ConfirmSchoolImageContributionAsync(new()
+                    {
+                        ContributionId = contributionResult.Data,
+                    });
+                }
 
-                return new(OperationResult.Succeeded) { Data = schoolImage.Id };
+                return new(OperationResult.Succeeded) { Data = contributionResult.Data };
 
-                async Task TryExtractGpsDataAsync()
+                async Task<bool> IsImageLocationNearSchoolAsync()
                 {
                     try
                     {
@@ -664,11 +597,12 @@ namespace GamaEdtech.Application.Service
                             var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
                             var point = geometryFactory.CreatePoint(new Coordinate(gps.Longitude, gps.Latitude));
 
+                            var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                             var schoolRepository = uow.GetRepository<School, long>();
                             var schoolCoordinates = await schoolRepository.GetManyQueryable(t => t.Id == requestDto.SchoolId).Select(t => t.Coordinates).FirstOrDefaultAsync();
-                            if (schoolCoordinates is not null && schoolCoordinates.Distance(point) < 2000)
+                            if (schoolCoordinates is not null && schoolCoordinates.Distance(point) < 200)
                             {
-                                schoolImage.Status = Status.Confirmed;
+                                return true;
                             }
                         }
                     }
@@ -676,12 +610,51 @@ namespace GamaEdtech.Application.Service
                     {
                         //ignore
                     }
+
+                    return false;
                 }
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<bool>> ConfirmSchoolImageContributionAsync([NotNull] ConfirmSchoolImageContributionRequestDto requestDto)
+        {
+            try
+            {
+                var result = await contributionService.Value.ConfirmContributionAsync(new()
+                {
+                    ContributionId = requestDto.ContributionId,
+                    ContributionType = ContributionType.SchoolImage,
+                });
+                if (result.Data is null)
+                {
+                    return new(OperationResult.Failed) { Errors = result.Errors };
+                }
+
+
+                var dto = JsonSerializer.Deserialize<SchoolImageContributionDto>(result.Data.Data!)!;
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var schoolImageRepository = uow.GetRepository<SchoolImage>();
+                schoolImageRepository.Add(new()
+                {
+                    FileId = dto.FileId,
+                    FileType = dto.FileType,
+                    SchoolId = dto.SchoolId,
+                    CreationUserId = result.Data.CreationUserId,
+                    CreationDate = result.Data.CreationDate,
+                });
+                _ = uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
             }
         }
 

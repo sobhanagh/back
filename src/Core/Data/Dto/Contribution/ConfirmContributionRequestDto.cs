@@ -5,7 +5,7 @@ namespace GamaEdtech.Data.Dto.Contribution
     public sealed class ConfirmContributionRequestDto
     {
         public required long ContributionId { get; set; }
-        public required long IdentifierId { get; set; }
+        public long? IdentifierId { get; set; }
         public required ContributionType ContributionType { get; set; }
     }
 }

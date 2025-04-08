@@ -171,6 +171,8 @@ namespace GamaEdtech.Application.Service
                         Id = contribution.Id,
                         Data = contribution.Data,
                         Comment = contribution.Comment,
+                        CreationUserId = contribution.CreationUserId,
+                        CreationDate = contribution.CreationDate,
                     }
                 };
             }

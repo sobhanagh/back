@@ -1,6 +1,6 @@
 namespace GamaEdtech.Data.Dto.School
 {
-    public sealed class ManageSchoolCommentRequestDto
+    public sealed class ManageSchoolCommentContributionRequestDto
     {
         public long? Id { get; set; }
         public long SchoolId { get; set; }
