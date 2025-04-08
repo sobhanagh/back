@@ -4,10 +4,9 @@ namespace GamaEdtech.Common.Core
     using System;
     using System.Text.Json.Serialization;
 
+    using GamaEdtech.Common.Converter;
     using GamaEdtech.Common.DataAnnotation;
     using GamaEdtech.Common.Resources;
-
-    using GamaEdtech.Common.Converter;
 
     public static class Constants
     {
@@ -125,7 +124,7 @@ namespace GamaEdtech.Common.Core
             Modified = 4,
         }
 
-        [JsonConverter(typeof(EnumStringConverter<SortType>))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public enum SortType
         {
             Asc,

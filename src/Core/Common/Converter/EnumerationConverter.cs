@@ -15,7 +15,7 @@ namespace GamaEdtech.Common.Converter
     {
         private const string NameProperty = "Name";
 
-        public override bool CanConvert([NotNull] Type typeToConvert) => Globals.IsSubclassOf(typeToConvert, typeof(Enumeration<TEnum, TKey>));
+        public override bool CanConvert([NotNull] Type typeToConvert) => typeToConvert.IsSubclassOf(typeof(Enumeration<TEnum, TKey>)) || Globals.IsSubclassOf(typeToConvert, typeof(Enumeration<TEnum, TKey>));
 
         public override TEnum? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
