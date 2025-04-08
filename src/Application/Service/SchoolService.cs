@@ -71,31 +71,7 @@ namespace GamaEdtech.Application.Service
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var lst = uow.GetRepository<School, long>().GetManyQueryable(requestDto?.Specification);
                 int? total = requestDto?.PagingDto?.PageFilter?.ReturnTotalRecordsCount == true ? await lst.CountAsync() : null;
-                var query = lst.Select(t => new
-                {
-                    t.Id,
-                    t.Name,
-                    t.LastModifyDate,
-                    t.CreationDate,
-                    t.WebSite,
-                    t.Email,
-                    t.PhoneNumber,
-                    t.Coordinates,
-                    Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : (double?)null,
-                    CityTitle = t.City == null ? "" : t.City.Title,
-                    CountryTitle = t.Country == null ? "" : t.Country.Title,
-                    StateTitle = t.State == null ? "" : t.State.Title,
-                    Distance = point != null && t.Coordinates != null ? t.Coordinates!.Distance(point) : (double?)null,
-                });
-                query = point is null ? query.OrderBy(t => t.Distance) : query.OrderBy(t => t.Id);
-                if (requestDto?.PagingDto?.PageFilter is not null)
-                {
-                    query = query.Skip(requestDto.PagingDto.PageFilter.Skip)
-                        .Take(requestDto.PagingDto.PageFilter.Size);
-                }
-                var data = await query.ToListAsync();
-
-                var result = data.Select(t => new SchoolInfoDto
+                var query = lst.Select(t => new SchoolInfoDto
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -104,12 +80,25 @@ namespace GamaEdtech.Application.Service
                     HasEmail = !string.IsNullOrEmpty(t.Email),
                     HasPhoneNumber = !string.IsNullOrEmpty(t.PhoneNumber),
                     Coordinates = t.Coordinates,
-                    Score = t.Score,
-                    CityTitle = t.CityTitle,
-                    CountryTitle = t.CountryTitle,
-                    StateTitle = t.StateTitle,
-                    Distance = t.Distance,
+                    Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : null,
+                    CityTitle = t.City == null ? "" : t.City.Title,
+                    CountryTitle = t.Country == null ? "" : t.Country.Title,
+                    StateTitle = t.State == null ? "" : t.State.Title,
+                    Distance = point != null && t.Coordinates != null ? t.Coordinates!.Distance(point) : null,
                 });
+
+                (query, var sortApplied) = query.OrderBy(requestDto?.PagingDto?.SortFilter);
+                if (!sortApplied)
+                {
+                    query = point is not null ? query.OrderBy(t => t.Distance) : query.OrderBy(t => t.Id);
+                }
+                if (requestDto?.PagingDto?.PageFilter is not null)
+                {
+                    query = query.Skip(requestDto.PagingDto.PageFilter.Skip)
+                        .Take(requestDto.PagingDto.PageFilter.Size);
+                }
+                var result = await query.ToListAsync();
+
                 return new(OperationResult.Succeeded) { Data = new() { List = result, TotalRecordsCount = total } };
             }
             catch (Exception exc)
