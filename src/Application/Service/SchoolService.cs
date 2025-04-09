@@ -812,7 +812,7 @@ namespace GamaEdtech.Application.Service
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var where = schoolId.HasValue ? $"WHERE Id={schoolId.Value}" : "";
-                var query = $"UPDATE Schools SET Score=(SELECT AVG(AverageRate) FROM SchoolComments WHERE SchoolId=Id) {where}";
+                var query = $"UPDATE s SET Score=(SELECT AVG(AverageRate) FROM SchoolComments c WHERE c.SchoolId = s.Id) FROM Schools s {where}";
                 _ = await uow.ExecuteSqlCommandAsync(query);
 
                 return new(OperationResult.Succeeded) { Data = true };
