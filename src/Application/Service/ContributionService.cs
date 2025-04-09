@@ -2,6 +2,7 @@ namespace GamaEdtech.Application.Service
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Transactions;
 
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
@@ -22,7 +23,7 @@ namespace GamaEdtech.Application.Service
     using static GamaEdtech.Common.Core.Constants;
 
     public class ContributionService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<ContributionService>> localizer
-        , Lazy<ILogger<ContributionService>> logger)
+        , Lazy<ILogger<ContributionService>> logger, Lazy<IApplicationSettingsService> applicationSettingsService, Lazy<ITransactionService> transactionService)
         : LocalizableServiceBase<ContributionService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IContributionService
     {
         public async Task<ResultData<ListDataSource<ContributionsDto>>> GetContributionsAsync(ListRequestDto<Contribution>? requestDto = null)
@@ -147,6 +148,7 @@ namespace GamaEdtech.Application.Service
 
         public async Task<ResultData<ContributionDto>> ConfirmContributionAsync([NotNull] ConfirmContributionRequestDto requestDto)
         {
+            using var scope = new TransactionScope(TransactionScopeOption.Required);
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
@@ -164,6 +166,32 @@ namespace GamaEdtech.Application.Service
                 _ = repository.Update(contribution);
                 _ = await uow.SaveChangesAsync();
 
+                var settings = await applicationSettingsService.Value.GetApplicationSettingsAsync();
+                var points = 0;
+
+                if (contribution.ContributionType == ContributionType.School)
+                {
+                    points = settings.Data!.SchoolContributionPoints;
+                }
+                else if (contribution.ContributionType == ContributionType.SchoolImage)
+                {
+                    points = settings.Data!.SchoolImageContributionPoints;
+                }
+                else if (contribution.ContributionType == ContributionType.SchoolComment)
+                {
+                    points = settings.Data!.SchoolCommentContributionPoints;
+                }
+
+                _ = await transactionService.Value.IncreaseBalanceAsync(new()
+                {
+                    Description = "Successful Contribution",
+                    Points = points,
+                    IdentifierId = contribution.IdentifierId,
+                    UserId = contribution.CreationUserId,
+                });
+
+                scope.Complete();
+
                 return new(OperationResult.Succeeded)
                 {
                     Data = new ContributionDto
@@ -178,6 +206,7 @@ namespace GamaEdtech.Application.Service
             }
             catch (Exception exc)
             {
+                scope.Dispose();
                 Logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
