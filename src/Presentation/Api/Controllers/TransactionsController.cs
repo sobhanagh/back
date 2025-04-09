@@ -56,7 +56,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpGet, Produces<ApiResponse<int>>()]
+        [HttpGet("balance"), Produces<ApiResponse<int>>()]
         public async Task<IActionResult<int>> GetCurrentBalance()
         {
             try
