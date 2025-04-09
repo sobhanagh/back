@@ -472,6 +472,9 @@ namespace GamaEdtech.Application.Service
                 });
                 _ = uow.SaveChangesAsync();
 
+                //this is temporary
+                _ = await UpdateAllSchoolScoreAsync(dto.SchoolId);
+
                 return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
@@ -770,13 +773,14 @@ namespace GamaEdtech.Application.Service
 
         #endregion
 
-        public async Task<ResultData<bool>> UpdateAllSchoolScoreAsync()
+        public async Task<ResultData<bool>> UpdateAllSchoolScoreAsync(long? schoolId = null)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-
-                _ = await uow.ExecuteSqlCommandAsync(@"UPDATE Schools SET Score=(SELECT AVG(AverageRate) FROM SchoolComments where SchoolId=Id)");
+                var where = schoolId.HasValue ? $"WHERE Id={schoolId.Value}" : "";
+                var query = $"UPDATE Schools SET Score=(SELECT AVG(AverageRate) FROM SchoolComments WHERE SchoolId=Id) {where}";
+                _ = await uow.ExecuteSqlCommandAsync(query);
 
                 return new(OperationResult.Succeeded) { Data = true };
             }
