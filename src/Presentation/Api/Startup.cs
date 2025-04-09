@@ -13,6 +13,8 @@ namespace GamaEdtech.Presentation.Api
 
     using GamaEdtech.Domain.Entity.Identity;
 
+    using Hangfire;
+
     using Microsoft.OpenApi.Models;
 
     public class Startup(IConfiguration configuration)
@@ -46,6 +48,13 @@ namespace GamaEdtech.Presentation.Api
 
         protected override void ConfigureServicesCore(IServiceCollection services, IMvcBuilder mvcBuilder)
         {
+            _ = services.AddHangfire(t => t
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(Configuration.GetValue<string>("Connection:ConnectionString")));
+            _ = services.AddHangfireServer();
+
             _ = services.AddDistributedMemoryCache();
 
             _ = services.AddApiVersioning(config =>
@@ -176,6 +185,9 @@ namespace GamaEdtech.Presentation.Api
             _ = app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
 
             _ = app.UseHealthChecks("/healthz");
+
+            _ = app.UseHangfireDashboard();
+            RecurringJob.AddOrUpdate<ISchoolService>("UpdateAllSchoolScore", t => t.UpdateAllSchoolScoreAsync(), Cron.Daily);
         }
     }
 }

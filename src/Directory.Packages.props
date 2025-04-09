@@ -6,14 +6,16 @@
     </PackageReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.18" />
+    <PackageVersion Include="Hangfire.SqlServer" Version="1.8.18" />
     <PackageVersion Include="MetadataExtractor" Version="2.8.1" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="9.0.3" />
-    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.7.0" />
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.8.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.13.61" />
     <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
     <PackageVersion Include="Slugify.Core" Version="5.1.1" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
-    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.7.0.110445">
+    <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.8.0.113526">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>

@@ -19,14 +19,15 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
-    using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.Contribution;
 
     using MetadataExtractor;
     using MetadataExtractor.Formats.Exif;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
@@ -34,7 +35,6 @@ namespace GamaEdtech.Application.Service
     using NetTopologySuite.Geometries;
 
     using static GamaEdtech.Common.Core.Constants;
-    using Microsoft.Extensions.Configuration;
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService, Lazy<IIdentityService> identityService
@@ -80,7 +80,7 @@ namespace GamaEdtech.Application.Service
                     HasEmail = !string.IsNullOrEmpty(t.Email),
                     HasPhoneNumber = !string.IsNullOrEmpty(t.PhoneNumber),
                     Coordinates = t.Coordinates,
-                    Score = t.Comments != null ? t.Comments.Average(c => c.AverageRate) : null,
+                    Score = t.Score,
                     CityTitle = t.City == null ? "" : t.City.Title,
                     CountryTitle = t.Country == null ? "" : t.Country.Title,
                     StateTitle = t.State == null ? "" : t.State.Title,
@@ -472,6 +472,9 @@ namespace GamaEdtech.Application.Service
                 });
                 _ = uow.SaveChangesAsync();
 
+                //this is temporary
+                _ = await UpdateAllSchoolScoreAsync(dto.SchoolId);
+
                 return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
@@ -653,52 +656,60 @@ namespace GamaEdtech.Application.Service
 
         public async Task<ResultData<long>> ManageSchoolContributionAsync([NotNull] ManageSchoolContributionRequestDto requestDto)
         {
-            var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-            var exist = await uow.GetRepository<School, long>().AnyAsync(t => t.Id == requestDto.SchoolId);
-            if (!exist)
+            try
             {
-                return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
-            }
-
-            if (requestDto.Id.HasValue)
-            {
-                var specification = new IdEqualsSpecification<Contribution, long>(requestDto.Id.Value)
-                    .And(new IdentifierIdEqualsSpecification(requestDto.SchoolId))
-                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(requestDto.UserId))
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.School))
-                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
-                var data = await contributionService.Value.ExistContributionAsync(specification);
-                if (!data.Data)
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var exist = await uow.GetRepository<School, long>().AnyAsync(t => t.Id == requestDto.SchoolId);
+                if (!exist)
                 {
-                    return new(data.OperationResult) { Errors = data.Errors };
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
                 }
-            }
 
-            var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
-            {
-                ContributionType = ContributionType.School,
-                IdentifierId = requestDto.SchoolId,
-                Status = Status.Draft,
-                Data = JsonSerializer.Serialize(requestDto.Data),
-                Id = requestDto.Id,
-            });
-            if (contributionResult.OperationResult is not OperationResult.Succeeded)
-            {
-                return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
-            }
-
-            var hasAutoConfirmSchoolContribution = await identityService.Value.HasClaimAsync(requestDto.UserId, SystemClaim.AutoConfirmSchoolContribution);
-            if (hasAutoConfirmSchoolContribution.Data)
-            {
-                _ = await ConfirmSchoolContributionAsync(new()
+                if (requestDto.Id.HasValue)
                 {
-                    ContributionId = contributionResult.Data,
-                    SchoolId = requestDto.SchoolId,
-                    Data = requestDto.Data,
-                });
-            }
+                    var specification = new IdEqualsSpecification<Contribution, long>(requestDto.Id.Value)
+                        .And(new IdentifierIdEqualsSpecification(requestDto.SchoolId))
+                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(requestDto.UserId))
+                        .And(new ContributionTypeEqualsSpecification(ContributionType.School))
+                        .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
+                    var data = await contributionService.Value.ExistContributionAsync(specification);
+                    if (!data.Data)
+                    {
+                        return new(data.OperationResult) { Errors = data.Errors };
+                    }
+                }
 
-            return new(OperationResult.Succeeded) { Data = contributionResult.Data };
+                var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
+                {
+                    ContributionType = ContributionType.School,
+                    IdentifierId = requestDto.SchoolId,
+                    Status = Status.Draft,
+                    Data = JsonSerializer.Serialize(requestDto.Data),
+                    Id = requestDto.Id,
+                });
+                if (contributionResult.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
+                }
+
+                var hasAutoConfirmSchoolContribution = await identityService.Value.HasClaimAsync(requestDto.UserId, SystemClaim.AutoConfirmSchoolContribution);
+                if (hasAutoConfirmSchoolContribution.Data)
+                {
+                    _ = await ConfirmSchoolContributionAsync(new()
+                    {
+                        ContributionId = contributionResult.Data,
+                        SchoolId = requestDto.SchoolId,
+                        Data = requestDto.Data,
+                    });
+                }
+
+                return new(OperationResult.Succeeded) { Data = contributionResult.Data };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
         }
 
         public async Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmSchoolContributionRequestDto requestDto)
@@ -761,5 +772,23 @@ namespace GamaEdtech.Application.Service
         }
 
         #endregion
+
+        public async Task<ResultData<bool>> UpdateAllSchoolScoreAsync(long? schoolId = null)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var where = schoolId.HasValue ? $"WHERE Id={schoolId.Value}" : "";
+                var query = $"UPDATE Schools SET Score=(SELECT AVG(AverageRate) FROM SchoolComments WHERE SchoolId=Id) {where}";
+                _ = await uow.ExecuteSqlCommandAsync(query);
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
     }
 }
