@@ -378,6 +378,23 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
+                if (!requestDto.Id.HasValue)
+                {
+                    var commentExist = await CommentExistAsync(requestDto.CreationUserId, requestDto.SchoolId);
+                    if (commentExist.Data)
+                    {
+                        return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
+                    }
+
+                    var specification = new CreationUserIdEqualsSpecification<Contribution, int>(requestDto.CreationUserId)
+                        .And(new IdentifierIdEqualsSpecification(requestDto.SchoolId));
+                    var contributionExist = await contributionService.Value.ExistContributionAsync(specification);
+                    if (contributionExist.Data)
+                    {
+                        return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
+                    }
+                }
+
                 SchoolCommentContributionDto dto = new()
                 {
                     SchoolId = requestDto.SchoolId,
@@ -476,6 +493,22 @@ namespace GamaEdtech.Application.Service
                 _ = await UpdateAllSchoolScoreAsync(dto.SchoolId);
 
                 return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> CommentExistAsync(int userId, long schoolId)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var exist = await uow.GetRepository<SchoolComment>().AnyAsync(t => t.SchoolId == schoolId && t.CreationUserId == userId);
+
+                return new(OperationResult.Succeeded) { Data = exist };
             }
             catch (Exception exc)
             {

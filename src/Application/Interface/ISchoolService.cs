@@ -26,6 +26,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification);
         Task<ResultData<long>> ManageSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto);
         Task<ResultData<bool>> ConfirmSchoolCommentContributionAsync([NotNull] ConfirmSchoolCommentContributionRequestDto requestDto);
+        Task<ResultData<bool>> CommentExistAsync(int userId, long schoolId);
 
         Task<ResultData<ListDataSource<SchoolImageDto>>> GetSchoolImagesAsync(ListRequestDto<SchoolImage>? requestDto = null);
         Task<ResultData<IEnumerable<string?>>> GetSchoolImagesPathAsync([NotNull] ISpecification<SchoolImage> specification);
