@@ -2,7 +2,6 @@ namespace GamaEdtech.Application.Service
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Transactions;
 
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
@@ -148,7 +147,6 @@ namespace GamaEdtech.Application.Service
 
         public async Task<ResultData<ContributionDto>> ConfirmContributionAsync([NotNull] ConfirmContributionRequestDto requestDto)
         {
-            using var scope = new TransactionScope(TransactionScopeOption.Required);
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
@@ -190,8 +188,6 @@ namespace GamaEdtech.Application.Service
                     UserId = contribution.CreationUserId,
                 });
 
-                scope.Complete();
-
                 return new(OperationResult.Succeeded)
                 {
                     Data = new ContributionDto
@@ -206,7 +202,6 @@ namespace GamaEdtech.Application.Service
             }
             catch (Exception exc)
             {
-                scope.Dispose();
                 Logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
