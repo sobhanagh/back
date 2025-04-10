@@ -72,7 +72,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     PagingDto = request.PagingDto,
                     Specification = baseSpecification,
                 }, point);
-                return Ok(new ApiResponseWithFilter<ListDataSource<SchoolInfoResponseViewModel>>(result.Errors)
+                return OkWithFilter<ListDataSource<SchoolInfoResponseViewModel>>(new(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
                     {
@@ -106,7 +106,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>(new Error { Message = exc.Message }));
+                return Ok<ListDataSource<SchoolInfoResponseViewModel>>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -117,7 +117,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(id));
 
-                return Ok(new ApiResponse<SchoolResponseViewModel>(result.Errors)
+                return Ok<SchoolResponseViewModel>(new(result.Errors)
                 {
                     Data = result.Data is null ? null : new()
                     {
@@ -150,7 +150,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<SchoolResponseViewModel>(new Error { Message = exc.Message }));
+                return Ok<SchoolResponseViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -163,9 +163,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await schoolService.Value.GetSchoolRateAsync(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
 
-                return Ok(new ApiResponse<SchoolRateResponseViewModel>
+                return Ok<SchoolRateResponseViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data is null ? new() : new()
                     {
                         ArtisticActivitiesRate = result.Data.ArtisticActivitiesRate,
@@ -185,7 +184,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<SchoolRateResponseViewModel>(new Error { Message = exc.Message }));
+                return Ok<SchoolRateResponseViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -199,9 +198,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     PagingDto = request.PagingDto,
                     Specification = new SchoolIdEqualsSpecification<SchoolComment>(schoolId),
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>
+                return Ok<ListDataSource<SchoolCommentsResponseViewModel>>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()
                     {
                         List = result.Data.List.Select(t => new SchoolCommentsResponseViewModel
@@ -223,7 +221,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<SchoolCommentsResponseViewModel>>(new Error { Message = exc.Message }));
+                return Ok<ListDataSource<SchoolCommentsResponseViewModel>>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -248,9 +246,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     CreationDate = DateTimeOffset.UtcNow,
                     CreationUserId = User.UserId(),
                 });
-                return Ok(new ApiResponse<ManageSchoolCommentResponseViewModel>
+                return Ok<ManageSchoolCommentResponseViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = new() { Id = result.Data, },
                 });
             }
@@ -258,7 +255,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ManageSchoolCommentResponseViewModel>(new Error { Message = exc.Message }));
+                return Ok<ManageSchoolCommentResponseViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -271,9 +268,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var specification = new IdEqualsSpecification<SchoolComment, long>(commentId)
                     .And(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
                 var result = await schoolService.Value.LikeSchoolCommentAsync(specification);
-                return Ok(new ApiResponse<bool>
+                return Ok<bool>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data,
                 });
             }
@@ -281,7 +277,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<bool>(new Error { Message = exc.Message }));
+                return Ok<bool>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -294,9 +290,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var specification = new IdEqualsSpecification<SchoolComment, long>(commentId)
                     .And(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
                 var result = await schoolService.Value.DislikeSchoolCommentAsync(specification);
-                return Ok(new ApiResponse<bool>
+                return Ok<bool>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data,
                 });
             }
@@ -304,7 +299,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<bool>(new Error { Message = exc.Message }));
+                return Ok<bool>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -320,7 +315,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var specification = new SchoolIdEqualsSpecification<SchoolImage>(schoolId)
                     .And(new SchoolImageFileTypeEqualsSpecification(fileType));
                 var result = await schoolService.Value.GetSchoolImagesPathAsync(specification);
-                return Ok(new ApiResponse<IEnumerable<string?>>(result.Errors)
+                return Ok<IEnumerable<string?>>(new(result.Errors)
                 {
                     Data = result.Data is null ? [] : result.Data,
                 });
@@ -329,7 +324,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<IEnumerable<string?>>(new Error { Message = exc.Message }));
+                return Ok<IEnumerable<string?>>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -347,9 +342,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     CreationDate = DateTimeOffset.UtcNow,
                     CreationUserId = User.UserId(),
                 });
-                return Ok(new ApiResponse<CreateSchoolImageResponseViewModel>
+                return Ok<CreateSchoolImageResponseViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = new() { Id = result.Data, },
                 });
             }
@@ -357,7 +351,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<CreateSchoolImageResponseViewModel>(new Error { Message = exc.Message }));
+                return Ok<CreateSchoolImageResponseViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -378,9 +372,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId()))
                         .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
                 });
-                return Ok(new ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>
+                return Ok<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data.List is null ? new() : new()
                     {
                         List = result.Data.List.Select(t => new SchoolContributionInfoListResponseViewModel
@@ -397,7 +390,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new Error { Message = exc.Message }));
+                return Ok<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -420,9 +413,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     viewModel = dto is null ? null : MapFrom(dto);
                 }
 
-                return Ok(new ApiResponse<SchoolContributionViewModel>
+                return Ok<SchoolContributionViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = viewModel,
                 });
             }
@@ -430,7 +422,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<SchoolContributionViewModel>(new Error { Message = exc.Message }));
+                return Ok<SchoolContributionViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -450,9 +442,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Data = dto,
                 });
 
-                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
+                return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = new() { Id = result.Data, },
                 });
             }
@@ -460,7 +451,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = exc.Message }));
+                return Ok<ManageSchoolContributionResponseViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -479,9 +470,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Data = dto,
                 });
 
-                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>
+                return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = new() { Id = result.Data, },
                 });
             }
@@ -489,7 +479,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 Logger.Value.LogException(exc);
 
-                return Ok(new ApiResponse<ManageSchoolContributionResponseViewModel>(new Error { Message = exc.Message }));
+                return Ok<ManageSchoolContributionResponseViewModel>(new(new Error { Message = exc.Message }));
             }
         }
 

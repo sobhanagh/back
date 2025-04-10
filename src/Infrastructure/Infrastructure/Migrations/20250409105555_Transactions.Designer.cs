@@ -4,6 +4,7 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250409105555_Transactions")]
+    partial class Transactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1168,18 +1171,11 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Points");
 
-                    b.Property<long?>("PreviousTransactionId")
-                        .HasColumnType("bigint");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("UserId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PreviousTransactionId")
-                        .IsUnique()
-                        .HasFilter("[PreviousTransactionId] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -1556,17 +1552,11 @@ namespace GamaEdtech.Infrastructure.Migrations
 
             modelBuilder.Entity("GamaEdtech.Domain.Entity.Transaction", b =>
                 {
-                    b.HasOne("GamaEdtech.Domain.Entity.Transaction", "PreviousTransaction")
-                        .WithMany()
-                        .HasForeignKey("PreviousTransactionId");
-
                     b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("PreviousTransaction");
 
                     b.Navigation("User");
                 });
