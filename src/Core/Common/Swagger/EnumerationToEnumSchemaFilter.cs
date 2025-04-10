@@ -21,12 +21,9 @@ namespace GamaEdtech.Common.Swagger
                 return;
             }
 
-            var names = EnumerationExtensions.GetNames(context.Type)!
-                            .Select(t => new OpenApiString(t)).ToList<IOpenApiAny>();
-
             if (isEnumeration)
             {
-                schema.Enum = names;
+                schema.Enum = [.. EnumerationExtensions.GetNames(context.Type)!.Select(t => new OpenApiString(t))];
                 schema.Type = "string";
                 schema.Properties = null;
                 schema.AllOf = null;
@@ -38,7 +35,7 @@ namespace GamaEdtech.Common.Swagger
                 schema.Type = "array";
                 schema.Items = new OpenApiSchema
                 {
-                    Enum = names,
+                    Enum = [.. FlagsEnumerationExtensions.GetNames(context.Type)!.Select(t => new OpenApiString(t))],
                     Type = "string",
                     Properties = null,
                     AllOf = null,

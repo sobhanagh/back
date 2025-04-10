@@ -220,9 +220,16 @@ namespace GamaEdtech.Application.Service
 
                 return new(OperationResult.Succeeded) { Data = school.Id };
 
-                T Get<T>(T newValue, T oldValue) => !ignoreNullValues && !string.IsNullOrEmpty(newValue?.ToString())
-                    ? newValue
-                    : oldValue;
+                T Get<T>(T newValue, T oldValue)
+                {
+                    if (!ignoreNullValues)
+                    {
+                        return newValue;
+                    }
+
+                    var isEmpty = string.IsNullOrEmpty(newValue?.ToString());
+                    return isEmpty ? oldValue : newValue;
+                }
             }
             catch (ReferenceConstraintException)
             {
