@@ -66,7 +66,7 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var fileProviderType = configuration.Value.GetValue<FileProviderType>("FileProvider:Type");
+                _ = configuration.Value.GetValue<string?>("FileProvider:Type").TryGetFromNameOrValue<FileProviderType, byte>(out var fileProviderType);
                 return genericFactory.Value.GetProvider(fileProviderType!)!.GetFileUri(id, containerType);
             }
             catch (Exception exc)
