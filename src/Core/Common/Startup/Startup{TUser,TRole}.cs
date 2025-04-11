@@ -93,6 +93,7 @@ namespace GamaEdtech.Common.Startup
                 _ = app.UseHttpsRedirection();
             }
 
+            _ = app.UseStaticFiles();
             _ = app.UseRouting();
 
             if (startupOption.Authentication)
