@@ -11,5 +11,9 @@ namespace GamaEdtech.Presentation.ViewModel.School
         [Required]
         [FromForm]
         public IFormFile? File { get; set; }
+
+        [Display]
+        [FromForm]
+        public long? TagId { get; set; }
     }
 }

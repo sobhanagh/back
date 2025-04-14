@@ -28,9 +28,7 @@ namespace GamaEdtech.Common.DataAccess.Context
 
     using NUlid;
 
-#pragma warning disable CA1005 // Avoid excessive parameters on generic types
     public abstract class IdentityEntityContext<TContext, TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
-#pragma warning restore CA1005 // Avoid excessive parameters on generic types
         : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>, IEntityContext
         where TContext : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
         where TUser : IdentityUser<TKey>

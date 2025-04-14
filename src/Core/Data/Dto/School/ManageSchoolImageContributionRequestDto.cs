@@ -11,5 +11,6 @@ namespace GamaEdtech.Data.Dto.School
         public long SchoolId { get; set; }
         public DateTimeOffset CreationDate { get; set; }
         public int CreationUserId { get; set; }
+        public long? TagId { get; set; }
     }
 }

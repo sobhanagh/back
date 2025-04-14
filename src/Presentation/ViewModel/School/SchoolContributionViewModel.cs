@@ -1,5 +1,6 @@
 namespace GamaEdtech.Presentation.ViewModel.School
 {
+    using System.Collections.Generic;
     using System.Text.Json.Serialization;
 
     using GamaEdtech.Common.Converter;
@@ -41,5 +42,7 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public string? PhoneNumber { get; set; }
 
         public string? Quarter { get; set; }
+
+        public IEnumerable<long>? Tags { get; set; }
     }
 }

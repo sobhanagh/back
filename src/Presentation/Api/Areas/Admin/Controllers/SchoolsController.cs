@@ -18,6 +18,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Domain.Specification;
     using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Presentation.ViewModel.School;
+    using GamaEdtech.Presentation.ViewModel.Tag;
 
     using Microsoft.AspNetCore.Mvc;
 
@@ -65,8 +66,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpGet("{id:int}"), Produces<ApiResponse<SchoolResponseViewModel>>()]
-        public async Task<IActionResult> GetSchool([FromRoute] int id)
+        [HttpGet("{id:long}"), Produces<ApiResponse<SchoolResponseViewModel>>()]
+        public async Task<IActionResult> GetSchool([FromRoute] long id)
         {
             try
             {
@@ -90,33 +91,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         {
             try
             {
-                Point? coordinates = null;
-                if (request.Latitude.HasValue && request.Longitude.HasValue)
-                {
-                    var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-                    coordinates = geometryFactory.CreatePoint(new Coordinate(request.Longitude.Value, request.Latitude.Value));
-                }
+                var result = await schoolService.Value.ManageSchoolAsync(MapTo(request, null), false);
 
-                var result = await schoolService.Value.ManageSchoolAsync(new ManageSchoolRequestDto
-                {
-                    Address = request.Address,
-                    Name = request.Name,
-                    LocalName = request.LocalName,
-                    SchoolType = request.SchoolType!,
-                    StateId = request.StateId,
-                    ZipCode = request.ZipCode,
-                    Coordinates = coordinates,
-                    Quarter = request.Quarter,
-                    PhoneNumber = request.PhoneNumber,
-                    FaxNumber = request.FaxNumber,
-                    Email = request.Email,
-                    CountryId = request.CountryId,
-                    CityId = request.CityId,
-                    Facilities = request.Facilities,
-                    LocalAddress = request.LocalAddress,
-                    WebSite = request.WebSite,
-                    OsmId = request.OsmId,
-                }, false);
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -131,38 +107,14 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpPut("{id:int}"), Produces<ApiResponse<ManageSchoolResponseViewModel>>()]
-        public async Task<IActionResult> UpdateSchool([FromRoute] int id, [NotNull, FromBody] ManageSchoolRequestViewModel request)
+        [HttpPut("{id:long}"), Produces<ApiResponse<ManageSchoolResponseViewModel>>()]
+        public async Task<IActionResult> UpdateSchool([FromRoute] long id, [NotNull, FromBody] ManageSchoolRequestViewModel request)
         {
             try
             {
-                Point? coordinates = null;
-                if (request.Latitude.HasValue && request.Longitude.HasValue)
-                {
-                    var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
-                    coordinates = geometryFactory.CreatePoint(new Coordinate(request.Longitude.Value, request.Latitude.Value));
-                }
-                var result = await schoolService.Value.ManageSchoolAsync(new ManageSchoolRequestDto
-                {
-                    Id = id,
-                    Address = request.Address,
-                    Name = request.Name,
-                    LocalName = request.LocalName,
-                    SchoolType = request.SchoolType!,
-                    StateId = request.StateId,
-                    ZipCode = request.ZipCode,
-                    Coordinates = coordinates,
-                    WebSite = request.WebSite,
-                    LocalAddress = request.LocalAddress,
-                    Facilities = request.Facilities,
-                    CityId = request.CityId,
-                    CountryId = request.CountryId,
-                    Email = request.Email,
-                    FaxNumber = request.FaxNumber,
-                    PhoneNumber = request.PhoneNumber,
-                    Quarter = request.Quarter,
-                    OsmId = request.OsmId,
-                }, false);
+                var dto = MapTo(request, id);
+                var result = await schoolService.Value.ManageSchoolAsync(dto, false);
+
                 return Ok(new ApiResponse<ManageSchoolResponseViewModel>
                 {
                     Errors = result.Errors,
@@ -201,7 +153,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Comments
 
-        [HttpGet("comments/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
+        [HttpGet("comments/contributions/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
         public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
         {
             try
@@ -235,7 +187,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpGet("comments/{contributionId:long}"), Produces<ApiResponse<SchoolCommentContributionReviewViewModel>>()]
+        [HttpGet("comments/contributions/{contributionId:long}"), Produces<ApiResponse<SchoolCommentContributionReviewViewModel>>()]
         public async Task<IActionResult<SchoolCommentContributionReviewViewModel>> GetSchoolCommentContribution([FromRoute] long contributionId)
         {
             try
@@ -287,7 +239,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         }
 
 
-        [HttpPatch("comments/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("comments/contributions/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> ConfirmSchoolCommentContribution([FromRoute] long contributionId)
         {
             try
@@ -310,7 +262,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpPatch("comments/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("comments/contributions/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> RejectSchoolCommentContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
         {
             try
@@ -337,7 +289,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Images
 
-        [HttpGet("images/pending"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
+        [HttpGet("images/contributions/pending"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
         public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
         {
             try
@@ -371,7 +323,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpGet("images/{contributionId:long}"), Produces<ApiResponse<SchoolImageContributionReviewViewModel>>()]
+        [HttpGet("images/contributions/{contributionId:long}"), Produces<ApiResponse<SchoolImageContributionReviewViewModel>>()]
         public async Task<IActionResult<SchoolImageContributionReviewViewModel>> GetSchoolImageContribution([FromRoute] long contributionId)
         {
             try
@@ -414,7 +366,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpPatch("images/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("images/contributions/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> ConfirmSchoolImageContribution([FromRoute] long contributionId)
         {
             try
@@ -437,7 +389,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
-        [HttpPatch("images/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
+        [HttpPatch("images/contributions/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> RejectSchoolImageContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
         {
             try
@@ -457,6 +409,30 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 Logger.Value.LogException(exc);
 
                 return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpPatch("{schoolId:long}/images/{imageId:long}"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult<bool>> ManageSchoolImage([FromRoute] long schoolId, [FromRoute] long imageId, [NotNull, FromBody] ManageSchoolImageRequestViewModel request)
+        {
+            try
+            {
+                var result = await schoolService.Value.ManageSchoolImageAsync(new ManageSchoolImageRequestDto
+                {
+                    Id = imageId,
+                    SchoolId = schoolId,
+                    TagId = request.TagId,
+                });
+                return Ok<bool>(new(result.Errors)
+                {
+                    Data = result.Data,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<bool>(new() { Errors = [new() { Message = exc.Message }] });
             }
         }
 
@@ -618,6 +594,46 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             PhoneNumber = dto.PhoneNumber,
             Quarter = dto.Quarter,
             OsmId = dto.OsmId,
+            Tags = dto.Tags?.Select(t => new TagResponseViewModel
+            {
+                TagType = t.TagType,
+                Name = t.Name,
+                Icon = t.Icon,
+                Id = t.Id,
+            }),
         };
+
+        private static ManageSchoolRequestDto MapTo(ManageSchoolRequestViewModel request, long? id)
+        {
+            Point? coordinates = null;
+            if (request.Latitude.HasValue && request.Longitude.HasValue)
+            {
+                var geometryFactory = NtsGeometryServices.Instance.CreateGeometryFactory(4326);
+                coordinates = geometryFactory.CreatePoint(new Coordinate(request.Longitude.Value, request.Latitude.Value));
+            }
+
+            return new()
+            {
+                Id = id,
+                Address = request.Address,
+                Name = request.Name,
+                LocalName = request.LocalName,
+                SchoolType = request.SchoolType!,
+                StateId = request.StateId,
+                ZipCode = request.ZipCode,
+                Coordinates = coordinates,
+                WebSite = request.WebSite,
+                LocalAddress = request.LocalAddress,
+                Facilities = request.Facilities,
+                CityId = request.CityId,
+                CountryId = request.CountryId,
+                Email = request.Email,
+                FaxNumber = request.FaxNumber,
+                PhoneNumber = request.PhoneNumber,
+                Quarter = request.Quarter,
+                OsmId = request.OsmId,
+                Tags = request.Tags,
+            };
+        }
     }
 }
