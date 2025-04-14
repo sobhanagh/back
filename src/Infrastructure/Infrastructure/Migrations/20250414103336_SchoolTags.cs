@@ -11,6 +11,8 @@ namespace GamaEdtech.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("UPDATE SchoolImages SET FileId=REPLACE(FileId,'School/','')");
+
             migrationBuilder.DropTable(
                 name: "Tags");
         }
