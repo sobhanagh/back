@@ -24,7 +24,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                 name: "FK_SchoolComments_Schools_SchoolId",
                 table: "SchoolComments");
 
-            migrationBuilder.Sql("DROP INDEX [SPATIAL_Schools] ON [dbo].[Schools]");
+            migrationBuilder.Sql("DROP INDEX IF EXISTS [SPATIAL_Schools] ON [dbo].[Schools]");
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Schools",
                 table: "Schools");
