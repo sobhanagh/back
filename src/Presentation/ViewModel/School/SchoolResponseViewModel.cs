@@ -4,6 +4,7 @@ namespace GamaEdtech.Presentation.ViewModel.School
 
     using GamaEdtech.Common.Converter;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Presentation.ViewModel.Tag;
 
     public sealed class SchoolResponseViewModel
     {
@@ -32,5 +33,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public string? PhoneNumber { get; set; }
         public string? Quarter { get; set; }
         public long? OsmId { get; set; }
+        public IEnumerable<TagResponseViewModel>? Tags { get; set; }
     }
 }

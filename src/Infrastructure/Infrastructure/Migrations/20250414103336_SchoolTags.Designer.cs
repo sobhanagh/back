@@ -4,6 +4,7 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250414103336_SchoolTags")]
+    partial class SchoolTags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1504,7 +1507,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("GamaEdtech.Domain.Entity.School", "School")
-                        .WithMany("SchoolComments")
+                        .WithMany("Comments")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1530,7 +1533,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("GamaEdtech.Domain.Entity.School", "School")
-                        .WithMany("SchoolImages")
+                        .WithMany("Images")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1557,7 +1560,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("GamaEdtech.Domain.Entity.School", "School")
-                        .WithMany("SchoolTags")
+                        .WithMany("Tags")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1706,11 +1709,11 @@ namespace GamaEdtech.Infrastructure.Migrations
 
             modelBuilder.Entity("GamaEdtech.Domain.Entity.School", b =>
                 {
-                    b.Navigation("SchoolComments");
+                    b.Navigation("Comments");
 
-                    b.Navigation("SchoolImages");
+                    b.Navigation("Images");
 
-                    b.Navigation("SchoolTags");
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

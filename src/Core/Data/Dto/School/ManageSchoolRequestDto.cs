@@ -1,5 +1,7 @@
 namespace GamaEdtech.Data.Dto.School
 {
+    using System.Collections.Generic;
+
     using GamaEdtech.Domain.Enumeration;
 
     using NetTopologySuite.Geometries;
@@ -24,5 +26,6 @@ namespace GamaEdtech.Data.Dto.School
         public int? CountryId { get; set; }
         public int? StateId { get; set; }
         public long? OsmId { get; set; }
+        public IEnumerable<long>? Tags { get; set; }
     }
 }

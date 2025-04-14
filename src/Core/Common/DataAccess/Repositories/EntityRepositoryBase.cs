@@ -15,9 +15,7 @@ namespace GamaEdtech.Common.DataAccess.Repositories
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-#pragma warning disable CA1005 // Avoid excessive parameters on generic types
     public abstract class EntityRepositoryBase<TContext, TEntity, TKey>([NotNull] ILogger<IDataAccess> logger, TContext? context)
-#pragma warning restore CA1005 // Avoid excessive parameters on generic types
         : RepositoryBase<TContext>(logger, context), IRepository<TEntity, TKey>
         where TContext : DbContext
         where TEntity : class, IEntity<TEntity, TKey>, new()
