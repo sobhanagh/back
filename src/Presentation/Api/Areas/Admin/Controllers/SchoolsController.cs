@@ -603,7 +603,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }),
         };
 
-        private static ManageSchoolRequestDto MapTo(ManageSchoolRequestViewModel request, long? id)
+        private ManageSchoolRequestDto MapTo(ManageSchoolRequestViewModel request, long? id)
         {
             Point? coordinates = null;
             if (request.Latitude.HasValue && request.Longitude.HasValue)
@@ -633,6 +633,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 Quarter = request.Quarter,
                 OsmId = request.OsmId,
                 Tags = request.Tags,
+                UserId = User.UserId(),
+                Date = DateTimeOffset.UtcNow,
             };
         }
     }

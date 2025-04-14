@@ -140,7 +140,13 @@ namespace GamaEdtech.Application.Service
                     Email = t.Email,
                     Quarter = t.Quarter,
                     OsmId = t.OsmId,
-                    Tags = t.SchoolTags == null ? null : t.SchoolTags.Select(s => new TagDto { Icon = s.Tag.Icon, Id = s.TagId, Name = s.Tag.Name }),
+                    Tags = t.SchoolTags == null ? null : t.SchoolTags.Select(s => new TagDto
+                    {
+                        Icon = s.Tag.Icon,
+                        Id = s.TagId,
+                        Name = s.Tag.Name,
+                        TagType = s.Tag.TagType,
+                    }),
                 }).FirstOrDefaultAsync();
 
                 return school is null
@@ -167,7 +173,7 @@ namespace GamaEdtech.Application.Service
 
                 if (requestDto.Id.HasValue)
                 {
-                    school = await repository.GetAsync(requestDto.Id.Value);
+                    school = await repository.GetAsync(requestDto.Id.Value, includes: (t) => t.Include(s => s.SchoolTags));
                     if (school is null)
                     {
                         return new(OperationResult.NotFound)
@@ -193,25 +199,37 @@ namespace GamaEdtech.Application.Service
                     school.CityId = Get(requestDto.CityId, school.CityId);
                     school.CountryId = Get(requestDto.CountryId, school.CountryId);
                     school.OsmId = Get(requestDto.OsmId, school.OsmId);
+                    school.LastModifyDate = requestDto.Date;
+                    school.LastModifyUserId = requestDto.UserId;
 
                     _ = repository.Update(school);
 
                     if (!ignoreNullValues || requestDto.Tags?.Any() == true)
                     {
                         var schoolTagRepository = uow.GetRepository<SchoolTag>();
-                        if (school.SchoolTags?.Count > 0)
+
+                        var removedTags = school.SchoolTags?.Where(t => requestDto.Tags is null || !requestDto.Tags.Contains(t.TagId));
+                        var newTags = requestDto.Tags?.Where(t => school.SchoolTags is null || school.SchoolTags.All(s => s.TagId != t));
+
+                        if (removedTags is not null)
                         {
-                            foreach (var item in school.SchoolTags)
+                            foreach (var item in removedTags)
                             {
                                 schoolTagRepository.Remove(item);
                             }
                         }
 
-                        if (requestDto.Tags?.Any() == true)
+                        if (newTags is not null)
                         {
-                            foreach (var item in requestDto.Tags)
+                            foreach (var item in newTags)
                             {
-                                schoolTagRepository.Add(new SchoolTag { SchoolId = requestDto.Id.Value, TagId = item });
+                                schoolTagRepository.Add(new SchoolTag
+                                {
+                                    SchoolId = requestDto.Id.Value,
+                                    TagId = item,
+                                    CreationDate = requestDto.Date,
+                                    CreationUserId = requestDto.UserId,
+                                });
                             }
                         }
                     }
@@ -240,7 +258,11 @@ namespace GamaEdtech.Application.Service
                     };
                     if (requestDto.Tags is not null)
                     {
-                        school.SchoolTags = [.. requestDto.Tags.Select(t => new SchoolTag { TagId = t })];
+                        school.SchoolTags = [.. requestDto.Tags.Select(t => new SchoolTag {
+                            TagId = t,
+                            CreationUserId=requestDto.UserId,
+                            CreationDate=requestDto.Date,
+                        })];
                     }
                     repository.Add(school);
                 }
@@ -905,15 +927,15 @@ namespace GamaEdtech.Application.Service
                     return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
                 }
 
-                var result = await contributionService.Value.ConfirmContributionAsync(new()
+                var contributionResult = await contributionService.Value.ConfirmContributionAsync(new()
                 {
                     ContributionId = requestDto.ContributionId,
                     ContributionType = ContributionType.School,
                     IdentifierId = requestDto.SchoolId,
                 });
-                if (result.OperationResult is not OperationResult.Succeeded)
+                if (contributionResult.Data is null)
                 {
-                    return new(OperationResult.Failed) { Errors = result.Errors };
+                    return new(OperationResult.Failed) { Errors = contributionResult.Errors };
                 }
 
                 ManageSchoolRequestDto manageSchoolRequestDto = new()
@@ -934,7 +956,9 @@ namespace GamaEdtech.Application.Service
                     WebSite = requestDto.Data.WebSite,
                     ZipCode = requestDto.Data.ZipCode,
                     Id = requestDto.SchoolId,
-                    Tags = requestDto.Data.Tags
+                    Tags = requestDto.Data.Tags,
+                    UserId = contributionResult.Data.CreationUserId,
+                    Date = contributionResult.Data.CreationDate,
                 };
                 if (requestDto.Data.Latitude.HasValue && requestDto.Data.Longitude.HasValue)
                 {
@@ -944,7 +968,7 @@ namespace GamaEdtech.Application.Service
                 var manageSchoolResult = await ManageSchoolAsync(manageSchoolRequestDto, true);
 
                 return manageSchoolResult.OperationResult is OperationResult.Succeeded
-                    ? new(OperationResult.Failed) { Errors = result.Errors }
+                    ? new(OperationResult.Failed) { Errors = contributionResult.Errors }
                     : new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
