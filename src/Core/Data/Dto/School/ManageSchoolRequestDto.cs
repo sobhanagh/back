@@ -1,5 +1,6 @@
 namespace GamaEdtech.Data.Dto.School
 {
+    using System;
     using System.Collections.Generic;
 
     using GamaEdtech.Domain.Enumeration;
@@ -27,5 +28,7 @@ namespace GamaEdtech.Data.Dto.School
         public int? StateId { get; set; }
         public long? OsmId { get; set; }
         public IEnumerable<long>? Tags { get; set; }
+        public int UserId { get; set; }
+        public DateTimeOffset Date { get; set; }
     }
 }
