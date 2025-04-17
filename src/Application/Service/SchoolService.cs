@@ -590,7 +590,7 @@ namespace GamaEdtech.Application.Service
                     CreationUserId = dto.CreationUserId,
                     CreationDate = dto.CreationDate,
                 });
-                _ = uow.SaveChangesAsync();
+                _ = await uow.SaveChangesAsync();
 
                 //this is temporary
                 _ = await UpdateSchoolScoreAsync(dto.SchoolId);
@@ -810,7 +810,7 @@ namespace GamaEdtech.Application.Service
                     CreationUserId = result.Data.CreationUserId,
                     CreationDate = result.Data.CreationDate,
                 });
-                _ = uow.SaveChangesAsync();
+                _ = await uow.SaveChangesAsync();
 
                 return new(OperationResult.Succeeded) { Data = true };
             }
