@@ -103,26 +103,6 @@ namespace GamaEdtech.Application.Service
                 var repository = uow.GetRepository<Post>();
                 Post? post = null;
 
-                string? imageId = null;
-                if (requestDto.Image is not null)
-                {
-                    using MemoryStream stream = new();
-                    await requestDto.Image.CopyToAsync(stream);
-
-                    var fileId = await fileService.Value.UploadFileAsync(new()
-                    {
-                        File = stream.ToArray(),
-                        ContainerType = ContainerType.Post,
-                        FileExtension = Path.GetExtension(requestDto.Image.FileName),
-                    });
-                    if (fileId.OperationResult is not OperationResult.Succeeded)
-                    {
-                        return new(fileId.OperationResult) { Errors = fileId.Errors, };
-                    }
-
-                    imageId = fileId.Data;
-                }
-
                 if (requestDto.Id.HasValue)
                 {
                     post = await repository.GetAsync(requestDto.Id.Value);
@@ -131,6 +111,15 @@ namespace GamaEdtech.Application.Service
                         return new(OperationResult.NotFound)
                         {
                             Errors = [new() { Message = Localizer.Value["PostNotFound"] },],
+                        };
+                    }
+
+                    var (imageId, errors) = await SaveImageAsync();
+                    if (errors is not null)
+                    {
+                        return new(OperationResult.Failed)
+                        {
+                            Errors = errors,
                         };
                     }
 
@@ -143,6 +132,15 @@ namespace GamaEdtech.Application.Service
                 }
                 else
                 {
+                    var (imageId, errors) = await SaveImageAsync();
+                    if (errors is not null)
+                    {
+                        return new(OperationResult.Failed)
+                        {
+                            Errors = errors,
+                        };
+                    }
+
                     post = new()
                     {
                         Title = requestDto.Title,
@@ -157,6 +155,28 @@ namespace GamaEdtech.Application.Service
                 _ = await uow.SaveChangesAsync();
 
                 return new(OperationResult.Succeeded) { Data = post.Id };
+
+                async Task<(string? ImageId, IEnumerable<Error>? Errors)> SaveImageAsync()
+                {
+                    if (requestDto.Image is null)
+                    {
+                        return (null, null);
+                    }
+
+                    using MemoryStream stream = new();
+                    await requestDto.Image.CopyToAsync(stream);
+
+                    var fileId = await fileService.Value.UploadFileAsync(new()
+                    {
+                        File = stream.ToArray(),
+                        ContainerType = ContainerType.Post,
+                        FileExtension = Path.GetExtension(requestDto.Image.FileName),
+                    });
+
+                    return fileId.OperationResult is OperationResult.Succeeded
+                        ? ((string? ImageId, IEnumerable<Error>? Errors))(fileId.Data, null)
+                        : new(null, fileId.Errors);
+                }
             }
             catch (Exception exc)
             {
@@ -192,11 +212,9 @@ namespace GamaEdtech.Application.Service
                     return new(OperationResult.Failed) { Errors = reactionResult.Errors };
                 }
 
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<Post>().GetManyQueryable(t => t.Id == requestDto.PostId)
-                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.LikeCount, p => p.LikeCount + 1));
+                var result = await UpdatePostReactionsAsync(requestDto.PostId);
 
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+                return result;
             }
             catch (Exception exc)
             {
@@ -232,11 +250,9 @@ namespace GamaEdtech.Application.Service
                     return new(OperationResult.Failed) { Errors = reactionResult.Errors };
                 }
 
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                _ = await uow.GetRepository<SchoolComment>().GetManyQueryable(t => t.Id == requestDto.PostId)
-                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.DislikeCount, p => p.DislikeCount + 1));
+                var result = await UpdatePostReactionsAsync(requestDto.PostId);
 
-                return new(OperationResult.Succeeded) { Data = true };
+                return result;
             }
             catch (Exception exc)
             {
@@ -299,5 +315,30 @@ namespace GamaEdtech.Application.Service
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
             }
         }
+
+        #region Job
+
+        public async Task<ResultData<bool>> UpdatePostReactionsAsync(long? postId = null)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var where = postId.HasValue ? $"WHERE p.Id={postId.Value}" : "";
+                var query = $@"UPDATE p SET
+                    LikeCount=(SELECT COUNT(1) FROM Reaction r WHERE r.CategoryType={CategoryType.Post.Value} AND r.IdentifierId=p.Id AND r.IsLike=1)
+                    ,DislikeCount=(SELECT COUNT(1) FROM Reaction r WHERE r.CategoryType={CategoryType.Post.Value} AND r.IdentifierId=p.Id AND r.IsLike=0)
+                FROM Posts p {where}";
+                _ = await uow.ExecuteSqlCommandAsync(query);
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        #endregion
     }
 }

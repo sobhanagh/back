@@ -425,11 +425,9 @@ namespace GamaEdtech.Application.Service
                     return new(OperationResult.Failed) { Errors = reactionResult.Errors };
                 }
 
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(t => t.Id == requestDto.CommentId)
-                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.LikeCount, p => p.LikeCount + 1));
+                var result = await UpdateSchoolCommentReactionsAsync(requestDto.CommentId);
 
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+                return result;
             }
             catch (Exception exc)
             {
@@ -466,11 +464,9 @@ namespace GamaEdtech.Application.Service
                     return new(OperationResult.Failed) { Errors = reactionResult.Errors };
                 }
 
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                _ = await uow.GetRepository<SchoolComment>().GetManyQueryable(t => t.Id == requestDto.CommentId)
-                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.DislikeCount, p => p.DislikeCount + 1));
+                var result = await UpdateSchoolCommentReactionsAsync(requestDto.CommentId);
 
-                return new(OperationResult.Succeeded) { Data = true };
+                return result;
             }
             catch (Exception exc)
             {
@@ -1036,8 +1032,31 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var where = schoolId.HasValue ? $"WHERE Id={schoolId.Value}" : "";
-                var query = $"UPDATE s SET Score=(SELECT AVG(AverageRate) FROM SchoolComments c WHERE c.SchoolId = s.Id) FROM Schools s {where}";
+                var where = schoolId.HasValue ? $"WHERE s.Id={schoolId.Value}" : "";
+                var query = $@"UPDATE s SET
+                    Score=(SELECT AVG(c.AverageRate) FROM SchoolComments c WHERE c.SchoolId = s.Id)
+                FROM Schools s {where}";
+                _ = await uow.ExecuteSqlCommandAsync(query);
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> UpdateSchoolCommentReactionsAsync(long? schoolCommentId = null)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var where = schoolCommentId.HasValue ? $"WHERE c.Id={schoolCommentId.Value}" : "";
+                var query = $@"UPDATE c SET
+                    LikeCount=(SELECT COUNT(1) FROM Reaction r WHERE r.CategoryType={CategoryType.SchoolComment.Value} AND r.IdentifierId=c.Id AND r.IsLike=1)
+                    ,DislikeCount=(SELECT COUNT(1) FROM Reaction r WHERE r.CategoryType={CategoryType.SchoolComment.Value} AND r.IdentifierId=c.Id AND r.IsLike=0)
+                FROM SchoolComments c {where}";
                 _ = await uow.ExecuteSqlCommandAsync(query);
 
                 return new(OperationResult.Succeeded) { Data = true };

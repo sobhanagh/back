@@ -184,7 +184,7 @@ namespace GamaEdtech.Application.Service
                 {
                     Description = "Successful Contribution",
                     Points = points,
-                    IdentifierId = contribution.IdentifierId,
+                    IdentifierId = requestDto.ContributionId,
                     UserId = contribution.CreationUserId,
                 });
 
