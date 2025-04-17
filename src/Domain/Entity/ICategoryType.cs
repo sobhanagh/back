@@ -2,8 +2,8 @@ namespace GamaEdtech.Domain.Entity
 {
     using GamaEdtech.Domain.Enumeration;
 
-    public interface IStatus
+    public interface ICategoryType
     {
-        Status Status { get; set; }
+        CategoryType CategoryType { get; set; }
     }
 }

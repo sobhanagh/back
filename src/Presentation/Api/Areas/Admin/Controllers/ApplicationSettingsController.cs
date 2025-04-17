@@ -38,6 +38,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                         SchoolCommentContributionPoints = result.Data.SchoolCommentContributionPoints,
                         SchoolContributionPoints = result.Data.SchoolContributionPoints,
                         SchoolImageContributionPoints = result.Data.SchoolImageContributionPoints,
+                        PostContributionPoints = result.Data.PostContributionPoints,
                     }
                 });
             }
@@ -62,6 +63,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     SchoolImageContributionPoints = request.SchoolImageContributionPoints,
                     SchoolContributionPoints = request.SchoolContributionPoints,
                     SchoolCommentContributionPoints = request.SchoolCommentContributionPoints,
+                    PostContributionPoints = request.PostContributionPoints,
                 });
                 return Ok<bool>(new(result.Errors) { Data = result.Data });
             }

@@ -10,7 +10,7 @@ namespace GamaEdtech.Data.Dto.Contribution
         public string? Comment { get; set; }
         public string? Data { get; set; }
         public long? IdentifierId { get; set; }
-        public ContributionType? ContributionType { get; set; }
+        public CategoryType? CategoryType { get; set; }
         public int CreationUserId { get; set; }
         public DateTimeOffset CreationDate { get; set; }
     }

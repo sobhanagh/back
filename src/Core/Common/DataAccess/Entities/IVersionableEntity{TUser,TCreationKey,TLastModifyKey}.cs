@@ -4,7 +4,7 @@ namespace GamaEdtech.Common.DataAccess.Entities
 
     using Microsoft.AspNetCore.Identity;
 
-    public interface IVersionableEntity<TUser, TKey, TLastModifyKey> : ICreationUser<TUser, TKey>
+    public interface IVersionableEntity<TUser, TKey, TLastModifyKey> : ICreationableEntity<TUser, TKey>
         where TUser : IdentityUser<TKey>
         where TKey : IEquatable<TKey>
     {

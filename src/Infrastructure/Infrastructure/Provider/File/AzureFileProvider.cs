@@ -71,7 +71,16 @@ namespace GamaEdtech.Infrastructure.Provider.File
 
         private BlobClient GetClient([NotNull] ContainerType containerType, string fileId)
         {
-            var key = containerType == ContainerType.School ? "Azure:SchoolContainerName" : "Azure:ContainerName";
+            var key = "Azure:ContainerName";
+            if (containerType == ContainerType.School)
+            {
+                key = "Azure:SchoolContainerName";
+            }
+            else if (containerType == ContainerType.Post)
+            {
+                key = "Azure:PostContainerName";
+            }
+
             var container = configuration.Value.GetValue<string>(key);
             var connection = configuration.Value.GetValue<string>("Azure:ConnectionString");
 

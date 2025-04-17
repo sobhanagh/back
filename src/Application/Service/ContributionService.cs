@@ -35,7 +35,7 @@ namespace GamaEdtech.Application.Service
                 {
                     Id = t.Id,
                     Comment = t.Comment,
-                    ContributionType = t.ContributionType,
+                    CategoryType = t.CategoryType,
                     IdentifierId = t.IdentifierId,
                     Status = t.Status,
                     CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
@@ -61,7 +61,7 @@ namespace GamaEdtech.Application.Service
                     Comment = t.Comment,
                     Data = t.Data,
                     IdentifierId = t.IdentifierId,
-                    ContributionType = t.ContributionType,
+                    CategoryType = t.CategoryType,
                 }).FirstOrDefaultAsync();
 
                 return contribution is null
@@ -98,7 +98,7 @@ namespace GamaEdtech.Application.Service
                     }
 
                     contribution.Comment = requestDto.Comment;
-                    contribution.ContributionType = requestDto.ContributionType;
+                    contribution.CategoryType = requestDto.CategoryType;
                     contribution.Data = requestDto.Data;
                     contribution.IdentifierId = requestDto.IdentifierId;
                     contribution.Status = requestDto.Status;
@@ -110,7 +110,7 @@ namespace GamaEdtech.Application.Service
                     contribution = new Contribution
                     {
                         Comment = requestDto.Comment,
-                        ContributionType = requestDto.ContributionType,
+                        CategoryType = requestDto.CategoryType,
                         Data = requestDto.Data,
                         IdentifierId = requestDto.IdentifierId,
                         Status = requestDto.Status,
@@ -167,15 +167,15 @@ namespace GamaEdtech.Application.Service
                 var settings = await applicationSettingsService.Value.GetApplicationSettingsAsync();
                 var points = 0;
 
-                if (contribution.ContributionType == ContributionType.School)
+                if (contribution.CategoryType == CategoryType.School)
                 {
                     points = settings.Data!.SchoolContributionPoints;
                 }
-                else if (contribution.ContributionType == ContributionType.SchoolImage)
+                else if (contribution.CategoryType == CategoryType.SchoolImage)
                 {
                     points = settings.Data!.SchoolImageContributionPoints;
                 }
-                else if (contribution.ContributionType == ContributionType.SchoolComment)
+                else if (contribution.CategoryType == CategoryType.SchoolComment)
                 {
                     points = settings.Data!.SchoolCommentContributionPoints;
                 }

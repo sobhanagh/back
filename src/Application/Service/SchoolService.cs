@@ -22,7 +22,6 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
-    using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Domain.Specification.Tag;
 
@@ -42,7 +41,7 @@ namespace GamaEdtech.Application.Service
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService, Lazy<IIdentityService> identityService
-        , Lazy<IConfiguration> configuration, Lazy<ITagService> tagService)
+        , Lazy<IConfiguration> configuration, Lazy<ITagService> tagService, Lazy<IReactionService> reactionService)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ISchoolService
     {
         #region Schools
@@ -398,12 +397,36 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        public async Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] SchoolCommentReactionRequestDto requestDto)
         {
             try
             {
+                var specification = new IdEqualsSpecification<SchoolComment, long>(requestDto.CommentId)
+                    .And(new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId));
+                var exist = await CommentExistAsync(specification);
+                if (!exist.Data)
+                {
+                    return new(OperationResult.NotFound)
+                    {
+                        Errors = [new() { Message = Localizer.Value["InvalidRequest"] },],
+                    };
+                }
+
+                var reactionResult = await reactionService.Value.ManageReactionAsync(new()
+                {
+                    CategoryType = CategoryType.SchoolComment,
+                    CreationDate = DateTimeOffset.UtcNow,
+                    CreationUserId = HttpContextAccessor.Value.HttpContext.UserId(),
+                    IdentifierId = requestDto.CommentId,
+                    IsLike = true,
+                });
+                if (reactionResult.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(OperationResult.Failed) { Errors = reactionResult.Errors };
+                }
+
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(t => t.Id == requestDto.CommentId)
                     .ExecuteUpdateAsync(t => t.SetProperty(p => p.LikeCount, p => p.LikeCount + 1));
 
                 return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
@@ -415,15 +438,39 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification)
+        public async Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] SchoolCommentReactionRequestDto requestDto)
         {
             try
             {
+                var specification = new IdEqualsSpecification<SchoolComment, long>(requestDto.CommentId)
+                    .And(new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId));
+                var exist = await CommentExistAsync(specification);
+                if (!exist.Data)
+                {
+                    return new(OperationResult.NotFound)
+                    {
+                        Errors = [new() { Message = Localizer.Value["InvalidRequest"] },],
+                    };
+                }
+
+                var reactionResult = await reactionService.Value.ManageReactionAsync(new()
+                {
+                    CategoryType = CategoryType.SchoolComment,
+                    CreationDate = DateTimeOffset.UtcNow,
+                    CreationUserId = HttpContextAccessor.Value.HttpContext.UserId(),
+                    IdentifierId = requestDto.CommentId,
+                    IsLike = false,
+                });
+                if (reactionResult.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(OperationResult.Failed) { Errors = reactionResult.Errors };
+                }
+
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var updatedRows = await uow.GetRepository<SchoolComment>().GetManyQueryable(specification)
+                _ = await uow.GetRepository<SchoolComment>().GetManyQueryable(t => t.Id == requestDto.CommentId)
                     .ExecuteUpdateAsync(t => t.SetProperty(p => p.DislikeCount, p => p.DislikeCount + 1));
 
-                return new(OperationResult.Succeeded) { Data = updatedRows > 0 };
+                return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
             {
@@ -438,15 +485,17 @@ namespace GamaEdtech.Application.Service
             {
                 if (!requestDto.Id.HasValue)
                 {
-                    var commentExist = await CommentExistAsync(requestDto.CreationUserId, requestDto.SchoolId);
+                    var commentSpecification = new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId)
+                        .And(new CreationUserIdEqualsSpecification<SchoolComment, ApplicationUser, int>(requestDto.CreationUserId));
+                    var commentExist = await CommentExistAsync(commentSpecification);
                     if (commentExist.Data)
                     {
                         return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
                     }
 
-                    var specification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
-                        .And(new IdentifierIdEqualsSpecification(requestDto.SchoolId));
-                    var contributionExist = await contributionService.Value.ExistContributionAsync(specification);
+                    var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
+                        .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId));
+                    var contributionExist = await contributionService.Value.ExistContributionAsync(contributionSpecification);
                     if (contributionExist.Data)
                     {
                         return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
@@ -472,7 +521,7 @@ namespace GamaEdtech.Application.Service
 
                 var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
                 {
-                    ContributionType = ContributionType.SchoolComment,
+                    CategoryType = CategoryType.SchoolComment,
                     IdentifierId = requestDto.SchoolId,
                     Status = Status.Draft,
                     Data = JsonSerializer.Serialize(dto),
@@ -518,7 +567,7 @@ namespace GamaEdtech.Application.Service
                 var result = await contributionService.Value.ConfirmContributionAsync(new()
                 {
                     ContributionId = requestDto.ContributionId,
-                    ContributionType = ContributionType.SchoolComment,
+                    CategoryType = CategoryType.SchoolComment,
                 });
                 if (result.Data is null)
                 {
@@ -548,7 +597,7 @@ namespace GamaEdtech.Application.Service
                 _ = uow.SaveChangesAsync();
 
                 //this is temporary
-                _ = await UpdateAllSchoolScoreAsync(dto.SchoolId);
+                _ = await UpdateSchoolScoreAsync(dto.SchoolId);
 
                 return new(OperationResult.Succeeded) { Data = true };
             }
@@ -559,12 +608,12 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> CommentExistAsync(int userId, long schoolId)
+        public async Task<ResultData<bool>> CommentExistAsync([NotNull] ISpecification<SchoolComment> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var exist = await uow.GetRepository<SchoolComment>().AnyAsync(t => t.SchoolId == schoolId && t.CreationUserId == userId);
+                var exist = await uow.GetRepository<SchoolComment>().AnyAsync(specification);
 
                 return new(OperationResult.Succeeded) { Data = exist };
             }
@@ -681,7 +730,7 @@ namespace GamaEdtech.Application.Service
                 };
                 var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
                 {
-                    ContributionType = ContributionType.SchoolImage,
+                    CategoryType = CategoryType.SchoolImage,
                     IdentifierId = requestDto.SchoolId,
                     Status = Status.Draft,
                     Data = JsonSerializer.Serialize(dto),
@@ -745,7 +794,7 @@ namespace GamaEdtech.Application.Service
                 var result = await contributionService.Value.ConfirmContributionAsync(new()
                 {
                     ContributionId = requestDto.ContributionId,
-                    ContributionType = ContributionType.SchoolImage,
+                    CategoryType = CategoryType.SchoolImage,
                 });
                 if (result.Data is null)
                 {
@@ -856,7 +905,7 @@ namespace GamaEdtech.Application.Service
 
         #endregion
 
-        #region Contribution
+        #region Contributions
 
         public async Task<ResultData<long>> ManageSchoolContributionAsync([NotNull] ManageSchoolContributionRequestDto requestDto)
         {
@@ -872,9 +921,9 @@ namespace GamaEdtech.Application.Service
                 if (requestDto.Id.HasValue)
                 {
                     var specification = new IdEqualsSpecification<Contribution, long>(requestDto.Id.Value)
-                        .And(new IdentifierIdEqualsSpecification(requestDto.SchoolId))
+                        .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.UserId))
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.School))
+                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School))
                         .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
                     var data = await contributionService.Value.ExistContributionAsync(specification);
                     if (!data.Data)
@@ -885,7 +934,7 @@ namespace GamaEdtech.Application.Service
 
                 var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto
                 {
-                    ContributionType = ContributionType.School,
+                    CategoryType = CategoryType.School,
                     IdentifierId = requestDto.SchoolId,
                     Status = Status.Draft,
                     Data = JsonSerializer.Serialize(requestDto.Data),
@@ -930,7 +979,7 @@ namespace GamaEdtech.Application.Service
                 var contributionResult = await contributionService.Value.ConfirmContributionAsync(new()
                 {
                     ContributionId = requestDto.ContributionId,
-                    ContributionType = ContributionType.School,
+                    CategoryType = CategoryType.School,
                     IdentifierId = requestDto.SchoolId,
                 });
                 if (contributionResult.Data is null)
@@ -980,7 +1029,9 @@ namespace GamaEdtech.Application.Service
 
         #endregion
 
-        public async Task<ResultData<bool>> UpdateAllSchoolScoreAsync(long? schoolId = null)
+        #region Job
+
+        public async Task<ResultData<bool>> UpdateSchoolScoreAsync(long? schoolId = null)
         {
             try
             {
@@ -997,5 +1048,7 @@ namespace GamaEdtech.Application.Service
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
             }
         }
+
+        #endregion
     }
 }

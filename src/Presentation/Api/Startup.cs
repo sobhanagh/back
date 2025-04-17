@@ -187,7 +187,7 @@ namespace GamaEdtech.Presentation.Api
             _ = app.UseHealthChecks("/healthz");
 
             _ = app.UseHangfireDashboard();
-            RecurringJob.AddOrUpdate<ISchoolService>("UpdateAllSchoolScore", t => t.UpdateAllSchoolScoreAsync(null), Cron.Daily);
+            RecurringJob.AddOrUpdate<ISchoolService>("UpdateAllSchoolScore", t => t.UpdateSchoolScoreAsync(null), Cron.Daily);
         }
     }
 }
