@@ -9,7 +9,7 @@ namespace GamaEdtech.Common.DataAccess.Specification.Impl
     using Microsoft.AspNetCore.Identity;
 
     public sealed class CreationUserIdEqualsSpecification<TClass, TUser, TKey>(TKey creationUserId) : SpecificationBase<TClass>
-        where TClass : class, ICreationUser<TUser, TKey>
+        where TClass : class, ICreationableEntity<TUser, TKey>
         where TUser : IdentityUser<TKey>
         where TKey : IEquatable<TKey>
     {

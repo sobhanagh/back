@@ -28,7 +28,7 @@ namespace GamaEdtech.Domain.Entity
 
         [Column(nameof(FileId), DataType.String)]
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? FileId { get; set; }
 
         [Column(nameof(FileType), DataType.Byte)]

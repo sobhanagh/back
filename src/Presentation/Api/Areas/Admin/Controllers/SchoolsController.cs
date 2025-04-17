@@ -16,7 +16,6 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
-    using GamaEdtech.Domain.Specification.Contribution;
     using GamaEdtech.Presentation.ViewModel.School;
     using GamaEdtech.Presentation.ViewModel.Tag;
 
@@ -162,7 +161,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 {
                     PagingDto = request.PagingDto,
                     Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolComment)),
+                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolComment)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>(result.Errors)
                 {
@@ -193,7 +192,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             try
             {
                 var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolComment));
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolComment));
                 var contributionResult = await contributionService.Value.GetContributionAsync(specification);
                 if (contributionResult.Data?.Data is null)
                 {
@@ -298,7 +297,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 {
                     PagingDto = request.PagingDto,
                     Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolImage)),
+                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>(result.Errors)
                 {
@@ -329,7 +328,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             try
             {
                 var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.SchoolImage));
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage));
                 var contributionResult = await contributionService.Value.GetContributionAsync(specification);
                 if (contributionResult.Data?.Data is null)
                 {
@@ -449,7 +448,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 {
                     PagingDto = request.PagingDto,
                     Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
+                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
                 {
@@ -482,7 +481,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             try
             {
                 var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.School));
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School));
                 var contributionResult = await contributionService.Value.GetContributionAsync(specification);
                 if (contributionResult.Data?.Data is null)
                 {

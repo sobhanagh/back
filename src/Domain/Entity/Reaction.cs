@@ -12,8 +12,8 @@ namespace GamaEdtech.Domain.Entity
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    [Table(nameof(Contribution))]
-    public class Contribution : VersionableEntity<ApplicationUser, int, int?>, IEntity<Contribution, long>, ICategoryType, IStatus, IIdentifierId
+    [Table(nameof(Reaction))]
+    public class Reaction : CreationableEntity<ApplicationUser, int>, IEntity<Reaction, long>, ICategoryType, IIdentifierId
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]
@@ -25,25 +25,23 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public CategoryType CategoryType { get; set; }
 
-        [Column(nameof(Status), DataType.Byte)]
-        [Required]
-        public Status Status { get; set; }
-
-        [Column(nameof(Comment), DataType.UnicodeString)]
-        [StringLength(300)]
-        public string? Comment { get; set; }
-
-        [Column(nameof(Data), DataType.UnicodeMaxString)]
-        public string? Data { get; set; }
-
         [Column(nameof(IdentifierId), DataType.Long)]
+        [Required]
         public long? IdentifierId { get; set; }
 
-        public void Configure([NotNull] EntityTypeBuilder<Contribution> builder)
+        [Column(nameof(IsLike), DataType.Boolean)]
+        [Required]
+        public bool IsLike { get; set; }
+
+        public void Configure([NotNull] EntityTypeBuilder<Reaction> builder)
         {
-            _ = builder.OwnEnumeration<Contribution, CategoryType, byte>(t => t.CategoryType);
-            _ = builder.OwnEnumeration<Contribution, Status, byte>(t => t.Status);
-            _ = builder.HasIndex(t => t.Status);
+            _ = builder.OwnEnumeration<Reaction, CategoryType, byte>(t => t.CategoryType);
+            _ = builder.HasIndex(t => new
+            {
+                t.CategoryType,
+                t.IdentifierId,
+                t.CreationUserId,
+            }).IsUnique(true);
         }
     }
 }

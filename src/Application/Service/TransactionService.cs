@@ -114,7 +114,7 @@ namespace GamaEdtech.Application.Service
                         IdentifierId = requestDto.IdentifierId,
                         CreationDate = DateTimeOffset.UtcNow,
                         CurrentBalance = factor + previousTransaction.Data.Balance,
-                        Description = $"{(isDebit ? "Increase" : "Decrease")} Balance by {requestDto.Description}",
+                        Description = $"{(isDebit ? "Decrease" : "Increase")} Balance by {requestDto.Description}",
                         IsDebit = isDebit,
                         Points = requestDto.Points,
                         UserId = requestDto.UserId,

@@ -15,7 +15,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
-    using GamaEdtech.Domain.Specification.Contribution;
+    using GamaEdtech.Domain.Specification;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
 
@@ -266,9 +266,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var specification = new IdEqualsSpecification<SchoolComment, long>(commentId)
-                    .And(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
-                var result = await schoolService.Value.LikeSchoolCommentAsync(specification);
+                var result = await schoolService.Value.LikeSchoolCommentAsync(new()
+                {
+                    CommentId = commentId,
+                    SchoolId = schoolId,
+                });
                 return Ok<bool>(new(result.Errors)
                 {
                     Data = result.Data,
@@ -288,9 +290,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var specification = new IdEqualsSpecification<SchoolComment, long>(commentId)
-                    .And(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
-                var result = await schoolService.Value.DislikeSchoolCommentAsync(specification);
+                var result = await schoolService.Value.DislikeSchoolCommentAsync(new()
+                {
+                    CommentId = commentId,
+                    SchoolId = schoolId,
+                });
                 return Ok<bool>(new(result.Errors)
                 {
                     Data = result.Data,
@@ -378,9 +382,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new IdentifierIdEqualsSpecification(schoolId)
+                    Specification = new IdentifierIdEqualsSpecification<Contribution>(schoolId)
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
+                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School)),
                 });
                 return Ok<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new(result.Errors)
                 {
@@ -411,9 +415,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             try
             {
                 var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new IdentifierIdEqualsSpecification(schoolId))
+                    .And(new IdentifierIdEqualsSpecification<Contribution>(schoolId))
                     .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.School));
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School));
                 var result = await contributionService.Value.GetContributionAsync(specification);
 
                 SchoolContributionViewModel? viewModel = null;

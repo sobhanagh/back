@@ -10,8 +10,8 @@ namespace GamaEdtech.Domain.Entity
 
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-    [Table(nameof(SchoolTag))]
-    public class SchoolTag : CreationableEntity<ApplicationUser, int>, IEntity<SchoolTag, long>, ISchoolId
+    [Table(nameof(PostTag))]
+    public class PostTag : CreationableEntity<ApplicationUser, int>, IEntity<PostTag, long>
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]
@@ -19,17 +19,17 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public long Id { get; set; }
 
-        [Column(nameof(SchoolId), DataType.Long)]
+        [Column(nameof(PostId), DataType.Long)]
         [Required]
-        public long SchoolId { get; set; }
-        public School School { get; set; }
+        public long PostId { get; set; }
+        public Post Post { get; set; }
 
         [Column(nameof(TagId), DataType.Long)]
         [Required]
         public long TagId { get; set; }
         public Tag Tag { get; set; }
 
-        public void Configure([NotNull] EntityTypeBuilder<SchoolTag> builder)
+        public void Configure([NotNull] EntityTypeBuilder<PostTag> builder)
         {
         }
     }
