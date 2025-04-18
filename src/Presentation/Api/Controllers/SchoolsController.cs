@@ -18,6 +18,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Domain.Specification;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
+    using GamaEdtech.Presentation.ViewModel.Tag;
 
     using Microsoft.AspNetCore.Mvc;
 
@@ -144,6 +145,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         PhoneNumber = result.Data.PhoneNumber,
                         Quarter = result.Data.Quarter,
                         OsmId = result.Data.OsmId,
+                        Tags = result.Data.Tags?.Select(t => new TagResponseViewModel
+                        {
+                            Id = t.Id,
+                            Icon = t.Icon,
+                            Name = t.Name,
+                            TagType = t.TagType,
+                        }),
                     }
                 });
             }

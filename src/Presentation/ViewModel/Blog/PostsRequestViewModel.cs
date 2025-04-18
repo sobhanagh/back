@@ -7,5 +7,8 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
     {
         [Display]
         public PagingDto? PagingDto { get; set; } = new() { PageFilter = new(), };
+
+        [Display]
+        public int? TagId { get; set; }
     }
 }

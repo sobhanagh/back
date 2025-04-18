@@ -39,6 +39,11 @@ namespace GamaEdtech.Domain.Entity
         public long? TagId { get; set; }
         public Tag? Tag { get; set; }
 
+        [Column(nameof(ContributionId), DataType.Long)]
+        [Required]
+        public long ContributionId { get; set; }
+        public Contribution? Contribution { get; set; }
+
         public void Configure([NotNull] EntityTypeBuilder<SchoolImage> builder) => _ = builder.OwnEnumeration<SchoolImage, FileType, byte>(t => t.FileType);
     }
 }
