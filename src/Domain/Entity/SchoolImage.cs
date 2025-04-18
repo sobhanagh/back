@@ -28,12 +28,16 @@ namespace GamaEdtech.Domain.Entity
 
         [Column(nameof(FileId), DataType.String)]
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string? FileId { get; set; }
 
         [Column(nameof(FileType), DataType.Byte)]
         [Required]
         public FileType? FileType { get; set; }
+
+        [Column(nameof(TagId), DataType.Long)]
+        public long? TagId { get; set; }
+        public Tag? Tag { get; set; }
 
         public void Configure([NotNull] EntityTypeBuilder<SchoolImage> builder) => _ = builder.OwnEnumeration<SchoolImage, FileType, byte>(t => t.FileType);
     }

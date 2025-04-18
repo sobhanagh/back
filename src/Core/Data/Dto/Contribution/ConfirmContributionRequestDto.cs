@@ -6,6 +6,6 @@ namespace GamaEdtech.Data.Dto.Contribution
     {
         public required long ContributionId { get; set; }
         public long? IdentifierId { get; set; }
-        public required ContributionType ContributionType { get; set; }
+        public required CategoryType CategoryType { get; set; }
     }
 }

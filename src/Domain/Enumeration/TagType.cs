@@ -6,7 +6,7 @@ namespace GamaEdtech.Domain.Enumeration
     public sealed class TagType : Enumeration<TagType, byte>
     {
         [Display]
-        public static readonly TagType Facility = new(nameof(Facility), 0);
+        public static readonly TagType Location = new(nameof(Location), 0);
 
         [Display]
         public static readonly TagType Service = new(nameof(Service), 1);

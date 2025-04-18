@@ -18,24 +18,27 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<SchoolDto>> GetSchoolAsync([NotNull] ISpecification<School> specification);
         Task<ResultData<long>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto, bool ignoreNullValues);
         Task<ResultData<bool>> RemoveSchoolAsync([NotNull] ISpecification<School> specification);
-        Task<ResultData<bool>> ExistSchoolAsync([NotNull] ISpecification<School> specification);
+        Task<ResultData<bool>> ExistsSchoolAsync([NotNull] ISpecification<School> specification);
 
         Task<ResultData<SchoolRateDto>> GetSchoolRateAsync([NotNull] ISpecification<SchoolComment> specification);
         Task<ResultData<ListDataSource<SchoolCommentDto>>> GetSchoolCommentsAsync(ListRequestDto<SchoolComment>? requestDto = null);
-        Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification);
-        Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] ISpecification<SchoolComment> specification);
+        Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] SchoolCommentReactionRequestDto requestDto);
+        Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] SchoolCommentReactionRequestDto requestDto);
         Task<ResultData<long>> ManageSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto);
         Task<ResultData<bool>> ConfirmSchoolCommentContributionAsync([NotNull] ConfirmSchoolCommentContributionRequestDto requestDto);
-        Task<ResultData<bool>> CommentExistAsync(int userId, long schoolId);
+        Task<ResultData<bool>> CommentExistAsync([NotNull] ISpecification<SchoolComment> specification);
 
         Task<ResultData<ListDataSource<SchoolImageDto>>> GetSchoolImagesAsync(ListRequestDto<SchoolImage>? requestDto = null);
-        Task<ResultData<IEnumerable<string?>>> GetSchoolImagesPathAsync([NotNull] ISpecification<SchoolImage> specification);
-        Task<ResultData<long>> ManageSchoolImageContributionAsync([NotNull] ManageSchoolImageContributionRequestDto requestDto);
+        Task<ResultData<IEnumerable<SchoolImageInfoDto>>> GetSchoolImagesListAsync([NotNull] ISpecification<SchoolImage> specification);
+        Task<ResultData<long>> CreateSchoolImageContributionAsync([NotNull] ManageSchoolImageContributionRequestDto requestDto);
         Task<ResultData<bool>> ConfirmSchoolImageContributionAsync([NotNull] ConfirmSchoolImageContributionRequestDto requestDto);
+        Task<ResultData<bool>> RemoveSchoolImageAsync([NotNull] ISpecification<SchoolImage> specification);
+        Task<ResultData<bool>> ManageSchoolImageAsync([NotNull] ManageSchoolImageRequestDto requestDto);
 
         Task<ResultData<long>> ManageSchoolContributionAsync([NotNull] ManageSchoolContributionRequestDto requestDto);
         Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmSchoolContributionRequestDto requestDto);
 
-        Task<ResultData<bool>> UpdateAllSchoolScoreAsync(long? schoolId = null);
+        Task<ResultData<bool>> UpdateSchoolScoreAsync(long? schoolId = null);
+        Task<ResultData<bool>> UpdateSchoolCommentReactionsAsync(long? schoolCommentId = null);
     }
 }

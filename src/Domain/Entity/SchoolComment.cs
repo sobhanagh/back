@@ -75,7 +75,7 @@ namespace GamaEdtech.Domain.Entity
 
         public void Configure([NotNull] EntityTypeBuilder<SchoolComment> builder)
         {
-            _ = builder.HasOne(t => t.School).WithMany(t => t.Comments).HasForeignKey(t => t.SchoolId).OnDelete(DeleteBehavior.NoAction);
+            _ = builder.HasOne(t => t.School).WithMany(t => t.SchoolComments).HasForeignKey(t => t.SchoolId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasIndex(t => new { t.CreationUserId, t.SchoolId }).IsUnique(true);
         }
     }

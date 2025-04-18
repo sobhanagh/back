@@ -12,5 +12,6 @@ namespace GamaEdtech.Data.Dto.School
         public FileType? FileType { get; set; }
         public long SchoolId { get; set; }
         public string? SchoolName { get; set; }
+        public long? TagId { get; set; }
     }
 }

@@ -91,7 +91,9 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(Score), TypeName = "float")]
         public double? Score { get; set; }
 
-        public virtual ICollection<SchoolComment>? Comments { get; set; }
+        public virtual ICollection<SchoolComment>? SchoolComments { get; set; }
+        public virtual ICollection<SchoolTag>? SchoolTags { get; set; }
+        public virtual ICollection<SchoolImage>? SchoolImages { get; set; }
 
         public void Configure([NotNull] EntityTypeBuilder<School> builder)
         {

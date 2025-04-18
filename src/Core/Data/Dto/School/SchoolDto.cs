@@ -1,5 +1,8 @@
 namespace GamaEdtech.Data.Dto.School
 {
+    using System.Collections.Generic;
+
+    using GamaEdtech.Data.Dto.Tag;
     using GamaEdtech.Domain.Enumeration;
 
     using NetTopologySuite.Geometries;
@@ -27,5 +30,6 @@ namespace GamaEdtech.Data.Dto.School
         public string? Email { get; set; }
         public string? Quarter { get; set; }
         public long? OsmId { get; set; }
+        public IEnumerable<TagDto>? Tags { get; set; }
     }
 }

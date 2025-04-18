@@ -237,14 +237,14 @@ namespace GamaEdtech.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<byte>("CategoryType")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("CategoryType");
+
                     b.Property<string>("Comment")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar")
                         .HasColumnName("Comment");
-
-                    b.Property<byte>("ContributionType")
-                        .HasColumnType("tinyint")
-                        .HasColumnName("ContributionType");
 
                     b.Property<DateTimeOffset>("CreationDate")
                         .HasColumnType("datetimeoffset")
@@ -383,6 +383,20 @@ namespace GamaEdtech.Infrastructure.Migrations
                             ConcurrencyStamp = "85465B3B-E646-49BC-AAC6-D07C450B3AE3",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "85465B3B-E646-49BC-AAC6-D07C450B3AE4",
+                            Name = "Teacher",
+                            NormalizedName = "TEACHER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = "85465B3B-E646-49BC-AAC6-D07C450B3AE5",
+                            Name = "Student",
+                            NormalizedName = "STUDENT"
                         });
                 });
 
@@ -732,6 +746,150 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.ToTable("Locations");
                 });
 
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.Post", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Body");
+
+                    b.Property<DateTimeOffset>("CreationDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("CreationDate");
+
+                    b.Property<int>("CreationUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreationUserId");
+
+                    b.Property<int>("DislikeCount")
+                        .HasColumnType("int")
+                        .HasColumnName("DislikeCount");
+
+                    b.Property<string>("ImageId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar")
+                        .HasColumnName("ImageId");
+
+                    b.Property<DateTimeOffset?>("LastModifyDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("LastModifyDate");
+
+                    b.Property<int?>("LastModifyUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("LastModifyUserId");
+
+                    b.Property<int>("LikeCount")
+                        .HasColumnType("int")
+                        .HasColumnName("LikeCount");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("Status");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar")
+                        .HasColumnName("Summary");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar")
+                        .HasColumnName("Title");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreationUserId");
+
+                    b.HasIndex("LastModifyUserId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.PostTag", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreationDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("CreationDate");
+
+                    b.Property<int>("CreationUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreationUserId");
+
+                    b.Property<long>("PostId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("PostId");
+
+                    b.Property<long>("TagId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("TagId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreationUserId");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("PostTags");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.Reaction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<byte>("CategoryType")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("CategoryType");
+
+                    b.Property<DateTimeOffset>("CreationDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("CreationDate");
+
+                    b.Property<int>("CreationUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreationUserId");
+
+                    b.Property<long>("IdentifierId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("IdentifierId");
+
+                    b.Property<bool>("IsLike")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsLike");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreationUserId");
+
+                    b.HasIndex("CategoryType", "IdentifierId", "CreationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Reactions");
+                });
+
             modelBuilder.Entity("GamaEdtech.Domain.Entity.School", b =>
                 {
                     b.Property<long>("Id")
@@ -962,7 +1120,7 @@ namespace GamaEdtech.Infrastructure.Migrations
 
                     b.Property<string>("FileId")
                         .IsRequired()
-                        .HasMaxLength(50)
+                        .HasMaxLength(100)
                         .HasColumnType("varchar")
                         .HasColumnName("FileId");
 
@@ -982,6 +1140,10 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("SchoolId");
 
+                    b.Property<long?>("TagId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("TagId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreationUserId");
@@ -990,7 +1152,45 @@ namespace GamaEdtech.Infrastructure.Migrations
 
                     b.HasIndex("SchoolId");
 
+                    b.HasIndex("TagId");
+
                     b.ToTable("SchoolImages");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.SchoolTag", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreationDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("CreationDate");
+
+                    b.Property<int>("CreationUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreationUserId");
+
+                    b.Property<long>("SchoolId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("SchoolId");
+
+                    b.Property<long>("TagId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("TagId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreationUserId");
+
+                    b.HasIndex("SchoolId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("SchoolTags");
                 });
 
             modelBuilder.Entity("GamaEdtech.Domain.Entity.Subject", b =>
@@ -1039,12 +1239,12 @@ namespace GamaEdtech.Infrastructure.Migrations
 
             modelBuilder.Entity("GamaEdtech.Domain.Entity.Tag", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
+                        .HasColumnType("bigint")
                         .HasColumnName("Id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTimeOffset>("CreationDate")
                         .HasColumnType("datetimeoffset")
@@ -1409,6 +1609,62 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.Post", b =>
+                {
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "LastModifyUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifyUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("LastModifyUser");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.PostTag", b =>
+                {
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.Post", "Post")
+                        .WithMany("PostTags")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.Reaction", b =>
+                {
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("CreationUser");
+                });
+
             modelBuilder.Entity("GamaEdtech.Domain.Entity.School", b =>
                 {
                     b.HasOne("GamaEdtech.Domain.Entity.Location", "City")
@@ -1462,7 +1718,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("GamaEdtech.Domain.Entity.School", "School")
-                        .WithMany("Comments")
+                        .WithMany("SchoolComments")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1488,16 +1744,49 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("GamaEdtech.Domain.Entity.School", "School")
-                        .WithMany()
+                        .WithMany("SchoolImages")
                         .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId");
 
                     b.Navigation("CreationUser");
 
                     b.Navigation("LastModifyUser");
 
                     b.Navigation("School");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.SchoolTag", b =>
+                {
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.School", "School")
+                        .WithMany("SchoolTags")
+                        .HasForeignKey("SchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("School");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("GamaEdtech.Domain.Entity.Subject", b =>
@@ -1629,9 +1918,18 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Navigation("UserTokens");
                 });
 
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.Post", b =>
+                {
+                    b.Navigation("PostTags");
+                });
+
             modelBuilder.Entity("GamaEdtech.Domain.Entity.School", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("SchoolComments");
+
+                    b.Navigation("SchoolImages");
+
+                    b.Navigation("SchoolTags");
                 });
 #pragma warning restore 612, 618
         }

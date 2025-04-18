@@ -7,5 +7,6 @@ namespace GamaEdtech.Data.Dto.ApplicationSettings
         public int SchoolContributionPoints { get; set; }
         public int SchoolImageContributionPoints { get; set; }
         public int SchoolCommentContributionPoints { get; set; }
+        public int PostContributionPoints { get; set; }
     }
 }

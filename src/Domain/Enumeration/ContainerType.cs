@@ -11,6 +11,9 @@ namespace GamaEdtech.Domain.Enumeration
         [Display]
         public static readonly ContainerType School = new(nameof(School), 1);
 
+        [Display]
+        public static readonly ContainerType Post = new(nameof(Post), 2);
+
         public ContainerType()
         {
         }

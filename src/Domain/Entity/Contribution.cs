@@ -13,7 +13,7 @@ namespace GamaEdtech.Domain.Entity
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
     [Table(nameof(Contribution))]
-    public class Contribution : VersionableEntity<ApplicationUser, int, int?>, IStatus, IEntity<Contribution, long>
+    public class Contribution : VersionableEntity<ApplicationUser, int, int?>, IEntity<Contribution, long>, ICategoryType, IStatus, IIdentifierId
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]
@@ -21,13 +21,13 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public long Id { get; set; }
 
-        [Column(nameof(ContributionType), DataType.Byte)]
+        [Column(nameof(CategoryType), DataType.Byte)]
         [Required]
-        public ContributionType? ContributionType { get; set; }
+        public CategoryType CategoryType { get; set; }
 
         [Column(nameof(Status), DataType.Byte)]
         [Required]
-        public Status? Status { get; set; }
+        public Status Status { get; set; }
 
         [Column(nameof(Comment), DataType.UnicodeString)]
         [StringLength(300)]
@@ -41,7 +41,7 @@ namespace GamaEdtech.Domain.Entity
 
         public void Configure([NotNull] EntityTypeBuilder<Contribution> builder)
         {
-            _ = builder.OwnEnumeration<Contribution, ContributionType, byte>(t => t.ContributionType);
+            _ = builder.OwnEnumeration<Contribution, CategoryType, byte>(t => t.CategoryType);
             _ = builder.OwnEnumeration<Contribution, Status, byte>(t => t.Status);
             _ = builder.HasIndex(t => t.Status);
         }

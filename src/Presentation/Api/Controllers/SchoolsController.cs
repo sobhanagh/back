@@ -13,8 +13,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Data.Dto.School;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
-    using GamaEdtech.Domain.Specification.Contribution;
+    using GamaEdtech.Domain.Specification;
     using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
 
@@ -265,9 +266,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var specification = new IdEqualsSpecification<SchoolComment, long>(commentId)
-                    .And(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
-                var result = await schoolService.Value.LikeSchoolCommentAsync(specification);
+                var result = await schoolService.Value.LikeSchoolCommentAsync(new()
+                {
+                    CommentId = commentId,
+                    SchoolId = schoolId,
+                });
                 return Ok<bool>(new(result.Errors)
                 {
                     Data = result.Data,
@@ -287,9 +290,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var specification = new IdEqualsSpecification<SchoolComment, long>(commentId)
-                    .And(new SchoolIdEqualsSpecification<SchoolComment>(schoolId));
-                var result = await schoolService.Value.DislikeSchoolCommentAsync(specification);
+                var result = await schoolService.Value.DislikeSchoolCommentAsync(new()
+                {
+                    CommentId = commentId,
+                    SchoolId = schoolId,
+                });
                 return Ok<bool>(new(result.Errors)
                 {
                     Data = result.Data,
@@ -307,24 +312,32 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #region Images
 
-        [HttpGet("{schoolId:long}/images/{fileType:FileType}"), Produces<ApiResponse<IEnumerable<string>>>()]
-        public async Task<IActionResult<IEnumerable<string?>>> GetSchoolImagesPath([FromRoute] long schoolId, [FromRoute] FileType fileType)
+        [HttpGet("{schoolId:long}/images/{fileType:FileType}"), Produces<ApiResponse<IEnumerable<SchoolImageInfoViewModel>>>()]
+        public async Task<IActionResult<IEnumerable<SchoolImageInfoViewModel>>> GetSchoolImagesList([FromRoute] long schoolId, [FromRoute] FileType fileType)
         {
             try
             {
                 var specification = new SchoolIdEqualsSpecification<SchoolImage>(schoolId)
                     .And(new SchoolImageFileTypeEqualsSpecification(fileType));
-                var result = await schoolService.Value.GetSchoolImagesPathAsync(specification);
-                return Ok<IEnumerable<string?>>(new(result.Errors)
+                var result = await schoolService.Value.GetSchoolImagesListAsync(specification);
+                return Ok<IEnumerable<SchoolImageInfoViewModel>>(new(result.Errors)
                 {
-                    Data = result.Data is null ? [] : result.Data,
+                    Data = result.Data is null ? [] : result.Data.Select(t => new SchoolImageInfoViewModel
+                    {
+                        CreationUser = t.CreationUser,
+                        CreationUserId = t.CreationUserId,
+                        FileUri = t.FileUri,
+                        TagIcon = t.TagIcon,
+                        TagId = t.TagId,
+                        TagName = t.TagName,
+                    }),
                 });
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<IEnumerable<string?>>(new(new Error { Message = exc.Message }));
+                return Ok<IEnumerable<SchoolImageInfoViewModel>>(new(new Error { Message = exc.Message }));
             }
         }
 
@@ -334,11 +347,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await schoolService.Value.ManageSchoolImageContributionAsync(new ManageSchoolImageContributionRequestDto
+                var result = await schoolService.Value.CreateSchoolImageContributionAsync(new ManageSchoolImageContributionRequestDto
                 {
                     File = request.File!,
                     FileType = fileType,
                     SchoolId = schoolId,
+                    TagId = request.TagId,
                     CreationDate = DateTimeOffset.UtcNow,
                     CreationUserId = User.UserId(),
                 });
@@ -368,9 +382,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new IdentifierIdEqualsSpecification(schoolId)
-                        .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId()))
-                        .And(new ContributionTypeEqualsSpecification(ContributionType.School)),
+                    Specification = new IdentifierIdEqualsSpecification<Contribution>(schoolId)
+                        .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
+                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School)),
                 });
                 return Ok<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new(result.Errors)
                 {
@@ -401,9 +415,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             try
             {
                 var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new IdentifierIdEqualsSpecification(schoolId))
-                    .And(new CreationUserIdEqualsSpecification<Contribution, int>(User.UserId()))
-                    .And(new ContributionTypeEqualsSpecification(ContributionType.School));
+                    .And(new IdentifierIdEqualsSpecification<Contribution>(schoolId))
+                    .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School));
                 var result = await contributionService.Value.GetContributionAsync(specification);
 
                 SchoolContributionViewModel? viewModel = null;
@@ -505,6 +519,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             ZipCode = request.ZipCode,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
+            Tags = request.Tags,
         };
 
         internal static SchoolContributionViewModel MapFrom(SchoolContributionDto dto) => new()
@@ -526,6 +541,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             StateId = dto.StateId,
             WebSite = dto.WebSite,
             ZipCode = dto.ZipCode,
+            Tags = dto.Tags,
         };
     }
 }
