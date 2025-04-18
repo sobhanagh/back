@@ -13,7 +13,7 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250418124257_IdentifierId")]
+    [Migration("20250418151103_IdentifierId")]
     partial class IdentifierId
     {
         /// <inheritdoc />
@@ -1114,7 +1114,7 @@ namespace GamaEdtech.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("ContributionId")
+                    b.Property<long?>("ContributionId")
                         .HasColumnType("bigint")
                         .HasColumnName("ContributionId");
 
@@ -1745,9 +1745,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                 {
                     b.HasOne("GamaEdtech.Domain.Entity.Contribution", "Contribution")
                         .WithMany()
-                        .HasForeignKey("ContributionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContributionId");
 
                     b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()

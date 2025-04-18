@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -22,7 +22,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                 name: "ContributionId",
                 table: "SchoolImages",
                 type: "bigint",
-                nullable: false);
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SchoolTags_SchoolId_TagId",
@@ -46,8 +46,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                 table: "SchoolImages",
                 column: "ContributionId",
                 principalTable: "Contributions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />

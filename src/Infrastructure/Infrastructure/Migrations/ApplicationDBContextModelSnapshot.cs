@@ -1111,7 +1111,7 @@ namespace GamaEdtech.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("ContributionId")
+                    b.Property<long?>("ContributionId")
                         .HasColumnType("bigint")
                         .HasColumnName("ContributionId");
 
@@ -1742,9 +1742,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                 {
                     b.HasOne("GamaEdtech.Domain.Entity.Contribution", "Contribution")
                         .WithMany()
-                        .HasForeignKey("ContributionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContributionId");
 
                     b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
                         .WithMany()

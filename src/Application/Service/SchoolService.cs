@@ -842,7 +842,7 @@ namespace GamaEdtech.Application.Service
                     ContainerType = ContainerType.School
                 });
 
-                _ = await contributionService.Value.DeleteContributionAsync(new IdEqualsSpecification<Contribution, long>(schoolImage.ContributionId));
+                _ = await contributionService.Value.DeleteContributionAsync(new IdEqualsSpecification<Contribution, long>(schoolImage.ContributionId.GetValueOrDefault()));
 
                 return new(OperationResult.Succeeded) { Data = true };
             }
