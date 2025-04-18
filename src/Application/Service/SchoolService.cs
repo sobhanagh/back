@@ -812,6 +812,11 @@ namespace GamaEdtech.Application.Service
                 });
                 _ = await uow.SaveChangesAsync();
 
+                var schoolRepository = uow.GetRepository<School>();
+                _ = await schoolRepository.GetManyQueryable(t => t.Id == dto.SchoolId).ExecuteUpdateAsync(t => t
+                    .SetProperty(p => p.LastModifyUserId, result.Data.CreationUserId)
+                    .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow));
+
                 return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
