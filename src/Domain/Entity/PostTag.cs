@@ -29,8 +29,6 @@ namespace GamaEdtech.Domain.Entity
         public long TagId { get; set; }
         public Tag Tag { get; set; }
 
-        public void Configure([NotNull] EntityTypeBuilder<PostTag> builder)
-        {
-        }
+        public void Configure([NotNull] EntityTypeBuilder<PostTag> builder) => builder.HasIndex(t => new { t.PostId, t.TagId }).IsUnique(true);
     }
 }

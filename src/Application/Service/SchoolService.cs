@@ -695,7 +695,7 @@ namespace GamaEdtech.Application.Service
                 if (requestDto.TagId.HasValue)
                 {
                     var specification = new IdEqualsSpecification<Domain.Entity.Tag, long>(requestDto.TagId.Value)
-                        .And(new TagTypeEqualsSpecification(TagType.Location));
+                        .And(new TagTypeEqualsSpecification(TagType.School));
                     var exists = await tagService.Value.ExistsTagAsync(specification);
                     if (!exists.Data)
                     {
@@ -812,6 +812,11 @@ namespace GamaEdtech.Application.Service
                 });
                 _ = await uow.SaveChangesAsync();
 
+                var schoolRepository = uow.GetRepository<School>();
+                _ = await schoolRepository.GetManyQueryable(t => t.Id == dto.SchoolId).ExecuteUpdateAsync(t => t
+                    .SetProperty(p => p.LastModifyUserId, result.Data.CreationUserId)
+                    .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow));
+
                 return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
@@ -826,15 +831,11 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var repository = uow.GetRepository<SchoolImage, long>();
+                var repository = uow.GetRepository<SchoolImage>();
                 var schoolImage = await repository.GetAsync(specification);
                 if (schoolImage is null)
                 {
-                    return new(OperationResult.NotFound)
-                    {
-                        Data = false,
-                        Errors = [new() { Message = Localizer.Value["SchoolImageNotFound"] },],
-                    };
+                    return new(OperationResult.NotFound) { Errors = [new() { Message = Localizer.Value["SchoolImageNotFound"] },], };
                 }
 
                 repository.Remove(schoolImage);
@@ -845,6 +846,8 @@ namespace GamaEdtech.Application.Service
                     FileId = schoolImage.FileId!,
                     ContainerType = ContainerType.School
                 });
+
+                _ = await contributionService.Value.DeleteContributionAsync(new IdEqualsSpecification<Contribution, long>(schoolImage.ContributionId.GetValueOrDefault()));
 
                 return new(OperationResult.Succeeded) { Data = true };
             }
@@ -873,7 +876,7 @@ namespace GamaEdtech.Application.Service
                 if (requestDto.TagId.HasValue)
                 {
                     var tagSpecification = new IdEqualsSpecification<Domain.Entity.Tag, long>(requestDto.TagId.Value)
-                        .And(new TagTypeEqualsSpecification(TagType.Location));
+                        .And(new TagTypeEqualsSpecification(TagType.School));
                     var exists = await tagService.Value.ExistsTagAsync(tagSpecification);
                     if (!exists.Data)
                     {

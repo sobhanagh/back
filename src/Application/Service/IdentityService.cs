@@ -155,6 +155,22 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public async Task<ResultData<bool>> UserIsInRoleAsync([NotNull] int userId, [NotNull] string role)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var normalizedRoleName = role.ToUpperInvariant();
+                var result = await uow.GetRepository<ApplicationUserRole, int>().AnyAsync(t => t.UserId == userId && t.Role!.NormalizedName == normalizedRoleName);
+                return new(OperationResult.Succeeded) { Data = result };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = new[] { new Error { Message = exc.Message }, } };
+            }
+        }
+
         public async Task<ResultData<AuthenticationResponseDto>> AuthenticateAsync([NotNull] AuthenticationRequestDto requestDto)
         {
             try
