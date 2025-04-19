@@ -22,6 +22,8 @@ namespace GamaEdtech.Application.Interface
 
         Task<ResultData<ICollection<string>>> GetUserRolesAsync([NotNull] int userId);
 
+        Task<ResultData<bool>> UserIsInRoleAsync([NotNull] int userId, [NotNull] string role);
+
         Task<ResultData<AuthenticationResponseDto>> AuthenticateAsync([NotNull] AuthenticationRequestDto requestDto);
 
         Task<ResultData<bool>> RegisterAsync([NotNull] RegistrationRequestDto requestDto);

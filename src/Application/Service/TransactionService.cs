@@ -10,6 +10,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Core.Extensions.Linq;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Repositories;
+    using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.Transaction;
@@ -26,13 +27,13 @@ namespace GamaEdtech.Application.Service
         , Lazy<ILogger<TransactionService>> logger)
         : LocalizableServiceBase<TransactionService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ITransactionService
     {
-        public async Task<ResultData<ListDataSource<TransactionsDto>>> GetTransactionsAsync(ListRequestDto<Transaction>? requestDto = null)
+        public async Task<ResultData<ListDataSource<TransactionDto>>> GetTransactionsAsync(ListRequestDto<Transaction>? requestDto = null)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var result = await uow.GetRepository<Transaction>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
-                var users = await result.List.Select(t => new TransactionsDto
+                var users = await result.List.Select(t => new TransactionDto
                 {
                     Id = t.Id,
                     CreationDate = t.CreationDate,
@@ -42,6 +43,31 @@ namespace GamaEdtech.Application.Service
                     Points = t.Points,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
+        public async Task<ResultData<TransactionDto>> GetTransactionAsync([NotNull] ISpecification<Transaction> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var result = await uow.GetRepository<Transaction>().GetManyQueryable(specification).Select(t => new TransactionDto
+                {
+                    Id = t.Id,
+                    CreationDate = t.CreationDate,
+                    UserId = t.UserId,
+                    CurrentBalance = t.CurrentBalance,
+                    Description = t.Description,
+                    IsDebit = t.IsDebit,
+                    Points = t.Points,
+                }).FirstOrDefaultAsync();
+
+                return new(OperationResult.Succeeded) { Data = result };
             }
             catch (Exception exc)
             {

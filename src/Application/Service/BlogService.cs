@@ -15,6 +15,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.Blog;
+    using GamaEdtech.Data.Dto.Tag;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
@@ -27,7 +28,7 @@ namespace GamaEdtech.Application.Service
     using static GamaEdtech.Common.Core.Constants;
 
     public class BlogService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<BlogService>> localizer
-        , Lazy<ILogger<BlogService>> logger, Lazy<IReactionService> reactionService, Lazy<IFileService> fileService)
+        , Lazy<ILogger<BlogService>> logger, Lazy<IReactionService> reactionService, Lazy<IFileService> fileService, Lazy<IIdentityService> identityService)
         : LocalizableServiceBase<BlogService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IBlogService
     {
         public async Task<ResultData<ListDataSource<PostsDto>>> GetPostsAsync(ListRequestDto<Post>? requestDto = null)
@@ -61,12 +62,19 @@ namespace GamaEdtech.Application.Service
                 var post = await uow.GetRepository<Post>().GetManyQueryable(specification).Select(t => new
                 {
                     t.Title,
-                    t.Body,
                     t.Summary,
-                    t.DislikeCount,
-                    t.LikeCount,
+                    t.Body,
                     t.ImageId,
+                    t.LikeCount,
+                    t.DislikeCount,
                     CreationUser = t.CreationUser.FirstName + " " + t.CreationUser.LastName,
+                    Tags = t.PostTags == null ? null : t.PostTags.Select(s => new TagDto
+                    {
+                        Icon = s.Tag.Icon,
+                        Id = s.TagId,
+                        Name = s.Tag.Name,
+                        TagType = s.Tag.TagType,
+                    }),
                 }).FirstOrDefaultAsync();
                 if (post is null)
                 {
@@ -78,12 +86,14 @@ namespace GamaEdtech.Application.Service
 
                 PostDto result = new()
                 {
-                    Body = post.Body,
-                    DislikeCount = post.DislikeCount,
-                    LikeCount = post.LikeCount,
-                    Summary = post.Summary,
                     Title = post.Title,
+                    Summary = post.Summary,
+                    Body = post.Body,
                     ImageUri = fileService.Value.GetFileUri(post.ImageId!, ContainerType.Post).Data,
+                    LikeCount = post.LikeCount,
+                    DislikeCount = post.DislikeCount,
+                    CreationUser = post.CreationUser,
+                    Tags = post.Tags,
                 };
 
                 return new(OperationResult.Succeeded) { Data = result };
@@ -112,6 +122,12 @@ namespace GamaEdtech.Application.Service
                         {
                             Errors = [new() { Message = Localizer.Value["PostNotFound"] },],
                         };
+                    }
+
+                    var permitted = await HasManagePermissionAsync(post.CreationUserId);
+                    if (!permitted)
+                    {
+                        return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InsufficientPrivileges"] },], };
                     }
 
                     var (imageId, errors) = await SaveImageAsync();
@@ -261,29 +277,40 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> RemovePostAsync([NotNull] long postId)
+        public async Task<ResultData<bool>> RemovePostAsync([NotNull] ISpecification<Post> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var postRepository = uow.GetRepository<Post>();
-                var imageId = await postRepository.GetManyQueryable(t => t.Id == postId).Select(t => t.ImageId).FirstOrDefaultAsync();
+                var post = await postRepository.GetAsync(specification);
+                if (post is null)
+                {
+                    return new(OperationResult.NotFound) { Errors = [new() { Message = Localizer.Value["PostNotFound"] },], };
+                }
+
+                var permitted = await HasManagePermissionAsync(post.CreationUserId);
+                if (!permitted)
+                {
+                    return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InsufficientPrivileges"] },], };
+                }
 
                 //remove post
-                _ = await postRepository.GetManyQueryable(t => t.Id == postId).ExecuteDeleteAsync();
+                postRepository.Remove(post);
+                _ = await uow.SaveChangesAsync();
 
                 //remove reactions
-                var reactionSpecification = new IdentifierIdEqualsSpecification<Reaction>(postId)
+                var reactionSpecification = new IdentifierIdEqualsSpecification<Reaction>(post.Id)
                     .And(new CategoryTypeEqualsSpecification<Reaction>(CategoryType.Post));
                 _ = reactionService.Value.RemoveReactionAsync(reactionSpecification);
 
-                if (imageId != null)
+                if (!string.IsNullOrEmpty(post.ImageId))
                 {
                     //remove image
                     _ = await fileService.Value.RemoveFileAsync(new()
                     {
                         ContainerType = ContainerType.Post,
-                        FileId = imageId,
+                        FileId = post.ImageId,
                     });
                 }
 
@@ -340,5 +367,20 @@ namespace GamaEdtech.Application.Service
         }
 
         #endregion
+
+        private async Task<bool> HasManagePermissionAsync(int creationUserId)
+        {
+            var currentUserId = HttpContextAccessor.Value.HttpContext.UserId();
+            if (creationUserId != currentUserId)
+            {
+                var hasAdminRole = await identityService.Value.UserIsInRoleAsync(currentUserId, nameof(Role.Admin));
+                if (!hasAdminRole.Data)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

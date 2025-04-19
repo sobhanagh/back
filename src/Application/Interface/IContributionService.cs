@@ -1,11 +1,10 @@
 namespace GamaEdtech.Application.Interface
 {
-    using GamaEdtech.Common.Data;
-    using GamaEdtech.Common.DataAccess.Specification;
     using System.Diagnostics.CodeAnalysis;
 
+    using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAnnotation;
-
     using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Domain.Entity;
 
@@ -18,5 +17,6 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<bool>> ExistContributionAsync([NotNull] ISpecification<Contribution> specification);
         Task<ResultData<ContributionDto>> ConfirmContributionAsync([NotNull] ConfirmContributionRequestDto requestDto);
         Task<ResultData<bool>> RejectContributionAsync([NotNull] RejectContributionRequestDto requestDto);
+        Task<ResultData<bool>> DeleteContributionAsync([NotNull] ISpecification<Contribution> specification);
     }
 }

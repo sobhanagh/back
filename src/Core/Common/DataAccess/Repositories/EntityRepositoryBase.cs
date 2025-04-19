@@ -58,6 +58,8 @@ namespace GamaEdtech.Common.DataAccess.Repositories
 
         public async Task<TEntity?> GetAsync(TKey id, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = true) => await QueryDb(t => t.Id.Equals(id), null, includes, tracking).FirstOrDefaultAsync();
 
+        public async Task<TEntity?> GetAsync([NotNull] Expression<Func<TEntity, bool>> predicate, bool tracking = true) => await QueryDb(predicate, null, null, tracking).FirstOrDefaultAsync();
+
         public async Task<TEntity?> GetAsync(ISpecification<TEntity>? specification, bool tracking = true) => await QueryDb(specification?.Expression(), specification?.Order, null, tracking).FirstOrDefaultAsync();
 
         public ICollection<TEntity>? Query(Expression<Func<TEntity, bool>> predicate, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, Func<IQueryable<TEntity>, IQueryable<TEntity>>? includes = null, bool tracking = false) => [.. QueryDb(predicate, orderBy, includes, tracking)];

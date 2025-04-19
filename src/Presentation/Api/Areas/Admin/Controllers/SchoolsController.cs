@@ -16,6 +16,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.School;
     using GamaEdtech.Presentation.ViewModel.School;
     using GamaEdtech.Presentation.ViewModel.Tag;
 
@@ -432,6 +433,28 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 Logger.Value.LogException(exc);
 
                 return Ok<bool>(new() { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpDelete("{schoolId:long}/images/{imageId:long}"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult> RemoveImage([FromRoute] long schoolId, [FromRoute] long imageId)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<SchoolImage, long>(imageId)
+                    .And(new SchoolIdEqualsSpecification<SchoolImage>(schoolId));
+                var result = await schoolService.Value.RemoveSchoolImageAsync(specification);
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
             }
         }
 

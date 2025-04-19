@@ -13,6 +13,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Data.Dto.Contribution;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Domain.Specification;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -221,6 +222,50 @@ namespace GamaEdtech.Application.Service
                     .SetProperty(p => p.LastModifyDate, DateTimeOffset.UtcNow));
 
                 return new(OperationResult.Succeeded) { Data = affectedRows > 0 };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<bool>> DeleteContributionAsync([NotNull] ISpecification<Contribution> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Contribution>();
+                var userId = HttpContextAccessor.Value.HttpContext?.User.UserId();
+
+                var contribution = await repository.GetAsync(specification.And(new StatusEqualsSpecification<Contribution>(Status.Confirmed)));
+                if (contribution is null)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "Invalid Request", }] };
+                }
+
+                contribution.Status = Status.Deleted;
+                contribution.LastModifyUserId = userId;
+                contribution.LastModifyDate = DateTimeOffset.UtcNow;
+                _ = repository.Update(contribution);
+                _ = await uow.SaveChangesAsync();
+
+                var transactionSpecification = new IdentifierIdEqualsSpecification<Transaction>(contribution.Id);
+                var previousTransaction = await transactionService.Value.GetTransactionAsync(transactionSpecification);
+                if (previousTransaction.Data is null)
+                {
+                    return new(OperationResult.Succeeded) { Data = true };
+                }
+
+                _ = await transactionService.Value.DecreaseBalanceAsync(new()
+                {
+                    Description = "Delete Contribution",
+                    IdentifierId = previousTransaction.Data.Id,
+                    UserId = previousTransaction.Data.UserId,
+                    Points = previousTransaction.Data.Points,
+                });
+
+                return new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
             {
