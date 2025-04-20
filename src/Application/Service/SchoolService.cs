@@ -162,6 +162,22 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public async Task<ResultData<string?>> GetSchoolNameAsync([NotNull] ISpecification<School> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var name = await uow.GetRepository<School>().GetManyQueryable(specification).Select(t => t.Name).FirstOrDefaultAsync();
+
+                return new(OperationResult.Succeeded) { Data = name };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
+
         public async Task<ResultData<long>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto, bool ignoreNullValues)
         {
             try
@@ -475,27 +491,25 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<long>> ManageSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto)
+        public async Task<ResultData<long>> CreateSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto)
         {
             try
             {
-                if (!requestDto.Id.HasValue)
-                {
-                    var commentSpecification = new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId)
+                var commentSpecification = new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId)
                         .And(new CreationUserIdEqualsSpecification<SchoolComment, ApplicationUser, int>(requestDto.CreationUserId));
-                    var commentExist = await CommentExistAsync(commentSpecification);
-                    if (commentExist.Data)
-                    {
-                        return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
-                    }
+                var commentExist = await CommentExistAsync(commentSpecification);
+                if (commentExist.Data)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
+                }
 
-                    var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
-                        .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId));
-                    var contributionExist = await contributionService.Value.ExistContributionAsync(contributionSpecification);
-                    if (contributionExist.Data)
-                    {
-                        return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
-                    }
+                var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
+                    .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
+                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft));
+                var contributionExist = await contributionService.Value.ExistContributionAsync(contributionSpecification);
+                if (contributionExist.Data)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "there is a pending Comment", }] };
                 }
 
                 SchoolCommentContributionDto dto = new()
@@ -560,16 +574,13 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var result = await contributionService.Value.ConfirmContributionAsync(new()
-                {
-                    ContributionId = requestDto.ContributionId,
-                    CategoryType = CategoryType.SchoolComment,
-                });
+                var contributionSpecification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId)
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolComment));
+                var result = await contributionService.Value.ConfirmContributionAsync(contributionSpecification);
                 if (result.Data is null)
                 {
                     return new(OperationResult.Failed) { Errors = result.Errors };
                 }
-
 
                 var dto = JsonSerializer.Deserialize<SchoolCommentContributionDto>(result.Data.Data!)!;
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
@@ -787,11 +798,9 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var result = await contributionService.Value.ConfirmContributionAsync(new()
-                {
-                    ContributionId = requestDto.ContributionId,
-                    CategoryType = CategoryType.SchoolImage,
-                });
+                var contributionSpecification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId)
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage));
+                var result = await contributionService.Value.ConfirmContributionAsync(contributionSpecification);
                 if (result.Data is null)
                 {
                     return new(OperationResult.Failed) { Errors = result.Errors };
@@ -975,12 +984,10 @@ namespace GamaEdtech.Application.Service
                     return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
                 }
 
-                var contributionResult = await contributionService.Value.ConfirmContributionAsync(new()
-                {
-                    ContributionId = requestDto.ContributionId,
-                    CategoryType = CategoryType.School,
-                    IdentifierId = requestDto.SchoolId,
-                });
+                var contributionSpecification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId)
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School))
+                    .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId));
+                var contributionResult = await contributionService.Value.ConfirmContributionAsync(contributionSpecification);
                 if (contributionResult.Data is null)
                 {
                     return new(OperationResult.Failed) { Errors = contributionResult.Errors };
