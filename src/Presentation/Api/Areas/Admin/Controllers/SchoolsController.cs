@@ -153,15 +153,15 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Comments
 
-        [HttpGet("comments/contributions/pending"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
+        [HttpGet("comments/contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([FromRoute] Status status, [NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
         {
             try
             {
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
+                    Specification = new StatusEqualsSpecification<Contribution>(status)
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolComment)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>(result.Errors)
@@ -289,15 +289,15 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Images
 
-        [HttpGet("images/contributions/pending"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
+        [HttpGet("images/contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([FromRoute] Status status, [NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
         {
             try
             {
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
+                    Specification = new StatusEqualsSpecification<Contribution>(status)
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>(result.Errors)
@@ -462,15 +462,15 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Contributions
 
-        [HttpGet("contributions/pending"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([NotNull, FromQuery] SchoolContributionListRequestViewModel request)
+        [HttpGet("contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([FromRoute] Status status, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
         {
             try
             {
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(Status.Draft)
+                    Specification = new StatusEqualsSpecification<Contribution>(status)
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School)),
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
