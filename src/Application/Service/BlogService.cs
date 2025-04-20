@@ -25,6 +25,7 @@ namespace GamaEdtech.Application.Service
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 
@@ -32,7 +33,7 @@ namespace GamaEdtech.Application.Service
 
     public class BlogService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<BlogService>> localizer
         , Lazy<ILogger<BlogService>> logger, Lazy<IReactionService> reactionService, Lazy<IFileService> fileService, Lazy<IIdentityService> identityService
-        , Lazy<IContributionService> contributionService)
+        , Lazy<IContributionService> contributionService, Lazy<IConfiguration> configuration)
         : LocalizableServiceBase<BlogService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IBlogService
     {
         public async Task<ResultData<ListDataSource<PostsDto>>> GetPostsAsync(ListRequestDto<Post>? requestDto = null)
@@ -172,7 +173,7 @@ namespace GamaEdtech.Application.Service
                 }
 
                 var hasAutoConfirmSchoolComment = await identityService.Value.HasClaimAsync(requestDto.UserId, SystemClaim.AutoConfirmPost);
-                if (hasAutoConfirmSchoolComment.Data)
+                if (hasAutoConfirmSchoolComment.Data || configuration.Value.GetValue<bool>("AutoConfirmPosts"))
                 {
                     _ = await ConfirmPostContributionAsync(new()
                     {
