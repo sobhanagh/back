@@ -153,16 +153,20 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Comments
 
-        [HttpGet("comments/contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([FromRoute] Status status, [NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
+        [HttpGet("comments/contributions"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
         {
             try
             {
+                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolComment);
+                if (request.Status is not null)
+                {
+                    specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
+                }
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(status)
-                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolComment)),
+                    Specification = specification,
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>(result.Errors)
                 {
@@ -174,6 +178,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             CreationUser = t.CreationUser,
                             CreationDate = t.CreationDate,
                             SchoolId = t.IdentifierId.GetValueOrDefault(),
+                            Status = t.Status,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -289,16 +294,20 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Images
 
-        [HttpGet("images/contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([FromRoute] Status status, [NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
+        [HttpGet("images/contributions"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
         {
             try
             {
+                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage);
+                if (request.Status is not null)
+                {
+                    specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
+                }
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(status)
-                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage)),
+                    Specification = specification,
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>(result.Errors)
                 {
@@ -310,6 +319,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             CreationUser = t.CreationUser,
                             CreationDate = t.CreationDate,
                             SchoolId = t.IdentifierId.GetValueOrDefault(),
+                            Status = t.Status,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -462,16 +472,21 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         #region Contributions
 
-        [HttpGet("contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([FromRoute] Status status, [NotNull, FromQuery] SchoolContributionListRequestViewModel request)
+        [HttpGet("contributions"), Produces<ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolContributionListResponseViewModel>>> GetSchoolContributionList([NotNull, FromQuery] SchoolContributionListRequestViewModel request)
         {
             try
             {
+                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School);
+                if (request.Status is not null)
+                {
+                    specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
+                }
+
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(status)
-                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School)),
+                    Specification = specification,
                 });
                 return Ok(new ApiResponse<ListDataSource<SchoolContributionListResponseViewModel>>
                 {
@@ -485,6 +500,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             CreationUser = t.CreationUser,
                             CreationDate = t.CreationDate,
                             IdentifierId = t.IdentifierId,
+                            Status = t.Status,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
