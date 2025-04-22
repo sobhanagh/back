@@ -309,7 +309,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 {
                     PagingDto = request.PagingDto,
                     Specification = specification,
-                });
+                }, true);
 
                 List<SchoolImageContributionListResponseViewModel> lst = [];
                 if (result.Data.List is not null)
