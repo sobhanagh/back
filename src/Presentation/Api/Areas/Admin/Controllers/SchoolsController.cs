@@ -29,7 +29,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     [Route("api/v{version:apiVersion}/[area]/[controller]")]
     [ApiVersion("1.0")]
     [Permission(Roles = [nameof(Role.Admin)])]
-    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService, Lazy<IContributionService> contributionService)
+    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService
+        , Lazy<IContributionService> contributionService, Lazy<IFileService> fileService)
         : ApiControllerBase<SchoolsController>(logger)
     {
         #region Schools
@@ -309,18 +310,31 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     PagingDto = request.PagingDto,
                     Specification = specification,
                 });
+
+                List<SchoolImageContributionListResponseViewModel> lst = [];
+                if (result.Data.List is not null)
+                {
+                    foreach (var item in result.Data.List)
+                    {
+                        var dto = JsonSerializer.Deserialize<SchoolImageContributionDto>(item.Data!);
+                        lst.Add(new SchoolImageContributionListResponseViewModel
+                        {
+                            Id = item.Id,
+                            CreationUser = item.CreationUser,
+                            CreationDate = item.CreationDate,
+                            SchoolId = item.IdentifierId.GetValueOrDefault(),
+                            Status = item.Status,
+                            FileUri = dto is null ? null : fileService.Value.GetFileUri(dto.FileId!, ContainerType.School).Data,
+                            FileType = dto?.FileType,
+                        });
+                    }
+                }
+
                 return Ok(new ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>(result.Errors)
                 {
-                    Data = result.Data.List is null ? new() : new()
+                    Data = new()
                     {
-                        List = result.Data.List.Select(t => new SchoolImageContributionListResponseViewModel
-                        {
-                            Id = t.Id,
-                            CreationUser = t.CreationUser,
-                            CreationDate = t.CreationDate,
-                            SchoolId = t.IdentifierId.GetValueOrDefault(),
-                            Status = t.Status,
-                        }),
+                        List = lst,
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
                 });

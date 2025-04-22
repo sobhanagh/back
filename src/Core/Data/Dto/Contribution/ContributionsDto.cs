@@ -13,5 +13,6 @@ namespace GamaEdtech.Data.Dto.Contribution
         public long? IdentifierId { get; set; }
         public string? CreationUser { get; set; }
         public DateTimeOffset CreationDate { get; set; }
+        public string? Data { get; set; }
     }
 }
