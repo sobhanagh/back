@@ -17,5 +17,10 @@ namespace GamaEdtech.Presentation.ViewModel.School
 
         [JsonConverter(typeof(EnumerationConverter<Status, byte>))]
         public Status Status { get; set; }
+
+        public Uri? FileUri { get; set; }
+
+        [JsonConverter(typeof(EnumerationConverter<FileType, byte>))]
+        public FileType? FileType { get; set; }
     }
 }

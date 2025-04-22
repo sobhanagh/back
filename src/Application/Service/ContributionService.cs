@@ -26,7 +26,7 @@ namespace GamaEdtech.Application.Service
         , Lazy<ILogger<ContributionService>> logger, Lazy<IApplicationSettingsService> applicationSettingsService, Lazy<ITransactionService> transactionService)
         : LocalizableServiceBase<ContributionService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IContributionService
     {
-        public async Task<ResultData<ListDataSource<ContributionsDto>>> GetContributionsAsync(ListRequestDto<Contribution>? requestDto = null)
+        public async Task<ResultData<ListDataSource<ContributionsDto>>> GetContributionsAsync(ListRequestDto<Contribution>? requestDto = null, bool includeData = false)
         {
             try
             {
@@ -41,6 +41,7 @@ namespace GamaEdtech.Application.Service
                     Status = t.Status,
                     CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
                     CreationDate = t.CreationDate,
+                    Data = includeData ? t.Data : null,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
