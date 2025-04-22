@@ -29,16 +29,21 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         , Lazy<IContributionService> contributionService, Lazy<IFileService> fileService)
         : ApiControllerBase<BlogsController>(logger)
     {
-        [HttpGet("contributions/{status:Status}"), Produces<ApiResponse<ListDataSource<PostContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<PostContributionListResponseViewModel>>> GetPendingPostContributionList([FromRoute] Status status, [NotNull, FromQuery] PostContributionListRequestViewModel request)
+        [HttpGet("contributions"), Produces<ApiResponse<ListDataSource<PostContributionListResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<PostContributionListResponseViewModel>>> GetPendingPostContributionList([NotNull, FromQuery] PostContributionListRequestViewModel request)
         {
             try
             {
+                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.Post);
+                if (request.Status is not null)
+                {
+                    specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
+                }
+
                 var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new StatusEqualsSpecification<Contribution>(status)
-                        .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.Post)),
+                    Specification = specification,
                 });
                 return Ok(new ApiResponse<ListDataSource<PostContributionListResponseViewModel>>(result.Errors)
                 {
