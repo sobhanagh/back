@@ -1135,7 +1135,8 @@ namespace GamaEdtech.Application.Service
 
                 foreach (var item in lst.Data.List)
                 {
-                    if (!item.LastModifyDate.HasValue || item.LastModifyDate.Value > DateTimeOffset.UtcNow.AddMonths(-3))
+                    var days = configuration.Value.GetValue<int>("DaysDistanceForRemoveOldRejectedSchoolImages") * -1;
+                    if (!item.LastModifyDate.HasValue || item.LastModifyDate.Value > DateTimeOffset.UtcNow.AddDays(days))
                     {
                         continue;
                     }
