@@ -240,7 +240,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await schoolService.Value.ManageSchoolCommentContributionAsync(new ManageSchoolCommentContributionRequestDto
+                var result = await schoolService.Value.CreateSchoolCommentContributionAsync(new ManageSchoolCommentContributionRequestDto
                 {
                     ArtisticActivitiesRate = request.ArtisticActivitiesRate,
                     BehaviorRate = request.BehaviorRate,
@@ -332,6 +332,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     Data = result.Data is null ? [] : result.Data.Select(t => new SchoolImageInfoViewModel
                     {
+                        Id = t.Id,
                         CreationUser = t.CreationUser,
                         CreationUserId = t.CreationUserId,
                         FileUri = t.FileUri,
@@ -394,16 +395,27 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School)),
                 });
+
+                List<SchoolContributionInfoListResponseViewModel> lst = [];
+                if (result.Data.List is not null)
+                {
+                    foreach (var item in result.Data.List)
+                    {
+                        lst.Add(new()
+                        {
+                            Id = item.Id,
+                            Comment = item.Comment,
+                            Status = item.Status,
+                            SchoolName = (await schoolService.Value.GetSchoolNameAsync(new IdEqualsSpecification<School, long>(item.IdentifierId.GetValueOrDefault()))).Data,
+                        });
+                    }
+                }
+
                 return Ok<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new(result.Errors)
                 {
                     Data = result.Data.List is null ? new() : new()
                     {
-                        List = result.Data.List.Select(t => new SchoolContributionInfoListResponseViewModel
-                        {
-                            Id = t.Id,
-                            Comment = t.Comment,
-                            Status = t.Status,
-                        }),
+                        List = lst,
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
                 });
@@ -460,7 +472,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     UserId = userId,
                     SchoolId = schoolId,
-                    Status = Status.Draft,
                     Data = dto,
                 });
 
@@ -488,7 +499,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     Id = contributionId,
                     SchoolId = schoolId,
-                    Status = Status.Draft,
                     Data = dto,
                 });
 

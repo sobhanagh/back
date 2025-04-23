@@ -16,6 +16,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<ListDataSource<SchoolsDto>>> GetSchoolsAsync(ListRequestDto<School>? requestDto = null);
         Task<ResultData<ListDataSource<SchoolInfoDto>>> GetSchoolsListAsync(ListRequestDto<School>? requestDto = null, Point? point = null);
         Task<ResultData<SchoolDto>> GetSchoolAsync([NotNull] ISpecification<School> specification);
+        Task<ResultData<string?>> GetSchoolNameAsync([NotNull] ISpecification<School> specification);
         Task<ResultData<long>> ManageSchoolAsync([NotNull] ManageSchoolRequestDto requestDto, bool ignoreNullValues);
         Task<ResultData<bool>> RemoveSchoolAsync([NotNull] ISpecification<School> specification);
         Task<ResultData<bool>> ExistsSchoolAsync([NotNull] ISpecification<School> specification);
@@ -24,7 +25,7 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<ListDataSource<SchoolCommentDto>>> GetSchoolCommentsAsync(ListRequestDto<SchoolComment>? requestDto = null);
         Task<ResultData<bool>> LikeSchoolCommentAsync([NotNull] SchoolCommentReactionRequestDto requestDto);
         Task<ResultData<bool>> DislikeSchoolCommentAsync([NotNull] SchoolCommentReactionRequestDto requestDto);
-        Task<ResultData<long>> ManageSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto);
+        Task<ResultData<long>> CreateSchoolCommentContributionAsync([NotNull] ManageSchoolCommentContributionRequestDto requestDto);
         Task<ResultData<bool>> ConfirmSchoolCommentContributionAsync([NotNull] ConfirmSchoolCommentContributionRequestDto requestDto);
         Task<ResultData<bool>> CommentExistAsync([NotNull] ISpecification<SchoolComment> specification);
 

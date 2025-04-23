@@ -26,7 +26,7 @@ namespace GamaEdtech.Application.Service
         , Lazy<ILogger<ContributionService>> logger, Lazy<IApplicationSettingsService> applicationSettingsService, Lazy<ITransactionService> transactionService)
         : LocalizableServiceBase<ContributionService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IContributionService
     {
-        public async Task<ResultData<ListDataSource<ContributionsDto>>> GetContributionsAsync(ListRequestDto<Contribution>? requestDto = null)
+        public async Task<ResultData<ListDataSource<ContributionsDto>>> GetContributionsAsync(ListRequestDto<Contribution>? requestDto = null, bool includeData = false)
         {
             try
             {
@@ -41,6 +41,7 @@ namespace GamaEdtech.Application.Service
                     Status = t.Status,
                     CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
                     CreationDate = t.CreationDate,
+                    Data = includeData ? t.Data : null,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
@@ -146,13 +147,13 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<ContributionDto>> ConfirmContributionAsync([NotNull] ConfirmContributionRequestDto requestDto)
+        public async Task<ResultData<ContributionDto>> ConfirmContributionAsync([NotNull] ISpecification<Contribution> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var repository = uow.GetRepository<Contribution>();
-                var contribution = await repository.GetAsync(requestDto.ContributionId);
+                var contribution = await repository.GetAsync(specification);
                 if (contribution is null)
                 {
                     return new(OperationResult.NotFound)
@@ -180,12 +181,16 @@ namespace GamaEdtech.Application.Service
                 {
                     points = settings.Data!.SchoolCommentContributionPoints;
                 }
+                else if (contribution.CategoryType == CategoryType.Post)
+                {
+                    points = settings.Data!.PostContributionPoints;
+                }
 
                 _ = await transactionService.Value.IncreaseBalanceAsync(new()
                 {
                     Description = "Successful Contribution",
                     Points = points,
-                    IdentifierId = requestDto.ContributionId,
+                    IdentifierId = contribution.Id,
                     UserId = contribution.CreationUserId,
                 });
 
@@ -266,6 +271,24 @@ namespace GamaEdtech.Application.Service
                 });
 
                 return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<bool>> IsCreatorOfContributionAsync(long contributionId, int userId)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Contribution>();
+
+                var exists = await repository.AnyAsync(t => t.Id == contributionId && t.CreationUserId == userId);
+
+                return new(OperationResult.Succeeded) { Data = exists };
             }
             catch (Exception exc)
             {

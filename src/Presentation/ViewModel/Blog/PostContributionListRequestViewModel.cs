@@ -1,10 +1,10 @@
-namespace GamaEdtech.Presentation.ViewModel.School
+namespace GamaEdtech.Presentation.ViewModel.Blog
 {
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAnnotation;
     using GamaEdtech.Domain.Enumeration;
 
-    public sealed class SchoolCommentContributionListRequestViewModel
+    public sealed class PostContributionListRequestViewModel
     {
         [Display]
         public PagingDto? PagingDto { get; set; } = new() { PageFilter = new(), };
