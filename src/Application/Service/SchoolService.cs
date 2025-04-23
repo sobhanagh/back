@@ -162,12 +162,12 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<string?>> GetSchoolNameAsync([NotNull] ISpecification<School> specification)
+        public async Task<ResultData<IReadOnlyList<KeyValuePair<long, string?>>>> GetSchoolsNameAsync([NotNull] ISpecification<School> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var name = await uow.GetRepository<School>().GetManyQueryable(specification).Select(t => t.Name).FirstOrDefaultAsync();
+                var name = await uow.GetRepository<School>().GetManyQueryable(specification).Select(t => new KeyValuePair<long, string?>(t.Id, t.Name)).ToListAsync();
 
                 return new(OperationResult.Succeeded) { Data = name };
             }
