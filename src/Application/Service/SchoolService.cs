@@ -1037,6 +1037,43 @@ namespace GamaEdtech.Application.Service
 
         #endregion
 
+        #region Issues
+
+        public async Task<ResultData<bool>> ConfirmSchoolIssuesContributionAsync([NotNull] ConfirmSchoolIssuesContributionRequestDto requestDto)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId)
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolIssues));
+                var result = await contributionService.Value.ConfirmContributionAsync(specification);
+                if (result.Data is null)
+                {
+                    return new(OperationResult.Failed) { Errors = result.Errors };
+                }
+
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<School>();
+                var school = await repository.GetAsync(result.Data.IdentifierId.GetValueOrDefault());
+                if (school is null)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+                }
+
+                school.IsDeleted = true;
+                _ = repository.Update(school);
+                _ = await uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        #endregion
+
         #region Job
 
         public async Task<ResultData<bool>> UpdateSchoolScoreAsync(long? schoolId = null)

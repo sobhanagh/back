@@ -683,13 +683,14 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         {
             try
             {
-                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
-                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolIssues));
-                var result = await contributionService.Value.ConfirmContributionAsync(specification);
+                var result = await schoolService.Value.ConfirmSchoolIssuesContributionAsync(new()
+                {
+                    ContributionId = contributionId
+                });
 
                 return Ok(new ApiResponse<bool>(result.Errors)
                 {
-                    Data = result.Data is not null,
+                    Data = result.Data,
                 });
             }
             catch (Exception exc)

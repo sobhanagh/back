@@ -188,6 +188,8 @@ namespace GamaEdtech.Application.Service
                         Comment = contribution.Comment,
                         CreationUserId = contribution.CreationUserId,
                         CreationDate = contribution.CreationDate,
+                        CategoryType = contribution.CategoryType,
+                        IdentifierId = contribution.IdentifierId,
                     }
                 };
             }

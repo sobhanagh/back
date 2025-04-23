@@ -16,7 +16,7 @@ namespace GamaEdtech.Domain.Entity
     using NetTopologySuite.Geometries;
 
     [Table(nameof(School))]
-    public class School : VersionableEntity<ApplicationUser, int, int?>, IEntity<School, long>
+    public class School : VersionableEntity<ApplicationUser, int, int?>, IEntity<School, long>, IDeletable
     {
         [System.ComponentModel.DataAnnotations.Key]
         [Column(nameof(Id), DataType.Long)]
@@ -91,6 +91,9 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(Score), TypeName = "float")]
         public double? Score { get; set; }
 
+        [Column(nameof(IsDeleted), DataType.Boolean)]
+        public bool IsDeleted { get; set; }
+
         public virtual ICollection<SchoolComment>? SchoolComments { get; set; }
         public virtual ICollection<SchoolTag>? SchoolTags { get; set; }
         public virtual ICollection<SchoolImage>? SchoolImages { get; set; }
@@ -101,6 +104,8 @@ namespace GamaEdtech.Domain.Entity
             _ = builder.HasOne(t => t.Country).WithMany().HasForeignKey(t => t.CountryId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.State).WithMany().HasForeignKey(t => t.StateId).OnDelete(DeleteBehavior.NoAction);
             _ = builder.HasOne(t => t.City).WithMany().HasForeignKey(t => t.CityId).OnDelete(DeleteBehavior.NoAction);
+
+            _ = builder.HasQueryFilter(t => !t.IsDeleted).HasIndex(t => t.IsDeleted);
         }
     }
 }

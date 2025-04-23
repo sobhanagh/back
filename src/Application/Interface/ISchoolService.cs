@@ -39,6 +39,8 @@ namespace GamaEdtech.Application.Interface
         Task<ResultData<long>> ManageSchoolContributionAsync([NotNull] ManageSchoolContributionRequestDto requestDto);
         Task<ResultData<bool>> ConfirmSchoolContributionAsync([NotNull] ConfirmSchoolContributionRequestDto requestDto);
 
+        Task<ResultData<bool>> ConfirmSchoolIssuesContributionAsync([NotNull] ConfirmSchoolIssuesContributionRequestDto requestDto);
+
         Task<ResultData<bool>> UpdateSchoolScoreAsync(long? schoolId = null);
         Task<ResultData<bool>> UpdateSchoolCommentReactionsAsync(long? schoolCommentId = null);
         Task<ResultData<bool>> RemoveOldRejectedSchoolImagesAsync();
