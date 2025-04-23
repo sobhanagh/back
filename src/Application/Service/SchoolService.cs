@@ -670,6 +670,7 @@ namespace GamaEdtech.Application.Service
                 var result = await uow.GetRepository<SchoolImage>().GetManyQueryable(specification)
                     .Select(t => new
                     {
+                        t.Id,
                         t.FileId,
                         t.CreationUserId,
                         CreationUser = t.CreationUser.FirstName + " " + t.CreationUser.LastName,
@@ -683,6 +684,7 @@ namespace GamaEdtech.Application.Service
                     Data = result.Select(t =>
                         new SchoolImageInfoDto
                         {
+                            Id = t.Id,
                             FileUri = fileService.Value.GetFileUri(t.FileId!, ContainerType.School).Data,
                             CreationUserId = t.CreationUserId,
                             CreationUser = t.CreationUser,
