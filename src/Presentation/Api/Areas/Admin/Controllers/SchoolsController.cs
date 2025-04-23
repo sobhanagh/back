@@ -7,6 +7,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
+    using GamaEdtech.Common.Core.Extensions.Collections.Generic;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
@@ -599,6 +600,108 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
         [HttpPatch("contributions/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult<bool>> RejectSchoolContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
+        {
+            try
+            {
+                var result = await contributionService.Value.RejectContributionAsync(new RejectContributionRequestDto
+                {
+                    Id = contributionId,
+                    Comment = request.Comment,
+                });
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool>(new Error { Message = exc.Message }));
+            }
+        }
+
+        #endregion
+
+        #region Issues
+
+        [HttpGet("issues/contributions"), Produces<ApiResponse<ListDataSource<SchoolIssuesContributionReviewResponseViewModel>>>()]
+        public async Task<IActionResult<ListDataSource<SchoolIssuesContributionReviewResponseViewModel>>> GetSchoolIssuesContributionList([NotNull, FromQuery] SchoolIssuesContributionListRequestViewModel request)
+        {
+            try
+            {
+                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School);
+                if (request.Status is not null)
+                {
+                    specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
+                }
+
+                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
+                {
+                    PagingDto = request.PagingDto,
+                    Specification = specification,
+                }, true);
+                if (result.Data.List is null)
+                {
+                    return Ok<ListDataSource<SchoolIssuesContributionReviewResponseViewModel>>(new(result.Errors)
+                    {
+                        Data = new()
+                    });
+                }
+
+                var schoolsName = await schoolService.Value.GetSchoolsNameAsync(new IdContainsSpecification<School, long>(result.Data.List.Select(t => t.IdentifierId.GetValueOrDefault())));
+
+                return Ok(new ApiResponse<ListDataSource<SchoolIssuesContributionReviewResponseViewModel>>
+                {
+                    Errors = result.Errors,
+                    Data = new()
+                    {
+                        List = result.Data.List.Select(t => new SchoolIssuesContributionReviewResponseViewModel
+                        {
+                            Id = t.Id,
+                            CreationUser = t.CreationUser,
+                            CreationDate = t.CreationDate,
+                            SchoolId = t.IdentifierId,
+                            SchoolName = schoolsName.Data?.Find(s => s.Key == t.IdentifierId).Value,
+                            Status = t.Status,
+                            Description = t.Data,
+                        }),
+                        TotalRecordsCount = result.Data.TotalRecordsCount,
+                    }
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<ListDataSource<SchoolIssuesContributionReviewResponseViewModel>>(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpPatch("issues/contributions/{contributionId:long}/confirm"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult<bool>> ConfirmSchoolIssuesContribution([FromRoute] long contributionId)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(contributionId)
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolIssues));
+                var result = await contributionService.Value.ConfirmContributionAsync(specification);
+
+                return Ok(new ApiResponse<bool>(result.Errors)
+                {
+                    Data = result.Data is not null,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
+        [HttpPatch("issues/contributions/{contributionId:long}/reject"), Produces<ApiResponse<bool>>()]
+        public async Task<IActionResult<bool>> RejectSchoolIssuesContribution([FromRoute] long contributionId, [NotNull, FromBody] RejectContributionRequestViewModel request)
         {
             try
             {

@@ -403,7 +403,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     });
                 }
 
-                var schoolName = await schoolService.Value.GetSchoolsNameAsync(new IdEqualsSpecification<School, long>(schoolId));
+                var schoolName = (await schoolService.Value.GetSchoolsNameAsync(new IdEqualsSpecification<School, long>(schoolId)))
+                    .Data?.ElementAtOrDefault(0).Value;
 
                 return Ok<ListDataSource<SchoolContributionInfoListResponseViewModel>>(new(result.Errors)
                 {
@@ -414,7 +415,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Id = t.Id,
                             Comment = t.Comment,
                             Status = t.Status,
-                            SchoolName = schoolName.Data?.ElementAtOrDefault(0).Value,
+                            SchoolName = schoolName,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -541,7 +542,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     });
                 }
 
-                var schoolName = await schoolService.Value.GetSchoolsNameAsync(new IdEqualsSpecification<School, long>(schoolId));
+                var schoolName = (await schoolService.Value.GetSchoolsNameAsync(new IdEqualsSpecification<School, long>(schoolId)))
+                    .Data?.ElementAtOrDefault(0).Value;
 
                 return Ok<ListDataSource<SchoolIssuesContributionResponseViewModel>>(new(result.Errors)
                 {
@@ -552,8 +554,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Id = t.Id,
                             Comment = t.Comment,
                             Status = t.Status,
-                            SchoolName = schoolName.Data?.ElementAtOrDefault(0).Value,
-                            Data = t.Data,
+                            SchoolName = schoolName,
+                            Description = t.Data,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -575,7 +577,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await contributionService.Value.ManageContributionAsync(new()
                 {
-                    Data = request.Data,
+                    Data = request.Description,
                     CategoryType = CategoryType.SchoolIssues,
                     IdentifierId = schoolId,
                     Status = Status.Draft,
@@ -603,7 +605,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await contributionService.Value.ManageContributionAsync(new()
                 {
                     Id = contributionId,
-                    Data = request.Data,
+                    Data = request.Description,
                     CategoryType = CategoryType.SchoolIssues,
                     IdentifierId = schoolId,
                     Status = Status.Draft,
