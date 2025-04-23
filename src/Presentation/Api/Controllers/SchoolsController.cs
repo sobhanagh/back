@@ -332,6 +332,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     Data = result.Data is null ? [] : result.Data.Select(t => new SchoolImageInfoViewModel
                     {
+                        Id = t.Id,
                         CreationUser = t.CreationUser,
                         CreationUserId = t.CreationUserId,
                         FileUri = t.FileUri,
