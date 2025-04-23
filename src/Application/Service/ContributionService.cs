@@ -41,6 +41,7 @@ namespace GamaEdtech.Application.Service
                     Status = t.Status,
                     CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
                     CreationDate = t.CreationDate,
+                    LastModifyDate = t.LastModifyDate,
                     Data = includeData ? t.Data : null,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
