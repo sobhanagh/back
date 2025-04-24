@@ -14,5 +14,6 @@ namespace GamaEdtech.Data.Dto.Contribution
         public string? CreationUser { get; set; }
         public DateTimeOffset CreationDate { get; set; }
         public string? Data { get; set; }
+        public DateTimeOffset? LastModifyDate { get; set; }
     }
 }

@@ -41,6 +41,7 @@ namespace GamaEdtech.Application.Service
                     Status = t.Status,
                     CreationUser = t.CreationUser!.FirstName + " " + t.CreationUser.LastName,
                     CreationDate = t.CreationDate,
+                    LastModifyDate = t.LastModifyDate,
                     Data = includeData ? t.Data : null,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
@@ -166,33 +167,17 @@ namespace GamaEdtech.Application.Service
                 _ = repository.Update(contribution);
                 _ = await uow.SaveChangesAsync();
 
-                var settings = await applicationSettingsService.Value.GetApplicationSettingsAsync();
-                var points = 0;
-
-                if (contribution.CategoryType == CategoryType.School)
+                var points = await applicationSettingsService.Value.GetSettingAsync<int>(contribution.CategoryType.ApplicationSettingsName);
+                if (points.Data > 0)
                 {
-                    points = settings.Data!.SchoolContributionPoints;
+                    _ = await transactionService.Value.IncreaseBalanceAsync(new()
+                    {
+                        Description = "Successful Contribution",
+                        Points = points.Data,
+                        IdentifierId = contribution.Id,
+                        UserId = contribution.CreationUserId,
+                    });
                 }
-                else if (contribution.CategoryType == CategoryType.SchoolImage)
-                {
-                    points = settings.Data!.SchoolImageContributionPoints;
-                }
-                else if (contribution.CategoryType == CategoryType.SchoolComment)
-                {
-                    points = settings.Data!.SchoolCommentContributionPoints;
-                }
-                else if (contribution.CategoryType == CategoryType.Post)
-                {
-                    points = settings.Data!.PostContributionPoints;
-                }
-
-                _ = await transactionService.Value.IncreaseBalanceAsync(new()
-                {
-                    Description = "Successful Contribution",
-                    Points = points,
-                    IdentifierId = contribution.Id,
-                    UserId = contribution.CreationUserId,
-                });
 
                 return new(OperationResult.Succeeded)
                 {
@@ -203,6 +188,8 @@ namespace GamaEdtech.Application.Service
                         Comment = contribution.Comment,
                         CreationUserId = contribution.CreationUserId,
                         CreationDate = contribution.CreationDate,
+                        CategoryType = contribution.CategoryType,
+                        IdentifierId = contribution.IdentifierId,
                     }
                 };
             }

@@ -162,12 +162,12 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<string?>> GetSchoolNameAsync([NotNull] ISpecification<School> specification)
+        public async Task<ResultData<IReadOnlyList<KeyValuePair<long, string?>>>> GetSchoolsNameAsync([NotNull] ISpecification<School> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var name = await uow.GetRepository<School>().GetManyQueryable(specification).Select(t => t.Name).FirstOrDefaultAsync();
+                var name = await uow.GetRepository<School>().GetManyQueryable(specification).Select(t => new KeyValuePair<long, string?>(t.Id, t.Name)).ToListAsync();
 
                 return new(OperationResult.Succeeded) { Data = name };
             }
@@ -852,7 +852,7 @@ namespace GamaEdtech.Application.Service
                 repository.Remove(schoolImage);
                 _ = await uow.SaveChangesAsync();
 
-                _ = fileService.Value.RemoveFileAsync(new()
+                _ = await fileService.Value.RemoveFileAsync(new()
                 {
                     FileId = schoolImage.FileId!,
                     ContainerType = ContainerType.School
@@ -1037,6 +1037,43 @@ namespace GamaEdtech.Application.Service
 
         #endregion
 
+        #region Issues
+
+        public async Task<ResultData<bool>> ConfirmSchoolIssuesContributionAsync([NotNull] ConfirmSchoolIssuesContributionRequestDto requestDto)
+        {
+            try
+            {
+                var specification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId)
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolIssues));
+                var result = await contributionService.Value.ConfirmContributionAsync(specification);
+                if (result.Data is null)
+                {
+                    return new(OperationResult.Failed) { Errors = result.Errors };
+                }
+
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<School>();
+                var school = await repository.GetAsync(result.Data.IdentifierId.GetValueOrDefault());
+                if (school is null)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+                }
+
+                school.IsDeleted = true;
+                _ = repository.Update(school);
+                _ = await uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        #endregion
+
         #region Job
 
         public async Task<ResultData<bool>> UpdateSchoolScoreAsync(long? schoolId = null)
@@ -1070,6 +1107,64 @@ namespace GamaEdtech.Application.Service
                     ,DislikeCount=(SELECT COUNT(1) FROM Reaction r WHERE r.CategoryType={CategoryType.SchoolComment.Value} AND r.IdentifierId=c.Id AND r.IsLike=0)
                 FROM SchoolComments c {where}";
                 _ = await uow.ExecuteSqlCommandAsync(query);
+
+                return new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
+        public async Task<ResultData<bool>> RemoveOldRejectedSchoolImagesAsync()
+        {
+            try
+            {
+                var lst = await contributionService.Value.GetContributionsAsync(new()
+                {
+                    PagingDto = new() { PageFilter = new() { ReturnTotalRecordsCount = false, Size = 1000 } },
+                    Specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage)
+                        .And(new StatusEqualsSpecification<Contribution>(Status.Rejected)),
+                }, true);
+
+                if (lst.Data.List is null)
+                {
+                    return new(OperationResult.Succeeded) { Data = true };
+                }
+
+                foreach (var item in lst.Data.List)
+                {
+                    var days = configuration.Value.GetValue<int>("DaysDistanceForRemoveOldRejectedSchoolImages") * -1;
+                    if (!item.LastModifyDate.HasValue || item.LastModifyDate.Value > DateTimeOffset.UtcNow.AddDays(days))
+                    {
+                        continue;
+                    }
+
+                    var dto = JsonSerializer.Deserialize<SchoolImageContributionDto>(item.Data!);
+                    if (dto is null)
+                    {
+                        continue;
+                    }
+
+                    var result = await fileService.Value.RemoveFileAsync(new()
+                    {
+                        FileId = dto.FileId!,
+                        ContainerType = ContainerType.School,
+                    });
+                    if (result.Data)
+                    {
+                        _ = await contributionService.Value.ManageContributionAsync(new()
+                        {
+                            CategoryType = item.CategoryType!,
+                            Id = item.Id,
+                            Status = Status.Deleted,
+                            IdentifierId = item.IdentifierId,
+                            Data = item.Data,
+                            Comment = item.Comment,
+                        });
+                    }
+                }
 
                 return new(OperationResult.Succeeded) { Data = true };
             }
