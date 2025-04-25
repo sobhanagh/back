@@ -75,5 +75,36 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 return Ok<int>(new() { Errors = [new() { Message = exc.Message }] });
             }
         }
+
+        [HttpGet("statistics"), Produces<ApiResponse<IEnumerable<TransactionStatisticsResponseViewModel>>>()]
+        public async Task<IActionResult<IEnumerable<TransactionStatisticsResponseViewModel>>> GetStatistics([NotNull, FromQuery] TransactionStatisticsRequestViewModel request)
+        {
+            try
+            {
+                var result = await transactionService.Value.GetStatisticsAsync(new()
+                {
+                    UserId = User.UserId(),
+                    EndDate = request.EndDate.HasValue ? new DateTimeOffset(request.EndDate.Value) : null,
+                    StartDate = request.StartDate.HasValue ? new DateTimeOffset(request.StartDate.Value) : null,
+                    Period = request.Period,
+                });
+
+                return Ok<IEnumerable<TransactionStatisticsResponseViewModel>>(new(result.Errors)
+                {
+                    Data = result.Data?.Select(t => new TransactionStatisticsResponseViewModel
+                    {
+                        Name = t.Name,
+                        Value = t.Value,
+                        IsDebit = t.IsDebit,
+                    }),
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<IEnumerable<TransactionStatisticsResponseViewModel>>(new() { Errors = [new() { Message = exc.Message }] });
+            }
+        }
     }
 }
