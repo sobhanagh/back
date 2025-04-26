@@ -2,6 +2,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Net.Http;
 
     using Asp.Versioning;
 
@@ -28,7 +29,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    public class IdentitiesController(Lazy<ILogger<IdentitiesController>> logger, Lazy<IIdentityService> identityService, UserManager<ApplicationUser> userManager) : ApiControllerBase<IdentitiesController>(logger)
+    public class IdentitiesController(Lazy<ILogger<IdentitiesController>> logger, Lazy<IIdentityService> identityService
+        , Lazy<UserManager<ApplicationUser>> userManager, Lazy<IHttpClientFactory> httpClientFactory) : ApiControllerBase<IdentitiesController>(logger)
     {
         [HttpPost("login"), Produces(typeof(ApiResponse<AuthenticationResponseViewModel>))]
         [AllowAnonymous]
@@ -172,6 +174,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
+                const string userInfoEndpoint = "https://core.gamatrain.com/api/v1/users/info";
                 const string endpoint = "https://core.gamatrain.com/";
                 var data = await new JsonWebTokenHandler().ValidateTokenAsync(request.Token, new TokenValidationParameters
                 {
@@ -189,9 +192,14 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     return Ok<GenerateTokenResponseViewModel>(new(new Error { Message = "Invalid Token" }));
                 }
 
+                var client = httpClientFactory.Value.CreateHttpClient();
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", request.Token);
+                var response = await client.GetFromJsonAsync<>(userInfoEndpoint);
+                var result = await response.Content.ReadAsStringAsync();
+
                 _ = data.Claims.TryGetValue("identity", out var email);
 
-                var user = await userManager.FindByEmailAsync(email?.ToString()!);
+                var user = await userManager.Value.FindByEmailAsync(email?.ToString()!);
                 if (user is null)
                 {
                     return Ok<GenerateTokenResponseViewModel>(new(new Error { Message = "Invalid Token" }));
