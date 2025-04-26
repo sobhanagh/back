@@ -94,8 +94,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Data = result.Data?.Select(t => new TransactionStatisticsResponseViewModel
                     {
                         Name = t.Name,
-                        Value = t.Value,
-                        IsDebit = t.IsDebit,
+                        DebitValue = t.DebitValue,
+                        CreditValue = t.CreditValue,
                     }),
                 });
             }

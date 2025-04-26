@@ -153,14 +153,8 @@ GROUP BY IsDebit, DATEPART(weekday, CreationDate)";
 
                         result.Add(new()
                         {
-                            Value = debitValue.GetValueOrDefault(),
-                            IsDebit = true,
-                            Name = ((System.DayOfWeek)i).ToString(),
-                        });
-                        result.Add(new()
-                        {
-                            Value = creditValue.GetValueOrDefault(),
-                            IsDebit = false,
+                            DebitValue = debitValue.GetValueOrDefault(),
+                            CreditValue = creditValue.GetValueOrDefault(),
                             Name = ((System.DayOfWeek)i).ToString(),
                         });
                     }
@@ -187,14 +181,8 @@ GROUP BY IsDebit, DATEPART(weekday, CreationDate)";
 
                         result.Add(new()
                         {
-                            Value = debitTransaction?.Value ?? 0,
-                            IsDebit = true,
-                            Name = monthNames[i],
-                        });
-                        result.Add(new()
-                        {
-                            Value = creditTransaction?.Value ?? 0,
-                            IsDebit = false,
+                            DebitValue = debitTransaction?.Value ?? 0,
+                            CreditValue = creditTransaction?.Value ?? 0,
                             Name = monthNames[i],
                         });
                     }
