@@ -3,6 +3,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.Http;
+    using System.Text.Json.Serialization;
 
     using Asp.Versioning;
 
@@ -169,6 +170,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// this is temporary, must delete
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("tokens/old"), Produces(typeof(ApiResponse<GenerateTokenResponseViewModel>))]
         public async Task<IActionResult<GenerateTokenResponseViewModel>> GenerateTokenWithOld([NotNull, FromBody] GenerateTokenWithOldRequestViewModel request)
         {
@@ -192,10 +198,15 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     return Ok<GenerateTokenResponseViewModel>(new(new Error { Message = "Invalid Token" }));
                 }
 
+#pragma warning disable CA2000 // Dispose objects before losing scope
                 var client = httpClientFactory.Value.CreateHttpClient();
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", request.Token);
-                var response = await client.GetFromJsonAsync<>(userInfoEndpoint);
-                var result = await response.Content.ReadAsStringAsync();
+                var response = await client.GetFromJsonAsync<ReponseDto>(userInfoEndpoint);
+                if (response?.Data is null)
+                {
+                    return Ok<GenerateTokenResponseViewModel>(new(new Error { Message = "Invalid Token" }));
+                }
 
                 _ = data.Claims.TryGetValue("identity", out var email);
 
@@ -204,6 +215,16 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     return Ok<GenerateTokenResponseViewModel>(new(new Error { Message = "Invalid Token" }));
                 }
+
+                user.FirstName = response.Data.FirstName;
+                user.LastName = response.Data.LastName;
+                user.PhoneNumber = response.Data.Phone;
+                if (!string.IsNullOrEmpty(response.Data.Avatar))
+                {
+                    var avatar = await client.GetByteArrayAsync(response.Data.Avatar);
+                    user.Avatar = $"data:image/{Path.GetExtension(response.Data.Avatar).Trim('.')};base64,{Convert.ToBase64String(avatar)}";
+                }
+                _ = await userManager.Value.UpdateAsync(user);
 
                 var result = await identityService.Value.GenerateUserTokenAsync(new GenerateUserTokenRequestDto
                 {
@@ -354,5 +375,32 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 return Ok<Void>(new(new Error { Message = exc.Message }));
             }
         }
+
+#pragma warning disable CA1034 // Nested types should not be visible
+        //this is temporary, must delete
+        public class ReponseDto
+        {
+            [JsonPropertyName("status")]
+            public int Status { get; set; }
+
+            [JsonPropertyName("data")]
+            public DataDto Data { get; set; }
+
+            public class DataDto
+            {
+                [JsonPropertyName("first_name")]
+                public string FirstName { get; set; }
+
+                [JsonPropertyName("last_name")]
+                public string LastName { get; set; }
+
+                [JsonPropertyName("avatar")]
+                public string Avatar { get; set; }
+
+                [JsonPropertyName("phone")]
+                public string Phone { get; set; }
+            }
+        }
+#pragma warning restore CA1034 // Nested types should not be visible
     }
 }
