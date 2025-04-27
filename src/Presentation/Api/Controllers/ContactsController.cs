@@ -4,12 +4,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     using Asp.Versioning;
 
+    using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.Data.Enumeration;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Infrastructure.Interface;
-    using GamaEdtech.Presentation.ViewModel.Blog;
     using GamaEdtech.Presentation.ViewModel.Contact;
 
     using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         : ApiControllerBase<ContactsController>(logger)
     {
         [HttpPost, Produces<ApiResponse<ManageContactResponseViewModel>>()]
-        public async Task<IActionResult<ManageContactResponseViewModel>> CreateContact([NotNull, FromBody] ManageContactRequestViewModel request)
+        public async Task<IActionResult<ManageContactResponseViewModel>> CreateContact([NotNull, FromBody] CreateContactRequestViewModel request)
         {
             try
             {
@@ -34,23 +34,14 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
                 var result = await contactService.Value.CreateContactAsync(new()
                 {
-
+                    Body = request.Body,
+                    Email = request.Email,
+                    FullName = request.FullName,
+                    Subject = request.Subject,
                 });
                 return Ok<ManageContactResponseViewModel>(new(result.Errors)
                 {
-                    Data = result.Data.List is null ? new() : new()
-                    {
-                        List = result.Data.List.Select(t => new PostsResponseViewModel
-                        {
-                            Id = t.Id,
-                            Title = t.Title,
-                            Summary = t.Summary,
-                            LikeCount = t.LikeCount,
-                            DislikeCount = t.DislikeCount,
-                            ImageUri = t.ImageUri,
-                        }),
-                        TotalRecordsCount = result.Data.TotalRecordsCount,
-                    }
+                    Data = new() { Id = result.Data },
                 });
             }
             catch (Exception exc)

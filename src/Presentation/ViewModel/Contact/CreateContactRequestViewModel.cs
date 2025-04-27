@@ -2,7 +2,7 @@ namespace GamaEdtech.Presentation.ViewModel.Contact
 {
     using GamaEdtech.Common.DataAnnotation;
 
-    public sealed class ManageContactRequestViewModel
+    public sealed class CreateContactRequestViewModel
     {
         [Display]
         [Required]
