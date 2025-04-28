@@ -132,7 +132,6 @@ namespace GamaEdtech.Application.Service
                     CountryTitle = t.Country != null ? t.Country.Title : "",
                     StateId = t.StateId,
                     StateTitle = t.State != null ? t.State.Title : "",
-                    Facilities = t.Facilities,
                     WebSite = t.WebSite,
                     FaxNumber = t.FaxNumber,
                     PhoneNumber = t.PhoneNumber,
@@ -209,7 +208,6 @@ namespace GamaEdtech.Application.Service
                     school.PhoneNumber = Get(requestDto.PhoneNumber, school.PhoneNumber);
                     school.LocalAddress = Get(requestDto.LocalAddress, school.LocalAddress);
                     school.FaxNumber = Get(requestDto.FaxNumber, school.FaxNumber);
-                    school.Facilities = Get(requestDto.Facilities, school.Facilities);
                     school.Email = Get(requestDto.Email, school.Email);
                     school.CityId = Get(requestDto.CityId, school.CityId);
                     school.CountryId = Get(requestDto.CountryId, school.CountryId);
@@ -265,7 +263,6 @@ namespace GamaEdtech.Application.Service
                         PhoneNumber = requestDto.PhoneNumber,
                         LocalAddress = requestDto.LocalAddress,
                         FaxNumber = requestDto.FaxNumber,
-                        Facilities = requestDto.Facilities,
                         Email = requestDto.Email,
                         CityId = requestDto.CityId,
                         CountryId = requestDto.CountryId,
@@ -1001,7 +998,6 @@ namespace GamaEdtech.Application.Service
                     CityId = requestDto.Data.CityId,
                     CountryId = requestDto.Data.CountryId,
                     Email = requestDto.Data.Email,
-                    Facilities = requestDto.Data.Facilities,
                     FaxNumber = requestDto.Data.FaxNumber,
                     LocalAddress = requestDto.Data.LocalAddress,
                     LocalName = requestDto.Data.LocalName,
