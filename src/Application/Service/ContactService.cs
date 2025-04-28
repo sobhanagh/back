@@ -3,14 +3,13 @@ namespace GamaEdtech.Application.Service
     using System;
     using System.Diagnostics.CodeAnalysis;
 
-    using EntityFramework.Exceptions.Common;
-
+    using GamaEdtech.Application.Interface;
+    using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Core.Extensions.Linq;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.UnitOfWork;
     using GamaEdtech.Common.Service;
-    using GamaEdtech.Common.Core;
     using GamaEdtech.Data.Dto.Contact;
     using GamaEdtech.Domain.Entity;
 
@@ -20,7 +19,6 @@ namespace GamaEdtech.Application.Service
     using Microsoft.Extensions.Logging;
 
     using static GamaEdtech.Common.Core.Constants;
-    using GamaEdtech.Application.Interface;
 
     public class ContactService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<ContactService>> localizer
         , Lazy<ILogger<ContactService>> logger)
@@ -31,12 +29,14 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var result = await uow.GetRepository<Contact, int>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
+                var result = await uow.GetRepository<Contact>().GetManyQueryable(requestDto?.Specification).FilterListAsync(requestDto?.PagingDto);
                 var users = await result.List.Select(t => new ContactsDto
                 {
                     Id = t.Id,
-                    Title = t.Title,
-                    Icon = t.Icon,
+                    Email = t.Email,
+                    FullName = t.FullName,
+                    IsRead = t.IsRead,
+                    Subject = t.Subject,
                 }).ToListAsync();
                 return new(OperationResult.Succeeded) { Data = new() { List = users, TotalRecordsCount = result.TotalRecordsCount } };
             }
@@ -52,20 +52,26 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var contact = await uow.GetRepository<Contact, int>().GetManyQueryable(specification).Select(t => new ContactDto
+                var repository = uow.GetRepository<Contact>();
+                var contact = await repository.GetManyQueryable(specification).Select(t => new ContactDto
                 {
                     Id = t.Id,
-                    Title = t.Title,
-                    Description = t.Description,
-                    Icon = t.Icon,
+                    Body = t.Body,
+                    Subject = t.Subject,
+                    FullName = t.FullName,
+                    Email = t.Email,
                 }).FirstOrDefaultAsync();
-
-                return contact is null
-                    ? new(OperationResult.NotFound)
+                if (contact is null)
+                {
+                    return new(OperationResult.NotFound)
                     {
                         Errors = [new() { Message = Localizer.Value["ContactNotFound"] },],
-                    }
-                    : new(OperationResult.Succeeded) { Data = contact };
+                    };
+                }
+
+                _ = await repository.GetManyQueryable(specification).ExecuteUpdateAsync(t => t.SetProperty(p => p.IsRead, true));
+
+                return new(OperationResult.Succeeded) { Data = contact };
             }
             catch (Exception exc)
             {
@@ -74,42 +80,23 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<int>> ManageContactAsync([NotNull] ManageContactRequestDto requestDto)
+        public async Task<ResultData<long>> CreateContactAsync([NotNull] CreateContactRequestDto requestDto)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var repository = uow.GetRepository<Contact, int>();
+                var repository = uow.GetRepository<Contact>();
                 Contact? contact = null;
 
-                if (requestDto.Id.HasValue)
+                contact = new Contact
                 {
-                    contact = await repository.GetAsync(requestDto.Id.Value);
-                    if (contact is null)
-                    {
-                        return new(OperationResult.NotFound)
-                        {
-                            Errors = [new() { Message = Localizer.Value["ContactNotFound"] },],
-                        };
-                    }
-
-                    contact.Title = requestDto.Title;
-                    contact.Description = requestDto.Description;
-                    contact.Icon = requestDto.Icon;
-
-                    _ = repository.Update(contact);
-                }
-                else
-                {
-                    contact = new Contact
-                    {
-                        Title = requestDto.Title,
-                        Description = requestDto.Description,
-                        Icon = requestDto.Icon,
-                    };
-                    repository.Add(contact);
-                }
-
+                    FullName = requestDto.FullName,
+                    Body = requestDto.Body,
+                    Email = requestDto.Email,
+                    Subject = requestDto.Subject,
+                    IsRead = false,
+                };
+                repository.Add(contact);
                 _ = await uow.SaveChangesAsync();
 
                 return new(OperationResult.Succeeded) { Data = contact.Id };
@@ -121,28 +108,42 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        public async Task<ResultData<bool>> ToggleIsReadAsync([NotNull] ISpecification<Contact> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var rowAffected = await uow.GetRepository<Contact>().GetManyQueryable(specification)
+                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.IsRead, p => !p.IsRead));
+
+                return rowAffected == 0
+                    ? new(OperationResult.NotFound)
+                    {
+                        Errors = [new() { Message = Localizer.Value["ContactNotFound"] },],
+                    }
+                    : new(OperationResult.Succeeded) { Data = true };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, },] };
+            }
+        }
+
         public async Task<ResultData<bool>> RemoveContactAsync([NotNull] ISpecification<Contact> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var contact = await uow.GetRepository<Contact, int>().GetAsync(specification);
-                if (contact is null)
-                {
-                    return new(OperationResult.NotFound)
-                    {
-                        Data = false,
-                        Errors = [new() { Message = Localizer.Value["ContactNotFound"] },],
-                    };
-                }
+                var rowAffected = await uow.GetRepository<Contact>().GetManyQueryable(specification)
+                    .ExecuteDeleteAsync();
 
-                uow.GetRepository<Contact, int>().Remove(contact);
-                _ = await uow.SaveChangesAsync();
-                return new(OperationResult.Succeeded) { Data = true };
-            }
-            catch (ReferenceConstraintException)
-            {
-                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["ContactCantBeRemoved"], },] };
+                return rowAffected == 0
+                    ? new(OperationResult.NotFound)
+                    {
+                        Errors = [new() { Message = Localizer.Value["ContactNotFound"] },],
+                    }
+                    : new(OperationResult.Succeeded) { Data = true };
             }
             catch (Exception exc)
             {
