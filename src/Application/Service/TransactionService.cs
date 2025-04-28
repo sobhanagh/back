@@ -1,7 +1,10 @@
 namespace GamaEdtech.Application.Service
 {
     using System;
+    using System.Data;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.Linq;
 
     using EntityFramework.Exceptions.Common;
 
@@ -15,6 +18,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Service;
     using GamaEdtech.Data.Dto.Transaction;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Enumeration;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -93,6 +97,103 @@ namespace GamaEdtech.Application.Service
             {
                 Logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
+
+        public async Task<ResultData<IEnumerable<GetStatisticsResponseDto>>> GetStatisticsAsync([NotNull] GetStatisticsRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Transaction>();
+                var lst = repository.GetManyQueryable(t => t.UserId == requestDto.UserId);
+
+                if (requestDto.StartDate.HasValue)
+                {
+                    lst = lst.Where(t => t.CreationDate >= requestDto.StartDate.Value);
+                }
+
+                if (requestDto.EndDate.HasValue)
+                {
+                    lst = lst.Where(t => t.CreationDate <= requestDto.EndDate.Value);
+                }
+
+                List<GetStatisticsResponseDto>? result = null;
+                if (requestDto.Period == Period.DayOfWeek)
+                {
+                    var startSql = requestDto.StartDate.HasValue ? $" AND (CreationDate>='{requestDto.StartDate.Value}') " : "";
+                    var endSql = requestDto.EndDate.HasValue ? $" AND (CreationDate<='{requestDto.EndDate.Value}') " : "";
+                    var sql = $@"
+SELECT IsDebit, DATEPART(weekday, CreationDate), SUM(Points)
+FROM Transactions
+WHERE UserId={requestDto.UserId} {startSql} {endSql}
+GROUP BY IsDebit, DATEPART(weekday, CreationDate)";
+                    var data = await uow.SqlQueryAsync(sql);
+
+                    result = new(7);
+                    for (var i = 0; i < 7; i++)
+                    {
+                        int? debitValue = null;
+                        int? creditValue = null;
+
+                        foreach (DataRow row in data.Tables[0].Rows)
+                        {
+                            if (((int)row[1]) - 1 == i)
+                            {
+                                if ((bool)row[0])
+                                {
+                                    debitValue = row[2] as int?;
+                                }
+                                else
+                                {
+                                    creditValue = row[2] as int?;
+                                }
+                            }
+                        }
+
+                        result.Add(new()
+                        {
+                            DebitValue = debitValue.GetValueOrDefault(),
+                            CreditValue = creditValue.GetValueOrDefault(),
+                            Name = ((System.DayOfWeek)i).ToString(),
+                        });
+                    }
+                }
+                else if (requestDto.Period == Period.MonthOfYear)
+                {
+                    var data = await lst.GroupBy(t => new
+                    {
+                        t.IsDebit,
+                        t.CreationDate.Month,
+                    }).Select(t => new
+                    {
+                        Name = t.Key.Month,
+                        t.Key.IsDebit,
+                        Value = t.Sum(s => s.Points),
+                    }).ToListAsync();
+
+                    var monthNames = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
+                    result = new(monthNames.Length);
+                    for (var i = 0; i < monthNames.Length; i++)
+                    {
+                        var debitTransaction = data.Find(t => t.Name == i && t.IsDebit);
+                        var creditTransaction = data.Find(t => t.Name == i && !t.IsDebit);
+
+                        result.Add(new()
+                        {
+                            DebitValue = debitTransaction?.Value ?? 0,
+                            CreditValue = creditTransaction?.Value ?? 0,
+                            Name = monthNames[i],
+                        });
+                    }
+                }
+
+                return new(OperationResult.Succeeded) { Data = result };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
             }
         }
 
