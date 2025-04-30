@@ -7,9 +7,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Application.Interface;
     using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
+    using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.Transaction;
     using GamaEdtech.Presentation.ViewModel.Transaction;
 
     using Microsoft.AspNetCore.Mvc;
@@ -25,10 +27,17 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
+                ISpecification<Transaction> specification = new UserIdEqualsSpecification<Transaction, int>(User.UserId());
+
+                if (request.IsDebit.HasValue)
+                {
+                    specification = specification.And(new IsDebitEqualsSpecification(request.IsDebit.Value));
+                }
+
                 var result = await transactionService.Value.GetTransactionsAsync(new ListRequestDto<Transaction>
                 {
                     PagingDto = request.PagingDto,
-                    Specification = new UserIdEqualsSpecification<Transaction, int>(User.UserId()),
+                    Specification = specification,
                 });
                 return Ok<ListDataSource<TransactionsResponseViewModel>>(new()
                 {
