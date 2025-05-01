@@ -125,9 +125,9 @@ namespace GamaEdtech.Application.Service
                     var data = await uow.SqlQueryAsync(sql);
 
                     result = new(7);
-                    var current = requestDto.EndDate;
-                    var end = requestDto.StartDate;
-                    while (current >= end)
+                    var current = requestDto.StartDate;
+                    var end = requestDto.EndDate;
+                    while (current <= end)
                     {
                         int? debitValue = null;
                         int? creditValue = null;
@@ -154,7 +154,7 @@ namespace GamaEdtech.Application.Service
                             Name = current.DayOfWeek.ToString(),
                         });
 
-                        current = current.AddDays(-1);
+                        current = current.AddDays(1);
                     }
                 }
                 else if (requestDto.Period == Period.MonthOfYear)
@@ -179,9 +179,9 @@ namespace GamaEdtech.Application.Service
 
                     var monthNames = CultureInfo.CurrentCulture.DateTimeFormat.MonthNames;
                     result = new(monthNames.Length);
-                    var current = requestDto.EndDate;
-                    var end = requestDto.StartDate;
-                    while (current >= end)
+                    var current = requestDto.StartDate;
+                    var end = requestDto.EndDate;
+                    while (current <= end)
                     {
                         var debitTransaction = lst.Find(t => t.Name == current.Month && t.IsDebit);
                         var creditTransaction = lst.Find(t => t.Name == current.Month && !t.IsDebit);
@@ -193,7 +193,7 @@ namespace GamaEdtech.Application.Service
                             Name = monthNames[current.Month],
                         });
 
-                        current = current.AddMonths(-1);
+                        current = current.AddMonths(1);
                     }
                 }
 
