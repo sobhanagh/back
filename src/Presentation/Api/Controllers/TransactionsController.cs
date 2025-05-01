@@ -10,6 +10,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Domain.Entity;
+    using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
     using GamaEdtech.Domain.Specification.Transaction;
     using GamaEdtech.Presentation.ViewModel.Transaction;
@@ -90,12 +91,30 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
+                var now = DateTime.Now;
+                if (!request.EndDate.HasValue)
+                {
+                    request.EndDate = DateOnly.FromDateTime(now);
+                }
+
+                if (!request.StartDate.HasValue)
+                {
+                    if (request.Period == Period.DayOfWeek)
+                    {
+                        request.StartDate = request.EndDate.Value.AddDays(-7);
+                    }
+                    else if (request.Period == Period.MonthOfYear)
+                    {
+                        request.StartDate = request.EndDate.Value.AddMonths(-12);
+                    }
+                }
+
                 var result = await transactionService.Value.GetStatisticsAsync(new()
                 {
                     UserId = User.UserId(),
-                    EndDate = request.EndDate.HasValue ? new DateTimeOffset(request.EndDate.Value) : null,
-                    StartDate = request.StartDate.HasValue ? new DateTimeOffset(request.StartDate.Value) : null,
                     Period = request.Period,
+                    StartDate = request.StartDate.GetValueOrDefault(),
+                    EndDate = request.EndDate.GetValueOrDefault(),
                 });
 
                 return Ok<IEnumerable<TransactionStatisticsResponseViewModel>>(new(result.Errors)
