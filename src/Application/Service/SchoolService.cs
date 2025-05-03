@@ -340,8 +340,8 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var exist = await uow.GetRepository<School, long>().AnyAsync(specification);
-                return new(OperationResult.Succeeded) { Data = exist };
+                var exists = await uow.GetRepository<School, long>().AnyAsync(specification);
+                return new(OperationResult.Succeeded) { Data = exists };
             }
             catch (Exception exc)
             {
@@ -416,8 +416,8 @@ namespace GamaEdtech.Application.Service
             {
                 var specification = new IdEqualsSpecification<SchoolComment, long>(requestDto.CommentId)
                     .And(new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId));
-                var exist = await CommentExistAsync(specification);
-                if (!exist.Data)
+                var exists = await CommentExistsAsync(specification);
+                if (!exists.Data)
                 {
                     return new(OperationResult.NotFound)
                     {
@@ -455,8 +455,8 @@ namespace GamaEdtech.Application.Service
             {
                 var specification = new IdEqualsSpecification<SchoolComment, long>(requestDto.CommentId)
                     .And(new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId));
-                var exist = await CommentExistAsync(specification);
-                if (!exist.Data)
+                var exists = await CommentExistsAsync(specification);
+                if (!exists.Data)
                 {
                     return new(OperationResult.NotFound)
                     {
@@ -494,17 +494,17 @@ namespace GamaEdtech.Application.Service
             {
                 var commentSpecification = new SchoolIdEqualsSpecification<SchoolComment>(requestDto.SchoolId)
                         .And(new CreationUserIdEqualsSpecification<SchoolComment, ApplicationUser, int>(requestDto.CreationUserId));
-                var commentExist = await CommentExistAsync(commentSpecification);
-                if (commentExist.Data)
+                var commentExists = await CommentExistsAsync(commentSpecification);
+                if (commentExists.Data)
                 {
-                    return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exist for Current User and School", }] };
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "Comment Exists for Current User and School", }] };
                 }
 
                 var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
                     .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
                     .And(new StatusEqualsSpecification<Contribution>(Status.Draft));
-                var contributionExist = await contributionService.Value.ExistContributionAsync(contributionSpecification);
-                if (contributionExist.Data)
+                var contributionExists = await contributionService.Value.ExistsContributionAsync(contributionSpecification);
+                if (contributionExists.Data)
                 {
                     return new(OperationResult.Failed) { Errors = [new() { Message = "there is a pending Comment", }] };
                 }
@@ -612,14 +612,14 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<bool>> CommentExistAsync([NotNull] ISpecification<SchoolComment> specification)
+        public async Task<ResultData<bool>> CommentExistsAsync([NotNull] ISpecification<SchoolComment> specification)
         {
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var exist = await uow.GetRepository<SchoolComment>().AnyAsync(specification);
+                var exists = await uow.GetRepository<SchoolComment>().AnyAsync(specification);
 
-                return new(OperationResult.Succeeded) { Data = exist };
+                return new(OperationResult.Succeeded) { Data = exists };
             }
             catch (Exception exc)
             {
@@ -919,8 +919,8 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var exist = await uow.GetRepository<School, long>().AnyAsync(t => t.Id == requestDto.SchoolId);
-                if (!exist)
+                var exists = await uow.GetRepository<School, long>().AnyAsync(t => t.Id == requestDto.SchoolId);
+                if (!exists)
                 {
                     return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
                 }
@@ -932,7 +932,7 @@ namespace GamaEdtech.Application.Service
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.UserId))
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School))
                         .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
-                    var data = await contributionService.Value.ExistContributionAsync(specification);
+                    var data = await contributionService.Value.ExistsContributionAsync(specification);
                     if (!data.Data)
                     {
                         return new(data.OperationResult) { Errors = data.Errors };
@@ -1034,6 +1034,57 @@ namespace GamaEdtech.Application.Service
         #endregion
 
         #region Issues
+
+        public async Task<ResultData<long>> CreateSchoolIssuesContributionAsync([NotNull] CreateSchoolIssuesContributionRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<School>();
+                var schoolExists = await repository.AnyAsync(t => t.Id == requestDto.SchoolId && !t.IsDeleted);
+                if (!schoolExists)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+                }
+
+                var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
+                    .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
+                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft));
+                var contributionExists = await contributionService.Value.ExistsContributionAsync(contributionSpecification);
+                if (contributionExists.Data)
+                {
+                    return new(OperationResult.Failed) { Errors = [new() { Message = "there is a pending issues", }] };
+                }
+
+                var contributionResult = await contributionService.Value.ManageContributionAsync(new()
+                {
+                    CategoryType = CategoryType.SchoolIssues,
+                    IdentifierId = requestDto.SchoolId,
+                    Status = Status.Draft,
+                    Data = requestDto.Description,
+                });
+                if (contributionResult.OperationResult is not OperationResult.Succeeded)
+                {
+                    return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
+                }
+
+                var hasAutoConfirmSchoolContribution = await identityService.Value.HasClaimAsync(requestDto.CreationUserId, SystemClaim.AutoConfirmSchoolContribution);
+                if (hasAutoConfirmSchoolContribution.Data)
+                {
+                    _ = await ConfirmSchoolIssuesContributionAsync(new()
+                    {
+                        ContributionId = contributionResult.Data,
+                    });
+                }
+
+                return new(OperationResult.Succeeded) { Data = contributionResult.Data };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
 
         public async Task<ResultData<bool>> ConfirmSchoolIssuesContributionAsync([NotNull] ConfirmSchoolIssuesContributionRequestDto requestDto)
         {

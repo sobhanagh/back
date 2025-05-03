@@ -630,7 +630,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         {
             try
             {
-                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School);
+                ISpecification<Contribution> specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolIssues);
                 if (request.Status is not null)
                 {
                     specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
