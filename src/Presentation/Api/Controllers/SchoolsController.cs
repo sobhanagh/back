@@ -574,40 +574,11 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await contributionService.Value.ManageContributionAsync(new()
+                var result = await schoolService.Value.CreateSchoolIssuesContributionAsync(new()
                 {
-                    Data = request.Description,
-                    CategoryType = CategoryType.SchoolIssues,
-                    IdentifierId = schoolId,
-                    Status = Status.Draft,
-                });
-
-                return Ok<ManageSchoolIssuesContributionResponseViewModel>(new(result.Errors)
-                {
-                    Data = new() { Id = result.Data, },
-                });
-            }
-            catch (Exception exc)
-            {
-                Logger.Value.LogException(exc);
-
-                return Ok<ManageSchoolIssuesContributionResponseViewModel>(new(new Error { Message = exc.Message }));
-            }
-        }
-
-        [HttpPut("{schoolId:long}/issues/{contributionId:long}"), Produces<ApiResponse<ManageSchoolIssuesContributionResponseViewModel>>()]
-        [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolIssuesContributionResponseViewModel>> UpdateSchoolIssuesContribution([FromRoute] long schoolId, [FromRoute] long contributionId, [NotNull, FromBody] ManageSchoolIssuesContributionRequestViewModel request)
-        {
-            try
-            {
-                var result = await contributionService.Value.ManageContributionAsync(new()
-                {
-                    Id = contributionId,
-                    Data = request.Description,
-                    CategoryType = CategoryType.SchoolIssues,
-                    IdentifierId = schoolId,
-                    Status = Status.Draft,
+                    Description = request.Description,
+                    SchoolId = schoolId,
+                    CreationUserId = User.UserId(),
                 });
 
                 return Ok<ManageSchoolIssuesContributionResponseViewModel>(new(result.Errors)
