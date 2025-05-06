@@ -59,7 +59,7 @@ namespace GamaEdtech.Application.Service
                     LikeCount = t.LikeCount,
                     Summary = t.Summary,
                     Title = t.Title,
-                    ImageUri = fileService.Value.GetFileUri(t.ImageId!, ContainerType.Post).Data,
+                    ImageUri = fileService.Value.GetFileUri(t.ImageId, ContainerType.Post).Data,
                 });
 
                 return new(OperationResult.Succeeded) { Data = new() { List = result, TotalRecordsCount = lst.TotalRecordsCount } };
@@ -106,7 +106,7 @@ namespace GamaEdtech.Application.Service
                     Title = post.Title,
                     Summary = post.Summary,
                     Body = post.Body,
-                    ImageUri = fileService.Value.GetFileUri(post.ImageId!, ContainerType.Post).Data,
+                    ImageUri = fileService.Value.GetFileUri(post.ImageId, ContainerType.Post).Data,
                     LikeCount = post.LikeCount,
                     DislikeCount = post.DislikeCount,
                     CreationUser = post.CreationUser,

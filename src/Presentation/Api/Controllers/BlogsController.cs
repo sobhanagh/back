@@ -238,7 +238,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Summary = dto.Summary,
                     Body = dto.Body,
                     Tags = dto.Tags,
-                    ImageUri = string.IsNullOrEmpty(dto.ImageId) ? null : fileService.Value.GetFileUri(dto.ImageId, ContainerType.Post).Data,
+                    ImageUri = fileService.Value.GetFileUri(dto.ImageId, ContainerType.Post).Data,
                 };
             }
             catch (Exception exc)
