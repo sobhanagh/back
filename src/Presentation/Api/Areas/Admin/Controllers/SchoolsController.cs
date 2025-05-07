@@ -55,6 +55,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             Id = t.Id,
                             Name = t.Name,
                             LocalName = t.LocalName,
+                            CoverImage = t.CoverImage,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -325,7 +326,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             CreationDate = item.CreationDate,
                             SchoolId = item.IdentifierId.GetValueOrDefault(),
                             Status = item.Status,
-                            FileUri = dto is null ? null : fileService.Value.GetFileUri(dto.FileId!, ContainerType.School).Data,
+                            FileUri = fileService.Value.GetFileUri(dto?.FileId, ContainerType.School).Data,
                             FileType = dto?.FileType,
                         });
                     }
@@ -550,7 +551,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
                 SchoolContributionReviewViewModel result = new()
                 {
-                    NewValues = Api.Controllers.SchoolsController.MapFrom(JsonSerializer.Deserialize<SchoolContributionDto>(contributionResult.Data.Data)!),
+                    NewValues = Api.Controllers.SchoolsController.MapFrom(fileService.Value, JsonSerializer.Deserialize<SchoolContributionDto>(contributionResult.Data.Data)!),
                     OldValues = MapFrom(schoolResult.Data!),
                 };
 
@@ -608,6 +609,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     Id = contributionId,
                     Comment = request.Comment,
                 });
+
                 return Ok(new ApiResponse<bool>(result.Errors)
                 {
                     Data = result.Data,
@@ -749,6 +751,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             PhoneNumber = dto.PhoneNumber,
             Quarter = dto.Quarter,
             OsmId = dto.OsmId,
+            CoverImage = dto.CoverImage,
             Tags = dto.Tags?.Select(t => new TagResponseViewModel
             {
                 TagType = t.TagType,
@@ -789,6 +792,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 Tags = request.Tags,
                 UserId = User.UserId(),
                 Date = DateTimeOffset.UtcNow,
+                CoverImageFile = request.CoverImage,
             };
         }
     }

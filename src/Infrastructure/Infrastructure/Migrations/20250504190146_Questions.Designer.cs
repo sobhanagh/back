@@ -4,6 +4,7 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250504190146_Questions")]
+    partial class Questions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -995,11 +998,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Property<int?>("CountryId")
                         .HasColumnType("int")
                         .HasColumnName("CountryId");
-
-                    b.Property<string>("CoverImageId")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar")
-                        .HasColumnName("CoverImageId");
 
                     b.Property<DateTimeOffset>("CreationDate")
                         .HasColumnType("datetimeoffset")

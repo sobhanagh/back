@@ -26,7 +26,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
-    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService, Lazy<IContributionService> contributionService)
+    public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService
+        , Lazy<IContributionService> contributionService, Lazy<IFileService> fileService)
         : ApiControllerBase<SchoolsController>(logger)
     {
         [HttpGet, Produces<ApiResponse<ListDataSource<SchoolInfoResponseViewModel>>>()]
@@ -94,6 +95,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Latitude = t.Coordinates?.Y,
                             Longitude = t.Coordinates?.X,
                             StateTitle = t.StateTitle,
+                            CoverImage = t.CoverImage,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     },
@@ -144,6 +146,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         PhoneNumber = result.Data.PhoneNumber,
                         Quarter = result.Data.Quarter,
                         OsmId = result.Data.OsmId,
+                        CoverImage = result.Data.CoverImage,
                         Tags = result.Data.Tags?.Select(t => new TagResponseViewModel
                         {
                             Id = t.Id,
@@ -444,7 +447,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 if (result.Data?.Data is not null)
                 {
                     var dto = JsonSerializer.Deserialize<SchoolContributionDto>(result.Data.Data);
-                    viewModel = dto is null ? null : MapFrom(dto);
+                    viewModel = MapFrom(fileService.Value, dto);
                 }
 
                 return Ok<SchoolContributionViewModel>(new(result.Errors)
@@ -462,17 +465,32 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         [HttpPost("{schoolId:long}/contributions"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> CreateSchoolContribution([FromRoute] long schoolId, [NotNull] SchoolContributionViewModel request)
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> CreateSchoolContribution([FromRoute] long schoolId, [NotNull, FromForm] ManageSchoolContributionRequestViewModel request)
         {
             try
             {
-                var userId = User.UserId();
-                var dto = MapTo(request, schoolId);
                 var result = await schoolService.Value.ManageSchoolContributionAsync(new ManageSchoolContributionRequestDto
                 {
-                    UserId = userId,
+                    UserId = User.UserId(),
                     SchoolId = schoolId,
-                    Data = dto,
+                    Address = request.Address,
+                    CityId = request.CityId,
+                    CountryId = request.CountryId,
+                    Email = request.Email,
+                    FaxNumber = request.FaxNumber,
+                    Latitude = request.Latitude,
+                    LocalAddress = request.LocalAddress,
+                    LocalName = request.LocalName,
+                    Longitude = request.Longitude,
+                    Name = request.Name,
+                    PhoneNumber = request.PhoneNumber,
+                    Quarter = request.Quarter,
+                    SchoolType = request.SchoolType,
+                    StateId = request.StateId,
+                    WebSite = request.WebSite,
+                    ZipCode = request.ZipCode,
+                    CoverImageFile = request.CoverImage,
+                    Tags = request.Tags,
                 });
 
                 return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
@@ -490,16 +508,33 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         [HttpPut("{schoolId:long}/contributions/{contributionId:long}"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
         [Permission(policy: null)]
-        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> UpdateSchoolContribution([FromRoute] long schoolId, [FromRoute] long contributionId, [NotNull, FromBody] SchoolContributionViewModel request)
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> UpdateSchoolContribution([FromRoute] long schoolId, [FromRoute] long contributionId, [NotNull, FromForm] ManageSchoolContributionRequestViewModel request)
         {
             try
             {
-                var dto = MapTo(request, schoolId);
                 var result = await schoolService.Value.ManageSchoolContributionAsync(new ManageSchoolContributionRequestDto
                 {
                     Id = contributionId,
+                    UserId = User.UserId(),
                     SchoolId = schoolId,
-                    Data = dto,
+                    Address = request.Address,
+                    CityId = request.CityId,
+                    CountryId = request.CountryId,
+                    Email = request.Email,
+                    FaxNumber = request.FaxNumber,
+                    Latitude = request.Latitude,
+                    LocalAddress = request.LocalAddress,
+                    LocalName = request.LocalName,
+                    Longitude = request.Longitude,
+                    Name = request.Name,
+                    PhoneNumber = request.PhoneNumber,
+                    Quarter = request.Quarter,
+                    SchoolType = request.SchoolType,
+                    StateId = request.StateId,
+                    WebSite = request.WebSite,
+                    ZipCode = request.ZipCode,
+                    CoverImageFile = request.CoverImage,
+                    Tags = request.Tags,
                 });
 
                 return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
@@ -596,47 +631,35 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
         #endregion
 
-        internal static SchoolContributionDto MapTo(SchoolContributionViewModel request, long schoolId) => new()
+        internal static SchoolContributionViewModel? MapFrom(IFileService fileService, SchoolContributionDto? dto)
         {
-            Address = request.Address,
-            CityId = request.CityId,
-            CountryId = request.CountryId,
-            Email = request.Email,
-            FaxNumber = request.FaxNumber,
-            Id = schoolId,
-            LocalAddress = request.LocalAddress,
-            LocalName = request.LocalName,
-            Name = request.Name,
-            PhoneNumber = request.PhoneNumber,
-            Quarter = request.Quarter,
-            SchoolType = request.SchoolType,
-            StateId = request.StateId,
-            WebSite = request.WebSite,
-            ZipCode = request.ZipCode,
-            Latitude = request.Latitude,
-            Longitude = request.Longitude,
-            Tags = request.Tags,
-        };
+            if (dto is null)
+            {
+                return null;
+            }
 
-        internal static SchoolContributionViewModel MapFrom(SchoolContributionDto dto) => new()
-        {
-            Address = dto.Address,
-            CityId = dto.CityId,
-            CountryId = dto.CountryId,
-            Email = dto.Email,
-            FaxNumber = dto.FaxNumber,
-            Latitude = dto.Latitude,
-            LocalAddress = dto.LocalAddress,
-            LocalName = dto.LocalName,
-            Longitude = dto.Longitude,
-            Name = dto.Name,
-            PhoneNumber = dto.PhoneNumber,
-            Quarter = dto.Quarter,
-            SchoolType = dto.SchoolType,
-            StateId = dto.StateId,
-            WebSite = dto.WebSite,
-            ZipCode = dto.ZipCode,
-            Tags = dto.Tags,
-        };
+            var coverImage = fileService.GetFileUri(dto.CoverImageId, ContainerType.School).Data;
+            return new()
+            {
+                Address = dto.Address,
+                CityId = dto.CityId,
+                CountryId = dto.CountryId,
+                Email = dto.Email,
+                FaxNumber = dto.FaxNumber,
+                Latitude = dto.Latitude,
+                LocalAddress = dto.LocalAddress,
+                LocalName = dto.LocalName,
+                Longitude = dto.Longitude,
+                Name = dto.Name,
+                PhoneNumber = dto.PhoneNumber,
+                Quarter = dto.Quarter,
+                SchoolType = dto.SchoolType,
+                StateId = dto.StateId,
+                WebSite = dto.WebSite,
+                ZipCode = dto.ZipCode,
+                Tags = dto.Tags,
+                CoverImage = coverImage,
+            };
+        }
     }
 }
