@@ -1,13 +1,11 @@
 namespace GamaEdtech.Presentation.ViewModel.School
 {
-    using GamaEdtech.Common.Converter;
+    using System.Collections.Generic;
     using System.Text.Json.Serialization;
 
+    using GamaEdtech.Common.Converter;
     using GamaEdtech.Common.DataAnnotation;
-
     using GamaEdtech.Domain.Enumeration;
-    using System.Collections.Generic;
-    using Microsoft.AspNetCore.Http;
 
     public sealed class ManageSchoolRequestViewModel
     {
@@ -67,8 +65,5 @@ namespace GamaEdtech.Presentation.ViewModel.School
 
         [Display]
         public IEnumerable<long> Tags { get; set; }
-
-        [Display]
-        public IFormFile? CoverImage { get; set; }
     }
 }

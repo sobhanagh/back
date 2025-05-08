@@ -34,6 +34,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
 
         public double? Score { get; set; }
 
-        public Uri? CoverImage { get; set; }
+        public Uri? DefaultImageUri { get; set; }
     }
 }
