@@ -2,8 +2,6 @@ namespace GamaEdtech.Data.Dto.School
 {
     using GamaEdtech.Domain.Enumeration;
 
-    using Microsoft.AspNetCore.Http;
-
     public sealed class ManageSchoolContributionRequestDto
     {
         public long? Id { get; set; }
@@ -25,7 +23,7 @@ namespace GamaEdtech.Data.Dto.School
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Quarter { get; set; }
-        public IFormFile? CoverImageFile { get; set; }
         public IEnumerable<long>? Tags { get; set; }
+        public long? DefaultImageId { get; set; }
     }
 }

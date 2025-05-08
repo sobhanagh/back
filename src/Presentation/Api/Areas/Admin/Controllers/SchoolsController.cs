@@ -31,7 +31,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
     [ApiVersion("1.0")]
     [Permission(Roles = [nameof(Role.Admin)])]
     public class SchoolsController(Lazy<ILogger<SchoolsController>> logger, Lazy<ISchoolService> schoolService
-        , Lazy<IContributionService> contributionService, Lazy<IFileService> fileService)
+        , Lazy<IContributionService> contributionService, Lazy<IFileService> fileService, Lazy<ITagService> tagService)
         : ApiControllerBase<SchoolsController>(logger)
     {
         #region Schools
@@ -55,7 +55,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             Id = t.Id,
                             Name = t.Name,
                             LocalName = t.LocalName,
-                            CoverImage = t.CoverImage,
+                            DefaultImageUri = t.DefaultImageUri,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -70,14 +70,13 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         }
 
         [HttpGet("{id:long}"), Produces<ApiResponse<SchoolResponseViewModel>>()]
-        public async Task<IActionResult> GetSchool([FromRoute] long id)
+        public async Task<IActionResult<SchoolResponseViewModel>> GetSchool([FromRoute] long id)
         {
             try
             {
                 var result = await schoolService.Value.GetSchoolAsync(new IdEqualsSpecification<School, long>(id));
-                return Ok(new ApiResponse<SchoolResponseViewModel>
+                return Ok<SchoolResponseViewModel>(new(result.Errors)
                 {
-                    Errors = result.Errors,
                     Data = result.Data is null ? null : MapFrom(result.Data)
                 });
             }
@@ -328,6 +327,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                             Status = item.Status,
                             FileUri = fileService.Value.GetFileUri(dto?.FileId, ContainerType.School).Data,
                             FileType = dto?.FileType,
+                            IsDefault = dto?.IsDefault ?? false,
                         });
                     }
                 }
@@ -370,12 +370,21 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
                 var dto = JsonSerializer.Deserialize<SchoolImageContributionDto>(contributionResult.Data.Data)!;
 
+                string? tagName = null;
+                if (dto.TagId.HasValue)
+                {
+                    tagName = (await tagService.Value.GetTagNameAsync(new IdEqualsSpecification<Tag, long>(dto.TagId.Value))).Data;
+                }
+
                 SchoolImageContributionReviewViewModel result = new()
                 {
                     Id = contributionResult.Data.Id,
                     FileId = dto.FileId,
                     FileType = dto.FileType,
                     SchoolId = dto.SchoolId,
+                    IsDefault = dto.IsDefault,
+                    TagId = dto.TagId,
+                    TagName = tagName,
                     SchoolName = schoolResult.Data?.Name,
                 };
 
@@ -448,6 +457,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     Id = imageId,
                     SchoolId = schoolId,
                     TagId = request.TagId,
+                    IsDefault = request.IsDefault,
                 });
                 return Ok<bool>(new(result.Errors)
                 {
@@ -551,7 +561,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
 
                 SchoolContributionReviewViewModel result = new()
                 {
-                    NewValues = Api.Controllers.SchoolsController.MapFrom(fileService.Value, JsonSerializer.Deserialize<SchoolContributionDto>(contributionResult.Data.Data)!),
+                    NewValues = Api.Controllers.SchoolsController.MapFrom(JsonSerializer.Deserialize<SchoolContributionDto>(contributionResult.Data.Data)!),
                     OldValues = MapFrom(schoolResult.Data!),
                 };
 
@@ -751,7 +761,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             PhoneNumber = dto.PhoneNumber,
             Quarter = dto.Quarter,
             OsmId = dto.OsmId,
-            CoverImage = dto.CoverImage,
+            DefaultImageUri = dto.DefaultImageUri,
             Tags = dto.Tags?.Select(t => new TagResponseViewModel
             {
                 TagType = t.TagType,
@@ -792,7 +802,6 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                 Tags = request.Tags,
                 UserId = User.UserId(),
                 Date = DateTimeOffset.UtcNow,
-                CoverImageFile = request.CoverImage,
             };
         }
     }
