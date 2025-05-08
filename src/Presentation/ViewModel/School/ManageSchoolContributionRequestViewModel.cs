@@ -13,6 +13,15 @@ namespace GamaEdtech.Presentation.ViewModel.School
         [Required(false)]
         public override double? Longitude { get; set; }
 
+        [Required(false)]
+        public override int? CountryId { get; set; }
+
+        [Required(false)]
+        public override int? StateId { get; set; }
+
+        [Required(false)]
+        public override int? CityId { get; set; }
+
         public long? DefaultImageId { get; set; }
     }
 }

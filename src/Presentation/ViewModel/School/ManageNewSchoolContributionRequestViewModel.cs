@@ -20,12 +20,22 @@ namespace GamaEdtech.Presentation.ViewModel.School
         [Required]
         public virtual double? Longitude { get; set; }
 
+        [Display]
+        [Required]
+        public virtual int? StateId { get; set; }
+
+        [Display]
+        [Required]
+        public virtual int? CityId { get; set; }
+
+        [Display]
+        [Required]
+        public virtual int? CountryId { get; set; }
+
         public string? LocalName { get; set; }
 
         [JsonConverter(typeof(EnumerationConverter<SchoolType, byte>))]
         public SchoolType? SchoolType { get; set; }
-
-        public int? StateId { get; set; }
 
         public string? ZipCode { get; set; }
 
@@ -34,10 +44,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public string? WebSite { get; set; }
 
         public string? LocalAddress { get; set; }
-
-        public int? CityId { get; set; }
-
-        public int? CountryId { get; set; }
 
         public string? Email { get; set; }
 
