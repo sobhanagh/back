@@ -5,8 +5,6 @@ namespace GamaEdtech.Data.Dto.School
 
     using GamaEdtech.Domain.Enumeration;
 
-    using Microsoft.AspNetCore.Http;
-
     using NetTopologySuite.Geometries;
 
     public sealed class ManageSchoolRequestDto
@@ -31,7 +29,5 @@ namespace GamaEdtech.Data.Dto.School
         public IEnumerable<long>? Tags { get; set; }
         public int UserId { get; set; }
         public DateTimeOffset Date { get; set; }
-        public string? CoverImageId { get; set; }
-        public IFormFile? CoverImageFile { get; set; }
     }
 }

@@ -6,8 +6,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
     using GamaEdtech.Common.Converter;
     using GamaEdtech.Domain.Enumeration;
 
-    using Microsoft.AspNetCore.Http;
-
     public sealed class ManageSchoolContributionRequestViewModel
     {
         public string? Name { get; set; }
@@ -45,6 +43,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
 
         public IEnumerable<long>? Tags { get; set; }
 
-        public IFormFile? CoverImage { get; set; }
+        public long? DefaultImageId { get; set; }
     }
 }

@@ -42,7 +42,5 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public string? Quarter { get; set; }
 
         public IEnumerable<long>? Tags { get; set; }
-
-        public Uri? CoverImage { get; set; }
     }
 }
