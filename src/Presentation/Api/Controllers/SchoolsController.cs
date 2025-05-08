@@ -552,6 +552,47 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
+        [HttpPost("contributions"), Produces<ApiResponse<ManageSchoolContributionResponseViewModel>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<ManageSchoolContributionResponseViewModel>> CreateNewSchoolContribution([NotNull, FromBody] ManageNewSchoolContributionRequestViewModel request)
+        {
+            try
+            {
+                var result = await schoolService.Value.ManageSchoolContributionAsync(new ManageSchoolContributionRequestDto
+                {
+                    UserId = User.UserId(),
+                    Address = request.Address,
+                    CityId = request.CityId,
+                    CountryId = request.CountryId,
+                    Email = request.Email,
+                    FaxNumber = request.FaxNumber,
+                    Latitude = request.Latitude,
+                    LocalAddress = request.LocalAddress,
+                    LocalName = request.LocalName,
+                    Longitude = request.Longitude,
+                    Name = request.Name,
+                    PhoneNumber = request.PhoneNumber,
+                    Quarter = request.Quarter,
+                    SchoolType = request.SchoolType,
+                    StateId = request.StateId,
+                    WebSite = request.WebSite,
+                    ZipCode = request.ZipCode,
+                    Tags = request.Tags,
+                });
+
+                return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
+                {
+                    Data = new() { Id = result.Data, },
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<ManageSchoolContributionResponseViewModel>(new(new Error { Message = exc.Message }));
+            }
+        }
+
         #endregion
 
         #region Issues

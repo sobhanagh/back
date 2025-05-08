@@ -1030,10 +1030,14 @@ namespace GamaEdtech.Application.Service
                 if (requestDto.Id.HasValue)
                 {
                     var specification = new IdEqualsSpecification<Contribution, long>(requestDto.Id.Value)
-                        .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.UserId))
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School))
                         .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
+                    if (requestDto.SchoolId.HasValue)
+                    {
+                        specification = specification.And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId.Value));
+                    }
+
                     var data = await contributionService.Value.ExistsContributionAsync(specification);
                     if (!data.Data)
                     {
@@ -1043,7 +1047,6 @@ namespace GamaEdtech.Application.Service
 
                 SchoolContributionDto dto = new()
                 {
-                    Id = requestDto.SchoolId,
                     Address = requestDto.Address,
                     CityId = requestDto.CityId,
                     CountryId = requestDto.CountryId,
@@ -1102,15 +1105,23 @@ namespace GamaEdtech.Application.Service
             try
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var school = await uow.GetRepository<School>().GetAsync(requestDto.SchoolId);
-                if (school is null)
+
+                if (requestDto.SchoolId.HasValue)
                 {
-                    return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+                    var schoolExists = await uow.GetRepository<School>().AnyAsync(t => t.Id == requestDto.SchoolId.Value);
+                    if (!schoolExists)
+                    {
+                        return new(OperationResult.Failed) { Errors = [new() { Message = "School not found", },] };
+                    }
                 }
 
                 var contributionSpecification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId)
-                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School))
-                    .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId));
+                    .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School));
+                if (requestDto.SchoolId.HasValue)
+                {
+                    contributionSpecification = contributionSpecification.And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId.Value));
+                }
+
                 var contributionResult = await contributionService.Value.ConfirmContributionAsync(contributionSpecification);
                 if (contributionResult.Data is null)
                 {
@@ -1145,12 +1156,12 @@ namespace GamaEdtech.Application.Service
                 }
                 var manageSchoolResult = await ManageSchoolAsync(manageSchoolRequestDto, true);
 
-                if (requestDto.Data.DefaultImageId.HasValue)
+                if (requestDto.Data.DefaultImageId.HasValue && requestDto.SchoolId.HasValue)
                 {
                     _ = await SetDefaultSchoolImageAsync(new()
                     {
                         Id = requestDto.Data.DefaultImageId.Value,
-                        SchoolId = requestDto.SchoolId,
+                        SchoolId = requestDto.SchoolId.Value,
                     });
                 }
 
