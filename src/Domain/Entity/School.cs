@@ -37,7 +37,6 @@ namespace GamaEdtech.Domain.Entity
         public string? LocalName { get; set; }
 
         [Column(nameof(SchoolType), DataType.Byte)]
-        [Required]
         public SchoolType? SchoolType { get; set; }
 
         [Column(nameof(CountryId), DataType.Int)]
