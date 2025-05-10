@@ -5,7 +5,7 @@ namespace GamaEdtech.Domain.Specification.School
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Domain.Entity;
 
-    public sealed class HasScoreEqualsSpecification(bool hasScore) : SpecificationBase<School>
+    public sealed class HasScoreSpecification(bool hasScore) : SpecificationBase<School>
     {
         public override Expression<Func<School, bool>> Expression() => (t) => hasScore && t.SchoolComments.Any();
     }
