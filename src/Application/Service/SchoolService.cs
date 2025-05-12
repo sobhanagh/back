@@ -99,13 +99,13 @@ namespace GamaEdtech.Application.Service
                     CountryTitle = t.Country == null ? "" : t.Country.Title,
                     StateTitle = t.State == null ? "" : t.State.Title,
                     Distance = point != null && t.Coordinates != null ? t.Coordinates.Distance(point) : (double?)null,
-                    DefaultImageId = t.SchoolImages.OrderByDescending(i => i.IsDefault).Select(i => i.FileId).FirstOrDefault(),
+                    DefaultImageUri = t.SchoolImages.OrderByDescending(i => i.IsDefault).Select(i => i.FileId).FirstOrDefault(),
                 });
 
                 (query, var sortApplied) = query.OrderBy(requestDto?.PagingDto?.SortFilter);
                 if (!sortApplied)
                 {
-                    query = point is not null ? query.OrderBy(t => t.Distance) : query.OrderBy(t => t.Id);
+                    query = point is not null ? query.OrderBy(t => t.Distance) : query.OrderByDescending(t => t.Id);
                 }
                 if (requestDto?.PagingDto?.PageFilter is not null)
                 {
@@ -128,7 +128,7 @@ namespace GamaEdtech.Application.Service
                     HasEmail = !string.IsNullOrEmpty(t.Email),
                     HasPhoneNumber = !string.IsNullOrEmpty(t.PhoneNumber),
                     HasWebSite = !string.IsNullOrEmpty(t.WebSite),
-                    DefaultImageUri = fileService.Value.GetFileUri(t.DefaultImageId, ContainerType.School).Data,
+                    DefaultImageUri = fileService.Value.GetFileUri(t.DefaultImageUri, ContainerType.School).Data,
                 });
 
                 return new(OperationResult.Succeeded) { Data = new() { List = result, TotalRecordsCount = total } };

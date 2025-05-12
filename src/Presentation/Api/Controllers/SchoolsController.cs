@@ -40,24 +40,34 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     baseSpecification = new CountryIdEqualsSpecification(request.CountryId.Value);
                 }
+
                 if (request.StateId.HasValue)
                 {
                     var specification = new StateIdEqualsSpecification(request.StateId.Value);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
+
                 if (request.CityId.HasValue)
                 {
                     var specification = new CityIdEqualsSpecification(request.CityId.Value);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
+
                 if (!string.IsNullOrEmpty(request.Name))
                 {
                     var specification = new NameContainsSpecification(request.Name);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
+
                 if (request.HasScore.HasValue)
                 {
-                    var specification = new HasScoreEqualsSpecification(request.HasScore.Value);
+                    var specification = new HasScoreSpecification(request.HasScore.Value);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+
+                if (request.HasImage.HasValue)
+                {
+                    var specification = new HasImageSpecification(request.HasImage.Value);
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
 
