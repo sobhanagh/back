@@ -6,6 +6,7 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
     {
         public long Id { get; set; }
         public string? Title { get; set; }
+        public string? Slug { get; set; }
         public string? Summary { get; set; }
         public int LikeCount { get; set; }
         public int DislikeCount { get; set; }

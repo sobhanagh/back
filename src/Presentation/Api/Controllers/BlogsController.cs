@@ -49,6 +49,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         {
                             Id = t.Id,
                             Title = t.Title,
+                            Slug = t.Title.Slugify(),
                             Summary = t.Summary,
                             LikeCount = t.LikeCount,
                             DislikeCount = t.DislikeCount,
