@@ -50,6 +50,8 @@ namespace GamaEdtech.Application.Service
                     t.LikeCount,
                     t.DislikeCount,
                     t.ImageId,
+                    t.PublishDate,
+                    t.VisibilityType,
                 }).ToListAsync();
 
                 var result = blogs.Select(t => new PostsDto
@@ -60,6 +62,8 @@ namespace GamaEdtech.Application.Service
                     Summary = t.Summary,
                     Title = t.Title,
                     ImageUri = fileService.Value.GetFileUri(t.ImageId, ContainerType.Post).Data,
+                    PublishDate = t.PublishDate,
+                    VisibilityType = t.VisibilityType,
                 });
 
                 return new(OperationResult.Succeeded) { Data = new() { List = result, TotalRecordsCount = lst.TotalRecordsCount } };
@@ -84,6 +88,7 @@ namespace GamaEdtech.Application.Service
                     t.ImageId,
                     t.LikeCount,
                     t.DislikeCount,
+                    t.VisibilityType,
                     CreationUser = t.CreationUser.FirstName + " " + t.CreationUser.LastName,
                     Tags = t.PostTags == null ? null : t.PostTags.Select(s => new TagDto
                     {
@@ -111,6 +116,7 @@ namespace GamaEdtech.Application.Service
                     DislikeCount = post.DislikeCount,
                     CreationUser = post.CreationUser,
                     Tags = post.Tags,
+                    VisibilityType = post.VisibilityType,
                 };
 
                 return new(OperationResult.Succeeded) { Data = result };
@@ -157,6 +163,8 @@ namespace GamaEdtech.Application.Service
                     Summary = requestDto.Summary,
                     Tags = requestDto.Tags,
                     Title = requestDto.Title,
+                    PublishDate = requestDto.PublishDate,
+                    VisibilityType = requestDto.VisibilityType,
                 };
 
                 var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto

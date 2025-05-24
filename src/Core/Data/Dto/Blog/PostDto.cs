@@ -3,6 +3,7 @@ namespace GamaEdtech.Data.Dto.Blog
     using System.Collections.Generic;
 
     using GamaEdtech.Data.Dto.Tag;
+    using GamaEdtech.Domain.Enumeration;
 
     public sealed class PostDto
     {
@@ -13,6 +14,7 @@ namespace GamaEdtech.Data.Dto.Blog
         public int LikeCount { get; set; }
         public int DislikeCount { get; set; }
         public string? CreationUser { get; set; }
+        public VisibilityType VisibilityType { get; set; }
         public IEnumerable<TagDto>? Tags { get; set; }
     }
 }
