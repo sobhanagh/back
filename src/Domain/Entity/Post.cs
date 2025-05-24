@@ -52,8 +52,20 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public int DislikeCount { get; set; }
 
+        [Column(nameof(PublishDate), DataType.DateTimeOffset)]
+        [Required]
+        public DateTimeOffset PublishDate { get; set; }
+
+        [Column(nameof(VisibilityType), DataType.Byte)]
+        [Required]
+        public VisibilityType VisibilityType { get; set; }
+
         public virtual ICollection<PostTag>? PostTags { get; set; }
 
-        public void Configure([NotNull] EntityTypeBuilder<Post> builder) => _ = builder.OwnEnumeration<Post, Status, byte>(t => t.Status);
+        public void Configure([NotNull] EntityTypeBuilder<Post> builder)
+        {
+            _ = builder.OwnEnumeration<Post, Status, byte>(t => t.Status);
+            _ = builder.OwnEnumeration<Post, VisibilityType, byte>(t => t.VisibilityType);
+        }
     }
 }

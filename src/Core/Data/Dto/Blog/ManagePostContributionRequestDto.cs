@@ -2,6 +2,8 @@ namespace GamaEdtech.Data.Dto.Blog
 {
     using System.Collections.Generic;
 
+    using GamaEdtech.Domain.Enumeration;
+
     using Microsoft.AspNetCore.Http;
 
     public sealed class ManagePostContributionRequestDto
@@ -11,6 +13,8 @@ namespace GamaEdtech.Data.Dto.Blog
         public string? Title { get; set; }
         public string? Summary { get; set; }
         public string? Body { get; set; }
+        public VisibilityType VisibilityType { get; set; }
+        public DateTimeOffset PublishDate { get; set; }
         public IFormFile? Image { get; set; }
         public IEnumerable<int>? Tags { get; set; }
     }

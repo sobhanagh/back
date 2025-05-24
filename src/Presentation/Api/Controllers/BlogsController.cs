@@ -33,9 +33,18 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                ISpecification<Post>? specification = request.TagId.HasValue
-                    ? new TagIncludedSpecification(request.TagId.Value)
-                    : null;
+                ISpecification<Post>? specification = new PublishDateSpecification();
+
+                if (request.TagId.HasValue)
+                {
+                    specification = specification.And(new TagIncludedSpecification(request.TagId.Value));
+                }
+
+                if (request.VisibilityType is not null)
+                {
+                    specification = specification.And(new VisibilityTypeEqualsSpecification(request.VisibilityType));
+                }
+
                 var result = await blogService.Value.GetPostsAsync(new ListRequestDto<Post>
                 {
                     PagingDto = request.PagingDto,
@@ -49,10 +58,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         {
                             Id = t.Id,
                             Title = t.Title,
+                            Slug = t.Title.Slugify(),
                             Summary = t.Summary,
                             LikeCount = t.LikeCount,
                             DislikeCount = t.DislikeCount,
                             ImageUri = t.ImageUri,
+                            PublishDate = t.PublishDate,
+                            VisibilityType = t.VisibilityType,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     }
@@ -71,7 +83,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await blogService.Value.GetPostAsync(new IdEqualsSpecification<Post, long>(postId));
+                var specification = new IdEqualsSpecification<Post, long>(postId).And(new PublishDateSpecification());
+                var result = await blogService.Value.GetPostAsync(specification);
 
                 return Ok<PostResponseViewModel>(new(result.Errors)
                 {
@@ -84,6 +97,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         LikeCount = result.Data.LikeCount,
                         DislikeCount = result.Data.DislikeCount,
                         CreationUser = result.Data.CreationUser,
+                        VisibilityType = result.Data.VisibilityType,
                         Tags = result.Data.Tags?.Select(t => new TagResponseViewModel
                         {
                             Id = t.Id,
@@ -239,6 +253,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Body = dto.Body,
                     Tags = dto.Tags,
                     ImageUri = fileService.Value.GetFileUri(dto.ImageId, ContainerType.Post).Data,
+                    PublishDate = dto.PublishDate,
+                    VisibilityType = dto.VisibilityType,
                 };
             }
             catch (Exception exc)
@@ -310,6 +326,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
             Body = request.Body,
             Image = request.Image,
             Tags = request.Tags,
+            PublishDate = request.PublishDate.GetValueOrDefault(),
+            VisibilityType = request.VisibilityType!,
         };
     }
 }

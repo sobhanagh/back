@@ -1,7 +1,10 @@
 namespace GamaEdtech.Presentation.ViewModel.Blog
 {
     using System;
+    using System.Text.Json.Serialization;
 
+    using GamaEdtech.Common.Converter;
+    using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Presentation.ViewModel.Tag;
 
     public sealed class PostResponseViewModel
@@ -14,5 +17,8 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
         public int DislikeCount { get; set; }
         public IEnumerable<TagResponseViewModel>? Tags { get; set; }
         public string? CreationUser { get; set; }
+
+        [JsonConverter(typeof(EnumerationConverter<VisibilityType, byte>))]
+        public VisibilityType? VisibilityType { get; set; }
     }
 }

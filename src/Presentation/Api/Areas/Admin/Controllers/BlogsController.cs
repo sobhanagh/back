@@ -89,6 +89,8 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     Body = dto.Body,
                     ImageUri = fileService.Value.GetFileUri(dto.ImageId, ContainerType.Post).Data,
                     Tags = dto.Tags,
+                    PublishDate = dto.PublishDate,
+                    VisibilityType = dto.VisibilityType,
                 };
 
                 return Ok(new ApiResponse<PostContributionResponseViewModel>
