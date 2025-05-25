@@ -10,6 +10,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
     using GamaEdtech.Common.DataAccess.Specification.Impl;
+    using GamaEdtech.Common.DataAnnotation;
     using GamaEdtech.Common.Identity;
     using GamaEdtech.Data.Dto.Blog;
     using GamaEdtech.Domain.Entity;
@@ -58,7 +59,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         {
                             Id = t.Id,
                             Title = t.Title,
-                            Slug = t.Title.Slugify(),
+                            Slug = t.Slug,
                             Summary = t.Summary,
                             LikeCount = t.LikeCount,
                             DislikeCount = t.DislikeCount,
@@ -91,6 +92,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Data = result.Data is null ? null : new()
                     {
                         Title = result.Data.Title,
+                        Slug = result.Data.Slug,
                         Summary = result.Data.Summary,
                         Body = result.Data.Body,
                         ImageUri = result.Data.ImageUri,
@@ -175,6 +177,60 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 return Ok<bool>(new(result.Errors)
                 {
                     Data = result.Data,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<bool>(new(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpGet("slugs/generate"), Produces<ApiResponse<string>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<string>> GenerateSlug([FromQuery, Required] string title)
+        {
+            try
+            {
+                var slug = Globals.Slugify(title);
+                var result = await GenerateSlugAsync(slug!);
+
+                return Ok<string>(new()
+                {
+                    Data = result,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<string>(new(new Error { Message = exc.Message }));
+            }
+
+            async Task<string> GenerateSlugAsync(string slug)
+            {
+                var result = await blogService.Value.PostExistsAsync(new SlugEqualsSpecification(slug));
+                if (result.OperationResult is Constants.OperationResult.Succeeded && !result.Data)
+                {
+                    return slug;
+                }
+
+                slug += 1;
+                return await GenerateSlugAsync(slug);
+            }
+        }
+
+        [HttpGet("slugs/validate"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<bool>> ValidateSlug([FromQuery, Required] string slug)
+        {
+            try
+            {
+                var result = await blogService.Value.PostExistsAsync(new SlugEqualsSpecification(slug));
+                return Ok<bool>(new(result.Errors)
+                {
+                    Data = !result.Data,
                 });
             }
             catch (Exception exc)
@@ -322,6 +378,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
             ContributionId = contributionId,
             UserId = User.UserId(),
             Title = request.Title,
+            Slug = request.Slug,
             Summary = request.Summary,
             Body = request.Body,
             Image = request.Image,

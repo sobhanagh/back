@@ -17,6 +17,10 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
 
         [Display]
         [Required]
+        public string? Slug { get; set; }
+
+        [Display]
+        [Required]
         public string? Summary { get; set; }
 
         [Display]

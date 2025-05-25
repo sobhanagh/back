@@ -22,6 +22,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
+    using GamaEdtech.Domain.Specification.Post;
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace GamaEdtech.Application.Service
                 {
                     t.Id,
                     t.Title,
+                    t.Slug,
                     t.Summary,
                     t.LikeCount,
                     t.DislikeCount,
@@ -61,6 +63,7 @@ namespace GamaEdtech.Application.Service
                     LikeCount = t.LikeCount,
                     Summary = t.Summary,
                     Title = t.Title,
+                    Slug = t.Slug,
                     ImageUri = fileService.Value.GetFileUri(t.ImageId, ContainerType.Post).Data,
                     PublishDate = t.PublishDate,
                     VisibilityType = t.VisibilityType,
@@ -83,6 +86,7 @@ namespace GamaEdtech.Application.Service
                 var post = await uow.GetRepository<Post>().GetManyQueryable(specification).Select(t => new
                 {
                     t.Title,
+                    t.Slug,
                     t.Summary,
                     t.Body,
                     t.ImageId,
@@ -109,6 +113,7 @@ namespace GamaEdtech.Application.Service
                 PostDto result = new()
                 {
                     Title = post.Title,
+                    Slug = post.Slug,
                     Summary = post.Summary,
                     Body = post.Body,
                     ImageUri = fileService.Value.GetFileUri(post.ImageId, ContainerType.Post).Data,
@@ -145,6 +150,12 @@ namespace GamaEdtech.Application.Service
                     }
                 }
 
+                var exists = await PostExistsAsync(new SlugEqualsSpecification(requestDto.Slug!));
+                if (exists.Data)
+                {
+                    return new(OperationResult.Duplicate) { Errors = [new() { Message = Localizer.Value["DuplicateSlug"] },], };
+                }
+
                 var (imageId, errors) = await SaveImageAsync();
                 if (errors is not null)
                 {
@@ -163,6 +174,7 @@ namespace GamaEdtech.Application.Service
                     Summary = requestDto.Summary,
                     Tags = requestDto.Tags,
                     Title = requestDto.Title,
+                    Slug = requestDto.Slug,
                     PublishDate = requestDto.PublishDate,
                     VisibilityType = requestDto.VisibilityType,
                 };
@@ -378,6 +390,7 @@ namespace GamaEdtech.Application.Service
                     CreationDate = dto.CreationDate,
                     ImageId = dto.ImageId,
                     Title = dto.Title,
+                    Slug = dto.Slug,
                     Summary = dto.Summary,
                     Status = Status.Confirmed,
                     PostTags = dto.Tags?.Select(t => new PostTag
@@ -402,12 +415,12 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var repository = uow.GetRepository<Post>();
+                var specification = new IdEqualsSpecification<Post, long>(postId)
+                    .And(new CreationUserIdEqualsSpecification<Post, ApplicationUser, int>(userId));
 
-                var exists = await repository.AnyAsync(t => t.Id == postId && t.CreationUserId == userId);
+                var exists = await PostExistsAsync(specification);
 
-                return new(OperationResult.Succeeded) { Data = exists };
+                return new(OperationResult.Succeeded) { Data = exists.Data };
             }
             catch (Exception exc)
             {

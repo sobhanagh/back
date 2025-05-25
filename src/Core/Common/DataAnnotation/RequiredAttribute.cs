@@ -10,7 +10,7 @@ namespace GamaEdtech.Common.DataAnnotation
 
     using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
     public sealed class RequiredAttribute : System.ComponentModel.DataAnnotations.RequiredAttribute, IClientModelValidator
     {
         public RequiredAttribute(bool required = true)
