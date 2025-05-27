@@ -11,6 +11,7 @@ namespace GamaEdtech.Data.Dto.Blog
         public long? ContributionId { get; set; }
         public int UserId { get; set; }
         public string? Title { get; set; }
+        public string? Slug { get; set; }
         public string? Summary { get; set; }
         public string? Body { get; set; }
         public VisibilityType VisibilityType { get; set; }

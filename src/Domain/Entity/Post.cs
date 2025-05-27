@@ -21,6 +21,10 @@ namespace GamaEdtech.Domain.Entity
         [Required]
         public long Id { get; set; }
 
+        [Column(nameof(Slug), DataType.UnicodeString)]
+        [StringLength(500)]
+        public string? Slug { get; set; }
+
         [Column(nameof(Title), DataType.UnicodeString)]
         [StringLength(500)]
         [Required]
@@ -66,6 +70,7 @@ namespace GamaEdtech.Domain.Entity
         {
             _ = builder.OwnEnumeration<Post, Status, byte>(t => t.Status);
             _ = builder.OwnEnumeration<Post, VisibilityType, byte>(t => t.VisibilityType);
+            _ = builder.HasIndex(t => t.Slug).IsUnique(true);
         }
     }
 }
