@@ -15,6 +15,6 @@ namespace GamaEdtech.Data.Dto.Blog
         public DateTimeOffset PublishDate { get; set; }
         public DateTimeOffset CreationDate { get; set; }
         public int CreationUserId { get; set; }
-        public IEnumerable<int>? Tags { get; set; }
+        public IEnumerable<long>? Tags { get; set; }
     }
 }

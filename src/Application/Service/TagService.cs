@@ -190,5 +190,21 @@ namespace GamaEdtech.Application.Service
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
             }
         }
+
+        public async Task<ResultData<int>> GetTagsCountAsync([NotNull] ISpecification<Tag> specification)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var count = await uow.GetRepository<Tag>().CountAsync(specification);
+
+                return new(OperationResult.Succeeded) { Data = count };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message },] };
+            }
+        }
     }
 }

@@ -28,6 +28,7 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
         public string? Body { get; set; }
 
         [Display]
+        [Required]
         [FileSize(1024 * 1024 * 2)]//2MB
         [FileExtensions(Constants.ValidImageExtensions)]
         public IFormFile? Image { get; set; }
@@ -41,6 +42,6 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
         [Required]
         public DateTimeOffset? PublishDate { get; set; }
 
-        public IEnumerable<int>? Tags { get; set; }
+        public IEnumerable<long>? Tags { get; set; }
     }
 }
