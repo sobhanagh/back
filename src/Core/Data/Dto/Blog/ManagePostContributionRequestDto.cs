@@ -17,6 +17,6 @@ namespace GamaEdtech.Data.Dto.Blog
         public VisibilityType VisibilityType { get; set; }
         public DateTimeOffset PublishDate { get; set; }
         public IFormFile? Image { get; set; }
-        public IEnumerable<int>? Tags { get; set; }
+        public IEnumerable<long>? Tags { get; set; }
     }
 }

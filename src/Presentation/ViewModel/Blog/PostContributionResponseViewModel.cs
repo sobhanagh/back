@@ -18,6 +18,6 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
 
         public DateTimeOffset PublishDate { get; set; }
 
-        public IEnumerable<int>? Tags { get; set; }
+        public IEnumerable<long>? Tags { get; set; }
     }
 }

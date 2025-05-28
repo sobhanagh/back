@@ -34,7 +34,7 @@ namespace GamaEdtech.Application.Service
 
     public class BlogService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<BlogService>> localizer
         , Lazy<ILogger<BlogService>> logger, Lazy<IReactionService> reactionService, Lazy<IFileService> fileService, Lazy<IIdentityService> identityService
-        , Lazy<IContributionService> contributionService, Lazy<IConfiguration> configuration)
+        , Lazy<IContributionService> contributionService, Lazy<ITagService> tagService, Lazy<IConfiguration> configuration)
         : LocalizableServiceBase<BlogService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), IBlogService
     {
         public async Task<ResultData<ListDataSource<PostsDto>>> GetPostsAsync(ListRequestDto<Post>? requestDto = null)
@@ -154,6 +154,15 @@ namespace GamaEdtech.Application.Service
                 if (exists.Data)
                 {
                     return new(OperationResult.Duplicate) { Errors = [new() { Message = Localizer.Value["DuplicateSlug"] },], };
+                }
+
+                if (requestDto.Tags?.Any() == true)
+                {
+                    var count = await tagService.Value.GetTagsCountAsync(new IdContainsSpecification<Tag, long>(requestDto.Tags));
+                    if (count.Data != requestDto.Tags.Count())
+                    {
+                        return new(OperationResult.Duplicate) { Errors = [new() { Message = Localizer.Value["InvalidTag"] },], };
+                    }
                 }
 
                 var (imageId, errors) = await SaveImageAsync();
@@ -393,6 +402,8 @@ namespace GamaEdtech.Application.Service
                     Slug = dto.Slug,
                     Summary = dto.Summary,
                     Status = Status.Confirmed,
+                    PublishDate = dto.PublishDate,
+                    VisibilityType = dto.VisibilityType,
                     PostTags = dto.Tags?.Select(t => new PostTag
                     {
                         CreationUserId = dto.CreationUserId,
