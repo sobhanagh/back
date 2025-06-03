@@ -21,5 +21,7 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
 
         [JsonConverter(typeof(EnumerationConverter<VisibilityType, byte>))]
         public VisibilityType? VisibilityType { get; set; }
+
+        public DateTimeOffset PublishDate { get; set; }
     }
 }

@@ -94,6 +94,7 @@ namespace GamaEdtech.Application.Service
                     t.DislikeCount,
                     t.VisibilityType,
                     CreationUser = t.CreationUser.FirstName + " " + t.CreationUser.LastName,
+                    t.PublishDate,
                     Tags = t.PostTags == null ? null : t.PostTags.Select(s => new TagDto
                     {
                         Icon = s.Tag.Icon,
@@ -122,6 +123,7 @@ namespace GamaEdtech.Application.Service
                     CreationUser = post.CreationUser,
                     Tags = post.Tags,
                     VisibilityType = post.VisibilityType,
+                    PublishDate = post.PublishDate,
                 };
 
                 return new(OperationResult.Succeeded) { Data = result };
@@ -144,9 +146,14 @@ namespace GamaEdtech.Application.Service
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.Post))
                         .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
                     var data = await contributionService.Value.ExistsContributionAsync(specification);
-                    if (!data.Data)
+                    if (data.OperationResult is not OperationResult.Succeeded)
                     {
                         return new(data.OperationResult) { Errors = data.Errors };
+                    }
+
+                    if (!data.Data)
+                    {
+                        return new(OperationResult.NotValid) { Errors = [new() { Message = "Invalid Blog Status", }] };
                     }
                 }
 
