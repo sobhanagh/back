@@ -100,6 +100,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         DislikeCount = result.Data.DislikeCount,
                         CreationUser = result.Data.CreationUser,
                         VisibilityType = result.Data.VisibilityType,
+                        PublishDate = result.Data.PublishDate,
                         Tags = result.Data.Tags?.Select(t => new TagResponseViewModel
                         {
                             Id = t.Id,

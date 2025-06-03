@@ -17,5 +17,6 @@ namespace GamaEdtech.Data.Dto.Blog
         public string? CreationUser { get; set; }
         public VisibilityType VisibilityType { get; set; }
         public IEnumerable<TagDto>? Tags { get; set; }
+        public DateTimeOffset PublishDate { get; set; }
     }
 }
