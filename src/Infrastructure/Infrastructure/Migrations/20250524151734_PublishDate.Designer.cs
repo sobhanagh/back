@@ -4,6 +4,7 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,13 +13,15 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250524151734_PublishDate")]
+    partial class PublishDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -835,11 +838,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("PublishDate");
 
-                    b.Property<string>("Slug")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("Slug");
-
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint")
                         .HasColumnName("Status");
@@ -865,10 +863,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.HasIndex("CreationUserId");
 
                     b.HasIndex("LastModifyUserId");
-
-                    b.HasIndex("Slug")
-                        .IsUnique()
-                        .HasFilter("[Slug] IS NOT NULL");
 
                     b.ToTable("Posts");
                 });
@@ -1480,8 +1474,7 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnName("Points");
 
                     b.Property<long?>("PreviousTransactionId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("PreviousTransactionId");
+                        .HasColumnType("bigint");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int")
@@ -1496,67 +1489,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
-                });
-
-            modelBuilder.Entity("GamaEdtech.Domain.Entity.VotingPower", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("Id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(36, 18)
-                        .HasColumnType("numeric")
-                        .HasColumnName("Amount");
-
-                    b.Property<DateTimeOffset>("CreationDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("CreationDate");
-
-                    b.Property<int>("CreationUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("CreationUserId");
-
-                    b.Property<DateTimeOffset?>("LastModifyDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("LastModifyDate");
-
-                    b.Property<int?>("LastModifyUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("LastModifyUserId");
-
-                    b.Property<string>("ProposalId")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("ProposalId");
-
-                    b.Property<string>("TokenAccount")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("TokenAccount");
-
-                    b.Property<string>("WalletAddress")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar")
-                        .HasColumnName("WalletAddress");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreationUserId");
-
-                    b.HasIndex("LastModifyUserId");
-
-                    b.HasIndex("ProposalId");
-
-                    b.HasIndex("WalletAddress");
-
-                    b.ToTable("VotingPowers");
                 });
 
             modelBuilder.Entity("SubjectGrades", b =>
@@ -2085,24 +2017,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Navigation("PreviousTransaction");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GamaEdtech.Domain.Entity.VotingPower", b =>
-                {
-                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
-                        .WithMany()
-                        .HasForeignKey("CreationUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "LastModifyUser")
-                        .WithMany()
-                        .HasForeignKey("LastModifyUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("CreationUser");
-
-                    b.Navigation("LastModifyUser");
                 });
 
             modelBuilder.Entity("SubjectGrades", b =>
