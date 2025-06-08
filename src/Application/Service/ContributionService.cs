@@ -144,7 +144,7 @@ namespace GamaEdtech.Application.Service
                         for (var i = 0; i < properties.Length; i++)
                         {
                             var property = properties[i];
-                            if (property.CanWrite)
+                            if (!property.CanWrite)
                             {
                                 continue;
                             }

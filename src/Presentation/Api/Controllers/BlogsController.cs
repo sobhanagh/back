@@ -379,8 +379,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Body = request.Body,
                     Image = request.Image,
                     Tags = request.Tags,
-                    PublishDate = request.PublishDate.GetValueOrDefault(),
-                    VisibilityType = request.VisibilityType!,
+                    PublishDate = request.PublishDate,
+                    VisibilityType = request.VisibilityType,
                     Keywords = request.Keywords,
                 };
                 var result = await blogService.Value.ManagePostContributionAsync(dto);
