@@ -40,5 +40,8 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
 
         [Display]
         public IEnumerable<long>? Tags { get; set; }
+
+        [Display]
+        public bool? Draft { get; set; }
     }
 }

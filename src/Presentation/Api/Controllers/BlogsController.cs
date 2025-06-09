@@ -341,6 +341,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     PublishDate = request.PublishDate.GetValueOrDefault(),
                     VisibilityType = request.VisibilityType!,
                     Keywords = request.Keywords,
+                    Draft = request.Draft,
                 };
                 var result = await blogService.Value.ManagePostContributionAsync(dto);
 
@@ -382,6 +383,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     PublishDate = request.PublishDate,
                     VisibilityType = request.VisibilityType,
                     Keywords = request.Keywords,
+                    Draft = request.Draft,
                 };
                 var result = await blogService.Value.ManagePostContributionAsync(dto);
 

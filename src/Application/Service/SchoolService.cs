@@ -550,7 +550,10 @@ namespace GamaEdtech.Application.Service
 
                 var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
                     .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
-                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft));
+                    .And(
+                        new StatusEqualsSpecification<Contribution>(Status.Draft)
+                        .Or(new StatusEqualsSpecification<Contribution>(Status.Review))
+                    );
                 var contributionExists = await contributionService.Value.ExistsContributionAsync(contributionSpecification);
                 if (contributionExists.Data)
                 {
@@ -578,7 +581,7 @@ namespace GamaEdtech.Application.Service
                 {
                     CategoryType = CategoryType.SchoolComment,
                     IdentifierId = requestDto.SchoolId,
-                    Status = Status.Draft,
+                    Status = Status.Review,
                     Data = dto,
                 });
                 if (contributionResult.OperationResult is not OperationResult.Succeeded)
@@ -789,7 +792,7 @@ namespace GamaEdtech.Application.Service
                 {
                     CategoryType = CategoryType.SchoolImage,
                     IdentifierId = requestDto.SchoolId,
-                    Status = Status.Draft,
+                    Status = Status.Review,
                     Data = dto,
                 });
                 if (contributionResult.OperationResult is not OperationResult.Succeeded)
@@ -1018,7 +1021,11 @@ namespace GamaEdtech.Application.Service
                     var specification = new IdEqualsSpecification<Contribution, long>(requestDto.Id.Value)
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.UserId))
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School))
-                        .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
+                        .And(
+                            new StatusEqualsSpecification<Contribution>(Status.Draft)
+                            .Or(new StatusEqualsSpecification<Contribution>(Status.Rejected))
+                            .Or(new StatusEqualsSpecification<Contribution>(Status.Review))
+                        );
                     if (requestDto.SchoolId.HasValue)
                     {
                         specification = specification.And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId.Value));
@@ -1035,7 +1042,7 @@ namespace GamaEdtech.Application.Service
                 {
                     CategoryType = CategoryType.School,
                     IdentifierId = requestDto.SchoolId,
-                    Status = Status.Draft,
+                    Status = Status.Review,
                     Data = requestDto.SchoolContribution,
                     Id = requestDto.Id,
                 });
@@ -1157,7 +1164,10 @@ namespace GamaEdtech.Application.Service
 
                 var contributionSpecification = new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.CreationUserId)
                     .And(new IdentifierIdEqualsSpecification<Contribution>(requestDto.SchoolId))
-                    .And(new StatusEqualsSpecification<Contribution>(Status.Draft));
+                    .And(
+                        new StatusEqualsSpecification<Contribution>(Status.Draft)
+                        .Or(new StatusEqualsSpecification<Contribution>(Status.Review))
+                    );
                 var contributionExists = await contributionService.Value.ExistsContributionAsync(contributionSpecification);
                 if (contributionExists.Data)
                 {
@@ -1168,7 +1178,7 @@ namespace GamaEdtech.Application.Service
                 {
                     CategoryType = CategoryType.SchoolIssues,
                     IdentifierId = requestDto.SchoolId,
-                    Status = Status.Draft,
+                    Status = Status.Review,
                     Data = requestDto.Description,
                 });
                 if (contributionResult.OperationResult is not OperationResult.Succeeded)

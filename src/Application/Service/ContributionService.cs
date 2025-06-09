@@ -206,7 +206,7 @@ namespace GamaEdtech.Application.Service
             {
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var repository = uow.GetRepository<Contribution>();
-                var contribution = await repository.GetAsync(specification);
+                var contribution = await repository.GetAsync(specification.And(new StatusEqualsSpecification<Contribution>(Status.Review)));
                 if (contribution is null)
                 {
                     return new(OperationResult.NotFound)
@@ -259,7 +259,7 @@ namespace GamaEdtech.Application.Service
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var repository = uow.GetRepository<Contribution>();
                 var userId = HttpContextAccessor.Value.HttpContext?.User.UserId();
-                var affectedRows = await repository.GetManyQueryable(t => t.Id == requestDto.Id).ExecuteUpdateAsync(t => t
+                var affectedRows = await repository.GetManyQueryable(t => t.Id == requestDto.Id && t.Status == Status.Review).ExecuteUpdateAsync(t => t
                     .SetProperty(p => p.Status, Status.Rejected)
                     .SetProperty(p => p.Comment, requestDto.Comment)
                     .SetProperty(p => p.LastModifyUserId, userId)

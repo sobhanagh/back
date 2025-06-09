@@ -145,7 +145,11 @@ namespace GamaEdtech.Application.Service
                     var specification = new IdEqualsSpecification<Contribution, long>(requestDto.ContributionId.Value)
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(requestDto.UserId))
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.Post))
-                        .And(new StatusEqualsSpecification<Contribution>(Status.Draft).Or(new StatusEqualsSpecification<Contribution>(Status.Rejected)));
+                        .And(
+                            new StatusEqualsSpecification<Contribution>(Status.Draft)
+                            .Or(new StatusEqualsSpecification<Contribution>(Status.Rejected))
+                            .Or(new StatusEqualsSpecification<Contribution>(Status.Review))
+                        );
                     var data = await contributionService.Value.ExistsContributionAsync(specification);
 
                     if (data.OperationResult is not OperationResult.Succeeded)
@@ -196,13 +200,14 @@ namespace GamaEdtech.Application.Service
                     PublishDate = requestDto.PublishDate,
                     VisibilityType = requestDto.VisibilityType,
                     Keywords = requestDto.Keywords,
+                    Draft = requestDto.Draft,
                 };
 
                 var contributionResult = await contributionService.Value.ManageContributionAsync(new ManageContributionRequestDto<PostContributionDto>
                 {
                     CategoryType = CategoryType.Post,
                     IdentifierId = null,
-                    Status = Status.Draft,
+                    Status = requestDto.Draft.GetValueOrDefault() ? Status.Draft : Status.Review,
                     Data = dto,
                     Id = requestDto.ContributionId,
                 });
@@ -211,13 +216,16 @@ namespace GamaEdtech.Application.Service
                     return new(contributionResult.OperationResult) { Errors = contributionResult.Errors };
                 }
 
-                var hasAutoConfirmSchoolComment = await identityService.Value.HasClaimAsync(requestDto.UserId, SystemClaim.AutoConfirmPost);
-                if (hasAutoConfirmSchoolComment.Data || configuration.Value.GetValue<bool>("AutoConfirmPosts"))
+                if (!requestDto.Draft.GetValueOrDefault())
                 {
-                    _ = await ConfirmPostContributionAsync(new()
+                    var hasAutoConfirmSchoolComment = await identityService.Value.HasClaimAsync(requestDto.UserId, SystemClaim.AutoConfirmPost);
+                    if (hasAutoConfirmSchoolComment.Data || configuration.Value.GetValue<bool>("AutoConfirmPosts"))
                     {
-                        ContributionId = contributionResult.Data,
-                    });
+                        _ = await ConfirmPostContributionAsync(new()
+                        {
+                            ContributionId = contributionResult.Data,
+                        });
+                    }
                 }
 
                 return new(OperationResult.Succeeded) { Data = contributionResult.Data };
@@ -410,7 +418,6 @@ namespace GamaEdtech.Application.Service
                     Title = result.Data.Data!.Title,
                     Slug = result.Data.Data!.Slug,
                     Summary = result.Data.Data!.Summary,
-                    Status = Status.Confirmed,
                     PublishDate = result.Data.Data!.PublishDate.GetValueOrDefault(),
                     VisibilityType = result.Data.Data!.VisibilityType!,
                     Keywords = result.Data.Data!.Keywords,

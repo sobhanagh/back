@@ -214,7 +214,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         #region Comments
 
         [HttpGet("comments/contributions"), Produces<ApiResponse<ListDataSource<SchoolCommentContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetPendingSchoolCommentContributionList([NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
+        public async Task<IActionResult<ListDataSource<SchoolCommentContributionListResponseViewModel>>> GetSchoolCommentContributionList([NotNull, FromQuery] SchoolCommentContributionListRequestViewModel request)
         {
             try
             {
@@ -353,7 +353,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         #region Images
 
         [HttpGet("images/contributions"), Produces<ApiResponse<ListDataSource<SchoolImageContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetPendingSchoolImageContributionList([NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
+        public async Task<IActionResult<ListDataSource<SchoolImageContributionListResponseViewModel>>> GetSchoolImageContributionList([NotNull, FromQuery] SchoolImageContributionListRequestViewModel request)
         {
             try
             {

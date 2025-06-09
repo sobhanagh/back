@@ -29,7 +29,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
         : ApiControllerBase<BlogsController>(logger)
     {
         [HttpGet("contributions"), Produces<ApiResponse<ListDataSource<PostContributionListResponseViewModel>>>()]
-        public async Task<IActionResult<ListDataSource<PostContributionListResponseViewModel>>> GetPendingPostContributionList([NotNull, FromQuery] PostContributionListRequestViewModel request)
+        public async Task<IActionResult<ListDataSource<PostContributionListResponseViewModel>>> GetPostContributionList([NotNull, FromQuery] PostContributionListRequestViewModel request)
         {
             try
             {
