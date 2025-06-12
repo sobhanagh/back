@@ -3,7 +3,6 @@ namespace GamaEdtech.Application.Service
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Text.Json;
 
     using EntityFramework.Exceptions.Common;
 
@@ -1286,7 +1285,7 @@ namespace GamaEdtech.Application.Service
         {
             try
             {
-                var lst = await contributionService.Value.GetContributionsAsync(new()
+                var lst = await contributionService.Value.GetContributionsAsync<SchoolImageContributionDto>(new()
                 {
                     PagingDto = new() { PageFilter = new() { ReturnTotalRecordsCount = false, Size = 1000 } },
                     Specification = new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolImage)
@@ -1306,20 +1305,19 @@ namespace GamaEdtech.Application.Service
                         continue;
                     }
 
-                    var dto = JsonSerializer.Deserialize<SchoolImageContributionDto>(item.Data!);
-                    if (dto is null)
+                    if (item.Data is null)
                     {
                         continue;
                     }
 
                     var result = await fileService.Value.RemoveFileAsync(new()
                     {
-                        FileId = dto.FileId!,
+                        FileId = item.Data.FileId!,
                         ContainerType = ContainerType.School,
                     });
                     if (result.Data)
                     {
-                        _ = await contributionService.Value.ManageContributionAsync<string>(new()
+                        _ = await contributionService.Value.ManageContributionAsync<SchoolImageContributionDto>(new()
                         {
                             CategoryType = item.CategoryType!,
                             Id = item.Id,

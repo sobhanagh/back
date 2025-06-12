@@ -39,7 +39,7 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
                     specification = specification.And(new StatusEqualsSpecification<Contribution>(request.Status));
                 }
 
-                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
+                var result = await contributionService.Value.GetContributionsAsync<PostContributionDto>(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
                     Specification = specification,
