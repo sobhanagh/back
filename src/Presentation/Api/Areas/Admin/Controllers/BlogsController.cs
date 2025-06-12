@@ -152,6 +152,39 @@ namespace GamaEdtech.Presentation.Api.Areas.Admin.Controllers
             }
         }
 
+        [HttpPut("posts/{postId:long}"), Produces<ApiResponse<ManagePostResponseViewModel>>()]
+        public async Task<IActionResult<ManagePostResponseViewModel>> UpdatePost([FromRoute] long postId, [NotNull, FromBody] UpdatePostRequestViewModel request)
+        {
+            try
+            {
+                ManagePostRequestDto dto = new()
+                {
+                    Id = postId,
+                    Body = request.Body,
+                    Image = request.Image,
+                    Keywords = request.Keywords,
+                    PublishDate = request.PublishDate,
+                    Slug = request.Slug,
+                    Summary = request.Summary,
+                    Tags = request.Tags,
+                    Title = request.Title,
+                    VisibilityType = request.VisibilityType,
+                };
+                var result = await blogService.Value.ManagePostAsync(dto);
+
+                return Ok<ManagePostResponseViewModel>(new(result.Errors)
+                {
+                    Data = new() { Id = result.Data, },
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok<ManagePostResponseViewModel>(new() { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
         [HttpDelete("posts/{postId:long}"), Produces<ApiResponse<bool>>()]
         public async Task<IActionResult> RemovePost([FromRoute] long postId)
         {

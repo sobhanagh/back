@@ -178,7 +178,7 @@ namespace GamaEdtech.Application.Service
                     }
                 }
 
-                var (imageId, errors) = await SaveImageAsync();
+                var (imageId, errors) = await SaveImageAsync(requestDto.Image);
                 if (errors is not null)
                 {
                     return new(OperationResult.Failed)
@@ -229,28 +229,114 @@ namespace GamaEdtech.Application.Service
                 }
 
                 return new(OperationResult.Succeeded) { Data = contributionResult.Data };
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
+            }
+        }
 
-                async Task<(string? ImageId, IEnumerable<Error>? Errors)> SaveImageAsync()
+        public async Task<ResultData<long>> ManagePostAsync([NotNull] ManagePostRequestDto requestDto)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var repository = uow.GetRepository<Post>();
+                Post? post = null;
+
+                var (imageId, errors) = await SaveImageAsync(requestDto.Image);
+                if (errors is not null)
                 {
-                    if (requestDto.Image is null)
+                    return new(OperationResult.Failed)
                     {
-                        return (null, null);
+                        Errors = errors,
+                    };
+                }
+
+                if (requestDto.Id.HasValue)
+                {
+                    post = await repository.GetAsync(requestDto.Id.Value, includes: (t) => t.Include(s => s.PostTags));
+                    if (post is null)
+                    {
+                        return new(OperationResult.NotFound)
+                        {
+                            Errors = [new() { Message = Localizer.Value["SchoolNotFound"] },],
+                        };
                     }
 
-                    using MemoryStream stream = new();
-                    await requestDto.Image.CopyToAsync(stream);
+                    post.Slug = requestDto.Slug ?? post.Slug;
+                    post.Title = requestDto.Title ?? post.Title;
+                    post.Summary = requestDto.Summary ?? post.Summary;
+                    post.Body = requestDto.Body ?? post.Body;
+                    post.ImageId = imageId ?? post.ImageId;
+                    post.PublishDate = requestDto.PublishDate ?? post.PublishDate;
+                    post.VisibilityType = requestDto.VisibilityType ?? post.VisibilityType;
+                    post.Keywords = requestDto.Keywords ?? post.Keywords;
 
-                    var fileId = await fileService.Value.UploadFileAsync(new()
+                    _ = repository.Update(post);
+
+                    if (requestDto.Tags?.Any() == true)
                     {
-                        File = stream.ToArray(),
-                        ContainerType = ContainerType.Post,
-                        FileExtension = Path.GetExtension(requestDto.Image.FileName),
-                    });
+                        var postTagRepository = uow.GetRepository<PostTag>();
 
-                    return fileId.OperationResult is OperationResult.Succeeded
-                        ? ((string? ImageId, IEnumerable<Error>? Errors))(fileId.Data, null)
-                        : new(null, fileId.Errors);
+                        var removedTags = post.PostTags?.Where(t => requestDto.Tags is null || !requestDto.Tags.Contains(t.TagId));
+                        var newTags = requestDto.Tags?.Where(t => post.PostTags is null || post.PostTags.All(s => s.TagId != t));
+
+                        if (removedTags is not null)
+                        {
+                            foreach (var item in removedTags)
+                            {
+                                postTagRepository.Remove(item);
+                            }
+                        }
+
+                        if (newTags is not null)
+                        {
+                            foreach (var item in newTags)
+                            {
+                                postTagRepository.Add(new PostTag
+                                {
+                                    PostId = requestDto.Id.Value,
+                                    TagId = item,
+                                    CreationDate = DateTimeOffset.UtcNow,
+                                    CreationUserId = HttpContextAccessor.Value.HttpContext.UserId(),
+                                });
+                            }
+                        }
+                    }
                 }
+                else
+                {
+                    post = new Post
+                    {
+                        Slug = requestDto.Slug,
+                        Title = requestDto.Title,
+                        Summary = requestDto.Summary,
+                        Body = requestDto.Body,
+                        PublishDate = requestDto.PublishDate.GetValueOrDefault(),
+                        VisibilityType = requestDto.VisibilityType!,
+                        Keywords = requestDto.Keywords,
+                        ImageId = imageId,
+                    };
+                    if (requestDto.Tags is not null)
+                    {
+                        post.PostTags = [.. requestDto.Tags.Select(t => new PostTag {
+                            TagId = t,
+                            CreationUserId = HttpContextAccessor.Value.HttpContext.UserId(),
+                            CreationDate = DateTimeOffset.UtcNow,
+                        })];
+                    }
+                    repository.Add(post);
+                }
+
+                _ = await uow.SaveChangesAsync();
+
+                return new(OperationResult.Succeeded) { Data = post.Id };
+            }
+            catch (ReferenceConstraintException)
+            {
+                return new(OperationResult.NotValid) { Errors = [new() { Message = Localizer.Value["InvalidStateId"], }] };
             }
             catch (Exception exc)
             {
@@ -455,6 +541,28 @@ namespace GamaEdtech.Application.Service
                 Logger.Value.LogException(exc);
                 return new(OperationResult.Failed) { Errors = [new() { Message = exc.Message, }] };
             }
+        }
+
+        private async Task<(string? ImageId, IEnumerable<Error>? Errors)> SaveImageAsync(IFormFile? file)
+        {
+            if (file is null)
+            {
+                return (null, null);
+            }
+
+            using MemoryStream stream = new();
+            await file.CopyToAsync(stream);
+
+            var fileId = await fileService.Value.UploadFileAsync(new()
+            {
+                File = stream.ToArray(),
+                ContainerType = ContainerType.Post,
+                FileExtension = Path.GetExtension(file.FileName),
+            });
+
+            return fileId.OperationResult is OperationResult.Succeeded
+                ? ((string? ImageId, IEnumerable<Error>? Errors))(fileId.Data, null)
+                : new(null, fileId.Errors);
         }
 
         #region Job
