@@ -12,6 +12,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
 
     using Microsoft.AspNetCore.Mvc;
 
+    using Org.BouncyCastle.Crypto.Parameters;
+    using Org.BouncyCastle.Security;
+
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     public class VotingPowersController(Lazy<ILogger<VotingPowersController>> logger, Lazy<IVotingPowerService> votingPowerService)
@@ -22,7 +25,17 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                //check signature
+                var signer = SignerUtilities.GetSigner("Ed25519");
+                var publicKey = new Ed25519PublicKeyParameters(System.Text.Encoding.ASCII.GetBytes(request.PublicKey!));
+                signer.Init(false, publicKey);
+                signer.BlockUpdate(System.Text.Encoding.ASCII.GetBytes(request.Message!), 0, request.Message!.Length);
+
+                var valid = signer.VerifySignature(System.Text.Encoding.ASCII.GetBytes(request.SignedMessage!));
+                if (!valid)
+                {
+                    return Ok<Void>(new() { Errors = [new() { Message = "Invalid Signature" }] });
+                }
+
                 var lst = request.Data.Select(t => new ManageVotingPowerRequestDto
                 {
                     Amount = t.Amount.GetValueOrDefault(),
