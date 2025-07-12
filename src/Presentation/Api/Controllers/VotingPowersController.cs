@@ -81,7 +81,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 Ed25519PublicKeyParameters? publicKey = null;
                 try
                 {
-                    publicKey = new Ed25519PublicKeyParameters(System.Text.Encoding.ASCII.GetBytes(request.PublicKey!));
+                    publicKey = new Ed25519PublicKeyParameters(Convert.FromHexString(request.PublicKey!));
                 }
                 catch (Exception)
                 {
@@ -91,7 +91,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 signer.Init(false, publicKey);
                 signer.BlockUpdate(System.Text.Encoding.ASCII.GetBytes(request.Message!), 0, request.Message!.Length);
 
-                var valid = signer.VerifySignature(System.Text.Encoding.ASCII.GetBytes(request.SignedMessage!));
+                var valid = signer.VerifySignature(Convert.FromHexString(request.SignedMessage!));
                 if (!valid)
                 {
                     return Ok<Void>(new() { Errors = [new() { Message = "Invalid Signature" }] });
