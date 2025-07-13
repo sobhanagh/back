@@ -61,6 +61,7 @@ namespace GamaEdtech.Application.Service
                     WalletAddress = t.WalletAddress,
                     Amount = t.Amount.GetValueOrDefault(),
                     TokenAccount = t.TokenAccount,
+                    CreationDate = t.CreationDate,
                 });
                 repository.AddRange(entities);
                 var affectedRows = await uow.SaveChangesAsync();

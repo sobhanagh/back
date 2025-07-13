@@ -8,10 +8,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Common.Core;
     using GamaEdtech.Common.Data;
     using GamaEdtech.Common.DataAccess.Specification;
-    using GamaEdtech.Common.DataAccess.Specification.Impl;
     using GamaEdtech.Data.Dto.VotingPower;
     using GamaEdtech.Domain.Entity;
-    using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Specification.VotingPower;
     using GamaEdtech.Presentation.ViewModel.VotingPower;
 
@@ -30,16 +28,17 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                ISpecification<VotingPower> specification = new CreationUserIdEqualsSpecification<VotingPower, ApplicationUser, int>(User.UserId());
+                ISpecification<VotingPower>? specification = null;
 
                 if (!string.IsNullOrEmpty(request.WalletAddress))
                 {
-                    specification = specification.And(new WalletAddressContainsSpecification(request.WalletAddress));
+                    specification = new WalletAddressContainsSpecification(request.WalletAddress);
                 }
 
                 if (!string.IsNullOrEmpty(request.ProposalId))
                 {
-                    specification = specification.And(new ProposalIdContainsSpecification(request.ProposalId));
+                    var proposalSpecification = new ProposalIdContainsSpecification(request.ProposalId);
+                    specification = specification is null ? proposalSpecification : specification.And(proposalSpecification);
                 }
 
                 var result = await votingPowerService.Value.GetVotingPowersAsync(new ListRequestDto<VotingPower>
@@ -103,6 +102,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     WalletAddress = t.WalletAddress,
                     TokenAccount = t.TokenAccount,
                     ProposalId = t.ProposalId,
+                    CreationDate = DateTimeOffset.UtcNow,
                 });
                 var result = await votingPowerService.Value.BulkImportVotingPowersAsync(lst);
 
