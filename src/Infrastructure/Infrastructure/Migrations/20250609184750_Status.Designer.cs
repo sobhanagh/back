@@ -4,6 +4,7 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250609184750_Status")]
+    partial class Status
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1517,6 +1520,18 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("CreationDate");
 
+                    b.Property<int>("CreationUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("CreationUserId");
+
+                    b.Property<DateTimeOffset?>("LastModifyDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("LastModifyDate");
+
+                    b.Property<int?>("LastModifyUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("LastModifyUserId");
+
                     b.Property<string>("ProposalId")
                         .IsRequired()
                         .HasMaxLength(512)
@@ -1536,6 +1551,10 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnName("WalletAddress");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreationUserId");
+
+                    b.HasIndex("LastModifyUserId");
 
                     b.HasIndex("ProposalId");
 
@@ -2070,6 +2089,24 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Navigation("PreviousTransaction");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GamaEdtech.Domain.Entity.VotingPower", b =>
+                {
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreationUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "LastModifyUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifyUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("CreationUser");
+
+                    b.Navigation("LastModifyUser");
                 });
 
             modelBuilder.Entity("SubjectGrades", b =>
