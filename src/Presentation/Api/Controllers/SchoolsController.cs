@@ -106,6 +106,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Longitude = t.Coordinates?.X,
                             StateTitle = t.StateTitle,
                             DefaultImageUri = t.DefaultImageUri,
+                            DefaultImageId = t.DefaultImageId,
+                            Distance = t.Distance,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     },
