@@ -56,7 +56,18 @@ namespace GamaEdtech.Application.Service
                     t.Id,
                     t.Name,
                     t.LocalName,
-                    DefaultImageId = t.SchoolImages.OrderByDescending(i => i.IsDefault).Select(i => i.FileId).FirstOrDefault(),
+                    t.DefaultImageId,
+                }).ToListAsync();
+                if (schools is null || schools.Count == 0)
+                {
+                    return new(OperationResult.Succeeded) { Data = new() { List = null } };
+                }
+
+                var imageIds = schools.Where(t => t.DefaultImageId.HasValue).Select(t => t.DefaultImageId!.Value);
+                var files = await uow.GetRepository<SchoolImage>().GetManyQueryable(t => imageIds.Contains(t.Id)).Select(t => new
+                {
+                    t.Id,
+                    t.FileId,
                 }).ToListAsync();
 
                 var lst = schools.Select(t => new SchoolsDto
@@ -64,7 +75,7 @@ namespace GamaEdtech.Application.Service
                     Id = t.Id,
                     Name = t.Name,
                     LocalName = t.LocalName,
-                    DefaultImageUri = fileService.Value.GetFileUri(t.DefaultImageId, ContainerType.School).Data,
+                    DefaultImageUri = t.DefaultImageId.HasValue ? fileService.Value.GetFileUri(files.Find(c => c.Id == t.DefaultImageId)?.FileId, ContainerType.School).Data : null,
                 });
 
                 return new(OperationResult.Succeeded) { Data = new() { List = lst, TotalRecordsCount = result.TotalRecordsCount } };
@@ -198,7 +209,7 @@ namespace GamaEdtech.Application.Service
                     t.Email,
                     t.Quarter,
                     t.OsmId,
-                    DefaultImageId = t.SchoolImages.OrderByDescending(i => i.IsDefault).Select(i => i.FileId).FirstOrDefault(),
+                    DefaultImageId = t.DefaultImage != null ? t.DefaultImage.FileId : null,
                     Tags = t.SchoolTags.Select(s => new TagDto
                     {
                         Icon = s.Tag.Icon,
@@ -906,7 +917,7 @@ namespace GamaEdtech.Application.Service
                 schoolImageRepository.Add(schoolImage);
                 _ = await uow.SaveChangesAsync();
 
-                if (result.Data.Data!.IsDefault)
+                if (result.Data.Data!.IsDefault || !await schoolImageRepository.AnyAsync(t => t.SchoolId == schoolImage.SchoolId))
                 {
                     _ = await SetDefaultSchoolImageAsync(new()
                     {
@@ -943,6 +954,18 @@ namespace GamaEdtech.Application.Service
 
                 repository.Remove(schoolImage);
                 _ = await uow.SaveChangesAsync();
+
+                if (schoolImage.IsDefault)
+                {
+                    var firstImageId = await repository.GetManyQueryable(t => t.SchoolId == schoolImage.SchoolId).Select(t => (long?)t.Id).FirstOrDefaultAsync();
+                    if (firstImageId.HasValue)
+                    {
+                        _ = await repository.GetManyQueryable(t => t.Id == firstImageId.Value).ExecuteUpdateAsync(t => t.SetProperty(p => p.IsDefault, true));
+
+                        _ = await uow.GetRepository<School>().GetManyQueryable(t => t.Id == schoolImage.SchoolId)
+                            .ExecuteUpdateAsync(t => t.SetProperty(p => p.DefaultImageId, firstImageId.Value));
+                    }
+                }
 
                 _ = await fileService.Value.RemoveFileAsync(new()
                 {
