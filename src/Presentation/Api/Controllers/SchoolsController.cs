@@ -106,6 +106,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Longitude = t.Coordinates?.X,
                             StateTitle = t.StateTitle,
                             DefaultImageUri = t.DefaultImageUri,
+                            DefaultImageId = t.DefaultImageId,
+                            Distance = t.Distance,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     },
@@ -389,6 +391,30 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 Logger.Value.LogException(exc);
 
                 return Ok<CreateSchoolImageResponseViewModel>(new(new Error { Message = exc.Message }));
+            }
+        }
+
+        [HttpDelete("{schoolId:long}/images/{contributionId:long}"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<bool>> RemoveSchoolImageContribution([FromRoute] long schoolId, [FromRoute] long contributionId)
+        {
+            try
+            {
+                var specification = new ContributionIdEqualsSpecification(contributionId)
+                    .And(new SchoolIdEqualsSpecification<SchoolImage>(schoolId))
+                    .And(new CreationUserIdEqualsSpecification<SchoolImage, ApplicationUser, int>(User.UserId()));
+                var result = await schoolService.Value.RemoveSchoolImageAsync(specification);
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
             }
         }
 

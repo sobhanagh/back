@@ -40,7 +40,7 @@ namespace GamaEdtech.Application.Service
 
     public class SchoolService(Lazy<IUnitOfWorkProvider> unitOfWorkProvider, Lazy<IHttpContextAccessor> httpContextAccessor, Lazy<IStringLocalizer<FileService>> localizer
         , Lazy<ILogger<FileService>> logger, Lazy<IFileService> fileService, Lazy<IContributionService> contributionService, Lazy<IIdentityService> identityService
-        , Lazy<IConfiguration> configuration, Lazy<ITagService> tagService, Lazy<IReactionService> reactionService)
+        , Lazy<IConfiguration> configuration, Lazy<ITagService> tagService, Lazy<IReactionService> reactionService, Lazy<ILocationService> locationService)
         : LocalizableServiceBase<FileService>(unitOfWorkProvider, httpContextAccessor, localizer, logger), ISchoolService
     {
         #region Schools
@@ -87,18 +87,17 @@ namespace GamaEdtech.Application.Service
                 {
                     t.Id,
                     t.Name,
-                    t.CreationDate,
-                    t.LastModifyDate,
+                    LastModifyDate = t.LastModifyDate ?? t.CreationDate,
                     t.WebSite,
                     t.Email,
                     t.PhoneNumber,
                     t.Coordinates,
                     t.Score,
-                    CityTitle = t.City == null ? "" : t.City.Title,
-                    CountryTitle = t.Country == null ? "" : t.Country.Title,
-                    StateTitle = t.State == null ? "" : t.State.Title,
+                    t.CityId,
+                    t.StateId,
+                    t.CountryId,
+                    t.DefaultImageId,
                     Distance = point != null && t.Coordinates != null ? t.Coordinates.Distance(point) : (double?)null,
-                    DefaultImageUri = t.SchoolImages.OrderByDescending(i => i.IsDefault).Select(i => i.FileId).FirstOrDefault(),
                 });
 
                 (query, var sortApplied) = query.OrderBy(requestDto?.PagingDto?.SortFilter);
@@ -112,22 +111,55 @@ namespace GamaEdtech.Application.Service
                         .Take(requestDto.PagingDto.PageFilter.Size);
                 }
                 var items = await query.ToListAsync();
+                if (items is null || items.Count == 0)
+                {
+                    return new(OperationResult.Succeeded) { Data = new() { List = null } };
+                }
+
+                HashSet<int> locationIds = [];
+                List<long> imageIds = [];
+                for (var i = 0; i < items.Count; i++)
+                {
+                    if (items[i].CountryId.HasValue)
+                    {
+                        _ = locationIds.Add(items[i].CountryId!.Value);
+                    }
+                    if (items[i].StateId.HasValue)
+                    {
+                        _ = locationIds.Add(items[i].StateId!.Value);
+                    }
+                    if (items[i].CityId.HasValue)
+                    {
+                        _ = locationIds.Add(items[i].CityId!.Value);
+                    }
+                    if (items[i].DefaultImageId.HasValue)
+                    {
+                        imageIds.Add(items[i].DefaultImageId!.Value);
+                    }
+                }
+                var titles = await locationService.Value.GetTitlesAsync(new IdContainsSpecification<Domain.Entity.Location, int>(locationIds));
+                var files = await uow.GetRepository<SchoolImage>().GetManyQueryable(t => imageIds.Contains(t.Id)).Select(t => new
+                {
+                    t.Id,
+                    t.FileId,
+                }).ToListAsync();
 
                 var result = items.Select(t => new SchoolInfoDto
                 {
                     Id = t.Id,
                     Name = t.Name,
-                    CityTitle = t.CityTitle,
+                    CityTitle = titles.Data?.Find(c => c.Key == t.CityId).Value,
                     Coordinates = t.Coordinates,
-                    CountryTitle = t.CountryTitle,
+                    CountryTitle = titles.Data?.Find(c => c.Key == t.CountryId).Value,
+                    StateTitle = titles.Data?.Find(c => c.Key == t.StateId).Value,
                     Distance = t.Distance,
-                    LastModifyDate = t.LastModifyDate ?? t.CreationDate,
+                    LastModifyDate = t.LastModifyDate,
                     Score = t.Score,
-                    StateTitle = t.StateTitle,
                     HasEmail = !string.IsNullOrEmpty(t.Email),
                     HasPhoneNumber = !string.IsNullOrEmpty(t.PhoneNumber),
                     HasWebSite = !string.IsNullOrEmpty(t.WebSite),
-                    DefaultImageUri = fileService.Value.GetFileUri(t.DefaultImageUri, ContainerType.School).Data,
+                    DefaultImageId = t.DefaultImageId,
+                    DefaultImageUri = t.DefaultImageId.HasValue ? fileService.Value.GetFileUri(files.Find(c => c.Id == t.DefaultImageId)?.FileId, ContainerType.School).Data : null,
                 });
 
                 return new(OperationResult.Succeeded) { Data = new() { List = result, TotalRecordsCount = total } };
@@ -990,6 +1022,9 @@ namespace GamaEdtech.Application.Service
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var affectedRows = await uow.GetRepository<SchoolImage>().GetManyQueryable(t => t.SchoolId == requestDto.SchoolId)
                     .ExecuteUpdateAsync(t => t.SetProperty(p => p.IsDefault, p => p.Id == requestDto.Id));
+
+                _ = await uow.GetRepository<School>().GetManyQueryable(t => t.Id == requestDto.SchoolId)
+                    .ExecuteUpdateAsync(t => t.SetProperty(p => p.DefaultImageId, requestDto.Id));
 
                 return new(OperationResult.Succeeded) { Data = affectedRows > 0 };
             }
