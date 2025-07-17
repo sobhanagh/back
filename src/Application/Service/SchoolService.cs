@@ -917,7 +917,7 @@ namespace GamaEdtech.Application.Service
                 schoolImageRepository.Add(schoolImage);
                 _ = await uow.SaveChangesAsync();
 
-                if (result.Data.Data!.IsDefault || !await schoolImageRepository.AnyAsync(t => t.SchoolId == schoolImage.SchoolId))
+                if (result.Data.Data!.IsDefault || await schoolImageRepository.CountAsync(t => t.SchoolId == schoolImage.SchoolId) == 1)
                 {
                     _ = await SetDefaultSchoolImageAsync(new()
                     {
