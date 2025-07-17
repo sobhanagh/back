@@ -110,6 +110,8 @@ namespace GamaEdtech.Domain.Entity
 
             _ = builder.HasIndex(t => t.Score).IsDescending(true);
             _ = builder.HasIndex(t => new { t.LastModifyDate, t.CreationDate }).IsDescending(true, true);
+
+            _ = builder.HasIndex(t => new { t.IsDeleted, t.Name });
         }
     }
 }
