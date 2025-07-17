@@ -36,8 +36,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
 
         public Uri? DefaultImageUri { get; set; }
 
-        public long? DefaultImageId { get; set; }
-
         public double? Distance { get; set; }
     }
 }
