@@ -42,6 +42,13 @@ namespace GamaEdtech.Presentation.ViewModel.Blog
         [Required]
         public DateTimeOffset? PublishDate { get; set; }
 
+        [Display]
+        public string? Keywords { get; set; }
+
+        [Display]
         public IEnumerable<long>? Tags { get; set; }
+
+        [Display]
+        public bool Draft { get; set; }
     }
 }

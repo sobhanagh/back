@@ -819,6 +819,11 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("ImageId");
 
+                    b.Property<string>("Keywords")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar")
+                        .HasColumnName("Keywords");
+
                     b.Property<DateTimeOffset?>("LastModifyDate")
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("LastModifyDate");
@@ -839,10 +844,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar")
                         .HasColumnName("Slug");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint")
-                        .HasColumnName("Status");
 
                     b.Property<string>("Summary")
                         .IsRequired()
@@ -1021,6 +1022,10 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("CreationUserId");
 
+                    b.Property<long?>("DefaultImageId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("DefaultImageId");
+
                     b.Property<string>("Email")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar")
@@ -1102,11 +1107,19 @@ namespace GamaEdtech.Infrastructure.Migrations
 
                     b.HasIndex("CreationUserId");
 
+                    b.HasIndex("DefaultImageId");
+
                     b.HasIndex("IsDeleted");
 
                     b.HasIndex("LastModifyUserId");
 
+                    b.HasIndex("Score")
+                        .IsDescending();
+
                     b.HasIndex("StateId");
+
+                    b.HasIndex("LastModifyDate", "CreationDate")
+                        .IsDescending();
 
                     b.ToTable("Schools");
                 });
@@ -1516,18 +1529,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset")
                         .HasColumnName("CreationDate");
 
-                    b.Property<int>("CreationUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("CreationUserId");
-
-                    b.Property<DateTimeOffset?>("LastModifyDate")
-                        .HasColumnType("datetimeoffset")
-                        .HasColumnName("LastModifyDate");
-
-                    b.Property<int?>("LastModifyUserId")
-                        .HasColumnType("int")
-                        .HasColumnName("LastModifyUserId");
-
                     b.Property<string>("ProposalId")
                         .IsRequired()
                         .HasMaxLength(512)
@@ -1547,10 +1548,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .HasColumnName("WalletAddress");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreationUserId");
-
-                    b.HasIndex("LastModifyUserId");
 
                     b.HasIndex("ProposalId");
 
@@ -1904,6 +1901,11 @@ namespace GamaEdtech.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("GamaEdtech.Domain.Entity.SchoolImage", "DefaultImage")
+                        .WithMany()
+                        .HasForeignKey("DefaultImageId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "LastModifyUser")
                         .WithMany()
                         .HasForeignKey("LastModifyUserId")
@@ -1919,6 +1921,8 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("CreationUser");
+
+                    b.Navigation("DefaultImage");
 
                     b.Navigation("LastModifyUser");
 
@@ -2085,24 +2089,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Navigation("PreviousTransaction");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("GamaEdtech.Domain.Entity.VotingPower", b =>
-                {
-                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "CreationUser")
-                        .WithMany()
-                        .HasForeignKey("CreationUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("GamaEdtech.Domain.Entity.Identity.ApplicationUser", "LastModifyUser")
-                        .WithMany()
-                        .HasForeignKey("LastModifyUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("CreationUser");
-
-                    b.Navigation("LastModifyUser");
                 });
 
             modelBuilder.Entity("SubjectGrades", b =>

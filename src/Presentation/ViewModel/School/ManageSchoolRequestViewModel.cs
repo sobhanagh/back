@@ -64,6 +64,6 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public long? OsmId { get; set; }
 
         [Display]
-        public IEnumerable<long> Tags { get; set; }
+        public IEnumerable<long>? Tags { get; set; }
     }
 }

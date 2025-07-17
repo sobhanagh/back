@@ -106,6 +106,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                             Longitude = t.Coordinates?.X,
                             StateTitle = t.StateTitle,
                             DefaultImageUri = t.DefaultImageUri,
+                            Distance = t.Distance,
                         }),
                         TotalRecordsCount = result.Data.TotalRecordsCount,
                     },
@@ -392,6 +393,30 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
+        [HttpDelete("{schoolId:long}/images/{contributionId:long}"), Produces<ApiResponse<bool>>()]
+        [Permission(policy: null)]
+        public async Task<IActionResult<bool>> RemoveSchoolImageContribution([FromRoute] long schoolId, [FromRoute] long contributionId)
+        {
+            try
+            {
+                var specification = new ContributionIdEqualsSpecification(contributionId)
+                    .And(new SchoolIdEqualsSpecification<SchoolImage>(schoolId))
+                    .And(new CreationUserIdEqualsSpecification<SchoolImage, ApplicationUser, int>(User.UserId()));
+                var result = await schoolService.Value.RemoveSchoolImageAsync(specification);
+                return Ok(new ApiResponse<bool>
+                {
+                    Errors = result.Errors,
+                    Data = result.Data
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+
+                return Ok(new ApiResponse<bool> { Errors = [new() { Message = exc.Message }] });
+            }
+        }
+
         #endregion
 
         #region Contributions
@@ -402,7 +427,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
+                var result = await contributionService.Value.GetContributionsAsync<SchoolContributionDto>(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
                     Specification = new IdentifierIdEqualsSpecification<Contribution>(schoolId)
@@ -453,13 +478,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     .And(new IdentifierIdEqualsSpecification<Contribution>(schoolId))
                     .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
                     .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.School));
-                var result = await contributionService.Value.GetContributionAsync(specification);
+                var result = await contributionService.Value.GetContributionAsync<SchoolContributionDto>(specification);
 
                 SchoolContributionViewModel? viewModel = null;
                 if (result.Data?.Data is not null)
                 {
-                    var dto = JsonSerializer.Deserialize<SchoolContributionDto>(result.Data.Data);
-                    viewModel = MapFrom(dto);
+                    viewModel = MapFrom(result.Data.Data);
                 }
 
                 return Ok<SchoolContributionViewModel>(new(result.Errors)
@@ -485,24 +509,27 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     UserId = User.UserId(),
                     SchoolId = schoolId,
-                    Address = request.Address,
-                    CityId = request.CityId,
-                    CountryId = request.CountryId,
-                    Email = request.Email,
-                    FaxNumber = request.FaxNumber,
-                    Latitude = request.Latitude,
-                    LocalAddress = request.LocalAddress,
-                    LocalName = request.LocalName,
-                    Longitude = request.Longitude,
-                    Name = request.Name,
-                    PhoneNumber = request.PhoneNumber,
-                    Quarter = request.Quarter,
-                    SchoolType = request.SchoolType,
-                    StateId = request.StateId,
-                    WebSite = request.WebSite,
-                    ZipCode = request.ZipCode,
-                    Tags = request.Tags,
-                    DefaultImageId = request.DefaultImageId,
+                    SchoolContribution = new()
+                    {
+                        Address = request.Address,
+                        CityId = request.CityId,
+                        CountryId = request.CountryId,
+                        Email = request.Email,
+                        FaxNumber = request.FaxNumber,
+                        Latitude = request.Latitude,
+                        LocalAddress = request.LocalAddress,
+                        LocalName = request.LocalName,
+                        Longitude = request.Longitude,
+                        Name = request.Name,
+                        PhoneNumber = request.PhoneNumber,
+                        Quarter = request.Quarter,
+                        SchoolType = request.SchoolType,
+                        StateId = request.StateId,
+                        WebSite = request.WebSite,
+                        ZipCode = request.ZipCode,
+                        Tags = request.Tags,
+                        DefaultImageId = request.DefaultImageId,
+                    },
                 });
 
                 return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
@@ -529,24 +556,27 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Id = contributionId,
                     UserId = User.UserId(),
                     SchoolId = schoolId,
-                    Address = request.Address,
-                    CityId = request.CityId,
-                    CountryId = request.CountryId,
-                    Email = request.Email,
-                    FaxNumber = request.FaxNumber,
-                    Latitude = request.Latitude,
-                    LocalAddress = request.LocalAddress,
-                    LocalName = request.LocalName,
-                    Longitude = request.Longitude,
-                    Name = request.Name,
-                    PhoneNumber = request.PhoneNumber,
-                    Quarter = request.Quarter,
-                    SchoolType = request.SchoolType,
-                    StateId = request.StateId,
-                    WebSite = request.WebSite,
-                    ZipCode = request.ZipCode,
-                    Tags = request.Tags,
-                    DefaultImageId = request.DefaultImageId,
+                    SchoolContribution = new()
+                    {
+                        Address = request.Address,
+                        CityId = request.CityId,
+                        CountryId = request.CountryId,
+                        Email = request.Email,
+                        FaxNumber = request.FaxNumber,
+                        Latitude = request.Latitude,
+                        LocalAddress = request.LocalAddress,
+                        LocalName = request.LocalName,
+                        Longitude = request.Longitude,
+                        Name = request.Name,
+                        PhoneNumber = request.PhoneNumber,
+                        Quarter = request.Quarter,
+                        SchoolType = request.SchoolType,
+                        StateId = request.StateId,
+                        WebSite = request.WebSite,
+                        ZipCode = request.ZipCode,
+                        Tags = request.Tags,
+                        DefaultImageId = request.DefaultImageId,
+                    },
                 });
 
                 return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
@@ -571,23 +601,26 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await schoolService.Value.ManageSchoolContributionAsync(new ManageSchoolContributionRequestDto
                 {
                     UserId = User.UserId(),
-                    Address = request.Address,
-                    CityId = request.CityId,
-                    CountryId = request.CountryId,
-                    Email = request.Email,
-                    FaxNumber = request.FaxNumber,
-                    Latitude = request.Latitude,
-                    LocalAddress = request.LocalAddress,
-                    LocalName = request.LocalName,
-                    Longitude = request.Longitude,
-                    Name = request.Name,
-                    PhoneNumber = request.PhoneNumber,
-                    Quarter = request.Quarter,
-                    SchoolType = request.SchoolType,
-                    StateId = request.StateId,
-                    WebSite = request.WebSite,
-                    ZipCode = request.ZipCode,
-                    Tags = request.Tags,
+                    SchoolContribution = new()
+                    {
+                        Address = request.Address,
+                        CityId = request.CityId,
+                        CountryId = request.CountryId,
+                        Email = request.Email,
+                        FaxNumber = request.FaxNumber,
+                        Latitude = request.Latitude,
+                        LocalAddress = request.LocalAddress,
+                        LocalName = request.LocalName,
+                        Longitude = request.Longitude,
+                        Name = request.Name,
+                        PhoneNumber = request.PhoneNumber,
+                        Quarter = request.Quarter,
+                        SchoolType = request.SchoolType,
+                        StateId = request.StateId,
+                        WebSite = request.WebSite,
+                        ZipCode = request.ZipCode,
+                        Tags = request.Tags,
+                    },
                 });
 
                 return Ok<ManageSchoolContributionResponseViewModel>(new(result.Errors)
@@ -613,13 +646,13 @@ namespace GamaEdtech.Presentation.Api.Controllers
         {
             try
             {
-                var result = await contributionService.Value.GetContributionsAsync(new ListRequestDto<Contribution>
+                var result = await contributionService.Value.GetContributionsAsync<string>(new ListRequestDto<Contribution>
                 {
                     PagingDto = request.PagingDto,
                     Specification = new IdentifierIdEqualsSpecification<Contribution>(schoolId)
                         .And(new CreationUserIdEqualsSpecification<Contribution, ApplicationUser, int>(User.UserId()))
                         .And(new CategoryTypeEqualsSpecification<Contribution>(CategoryType.SchoolIssues)),
-                }, true);
+                }, false);
 
                 if (result.Data.List is null)
                 {
