@@ -11,6 +11,9 @@ namespace GamaEdtech.Domain.Enumeration
         [Display]
         public static readonly AuthenticationProvider Google = new(nameof(Google), 1);
 
+        [Display]
+        public static readonly AuthenticationProvider Solana = new(nameof(Solana), 2);
+
         public AuthenticationProvider()
         {
         }
