@@ -8,21 +8,21 @@ namespace GamaEdtech.Presentation.ViewModel.Identity
         [Required]
         [Display]
         [JsonPropertyName("walletAddress")]
-        public string? WalletAddress { get; set; }
+        public string WalletAddress { get; set; }
 
         [Required]
         [Display]
         [JsonPropertyName("signature")]
-        public string? Signature { get; set; }
+        public string Signature { get; set; }
 
         [Required]
         [Display]
         [JsonPropertyName("message")]
-        public string? Message { get; set; }
+        public string Message { get; set; }
 
         [Required]
         [Display]
         [JsonPropertyName("nonce")]
-        public string? Nonce { get; set; }
+        public string Nonce { get; set; }
     }
 }

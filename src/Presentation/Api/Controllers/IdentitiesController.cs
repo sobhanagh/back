@@ -66,6 +66,58 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
+        [HttpPost("login/solana"), Produces(typeof(ApiResponse<AuthenticationResponseViewModel>))]
+        public async Task<IActionResult<AuthenticationResponseViewModel>> LoginWithSolana([FromBody] SolanaAuthenticationViewModel request)
+        {
+            try
+            {
+                if (request is null)
+                {
+                    return Ok<AuthenticationResponseViewModel>(new(new Error { Message = "Invalid request" }));
+                }
+
+                // Map ViewModel to DTO
+                var solanaDto = new SolanaAuthenticationDto
+                {
+                    WalletAddress = request.WalletAddress!,
+                    Signature = request.Signature,
+                    Message = request.Message,
+                    Nonce = request.Nonce
+                };
+
+                var authenticateResult = await identityService.Value.AuthenticateAsync(new AuthenticationRequestDto
+                {
+                    Username = System.Text.Json.JsonSerializer.Serialize(solanaDto),
+                    AuthenticationProvider = AuthenticationProvider.Solana,
+                });
+
+                if (authenticateResult.Data?.User is null)
+                {
+                    return Ok<AuthenticationResponseViewModel>(new(authenticateResult.Errors));
+                }
+
+                // Issue JWT
+                var signInResult = await identityService.Value.SignInAsync(new SignInRequestDto
+                {
+                    RememberMe = false,
+                    User = authenticateResult.Data.User
+                });
+
+                return Ok<AuthenticationResponseViewModel>(new(signInResult.Errors)
+                {
+                    Data = signInResult.OperationResult is OperationResult.Succeeded
+                        ? new() { Roles = signInResult.Data?.Roles?.ListToFlagsEnum<Role>(), }
+                        : null,
+                });
+            }
+            catch (Exception exc)
+            {
+                Logger.Value.LogException(exc);
+                return Ok<AuthenticationResponseViewModel>(new(new Error { Message = exc.Message }));
+            }
+        }
+
+
         [HttpPost("register"), Produces(typeof(ApiResponse<Void>))]
         [AllowAnonymous]
         public async Task<IActionResult<Void>> Register([NotNull] RegistrationRequestViewModel request)
