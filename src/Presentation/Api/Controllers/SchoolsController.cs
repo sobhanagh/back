@@ -158,6 +158,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         Quarter = result.Data.Quarter,
                         OsmId = result.Data.OsmId,
                         DefaultImageUri = result.Data.DefaultImageUri,
+                        Slug = result.Data.Name.Slugify(),
                         Tags = result.Data.Tags?.Select(t => new TagResponseViewModel
                         {
                             Id = t.Id,
