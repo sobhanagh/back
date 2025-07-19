@@ -25,6 +25,7 @@ namespace GamaEdtech.Application.Service
     using GamaEdtech.Common.Service;
     using GamaEdtech.Common.Service.Factory;
     using GamaEdtech.Data.Dto.Identity;
+    using GamaEdtech.Domain.Entity;
     using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
     using GamaEdtech.Domain.Specification;
@@ -743,6 +744,28 @@ namespace GamaEdtech.Application.Service
             }
         }
 
+        private async Task<Dictionary<string, int?>> GetLocationClaimsAsync(int userId)
+        {
+            var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+
+            // Fetch all claims for location keys in one query
+            var locationClaims = await uow.GetRepository<ApplicationUserClaim, int>()
+                .GetManyQueryable(c => c.UserId == userId &&
+                    (c.ClaimType == "school_id" || c.ClaimType == "city_id" || c.ClaimType == "state_id" || c.ClaimType == "country_id"))
+                .Select(c => new { c.ClaimType, c.ClaimValue })
+                .ToListAsync();
+
+            var result = new Dictionary<string, int?>();
+
+            foreach (var claimKey in new[] { "school_id", "city_id", "state_id", "country_id" })
+            {
+                var claim = locationClaims.FirstOrDefault(c => c.ClaimType == claimKey);
+                result[claimKey] = claim != null && int.TryParse(claim.ClaimValue, out var id) ? id : null;
+            }
+
+            return result;
+        }
+
         public async Task<ResultData<ProfileSettingsDto>> GetProfileSettingsAsync()
         {
             try
@@ -752,29 +775,75 @@ namespace GamaEdtech.Application.Service
                 {
                     return new(OperationResult.Failed)
                     {
-                        Errors = new Error[] { new() { Message = Localizer.Value["AuthenticationError"].Value }, },
+                        Errors = new[] { new Error { Message = Localizer.Value["AuthenticationError"].Value } },
                     };
                 }
+
                 var timeZone = await GetTimeZoneIdAsync(userId.Value);
-                var country = await GetCountryIdAsync(userId.Value);
-                var school = await GetSchoolIdAsync(userId.Value);
-                var state = await GetStateIdAsync(userId.Value);
+                var locationClaims = await GetLocationClaimsAsync(userId.Value);
+
+                // If any location part is missing
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var locationRepo = uow.GetRepository<Location, int>();
+
+                var schoolId = locationClaims.GetValueOrDefault("school_id");
+                var cityId = locationClaims.GetValueOrDefault("city_id");
+                var stateId = locationClaims.GetValueOrDefault("state_id");
+                var countryId = locationClaims.GetValueOrDefault("country_id");
+
+                if (schoolId.HasValue && (!cityId.HasValue || !stateId.HasValue || !countryId.HasValue))
+                {
+                    var currentId = schoolId;
+                    while (currentId.HasValue)
+                    {
+                        var loc = await locationRepo
+                            .GetManyQueryable(l => l.Id == currentId.Value)
+                            .Select(l => new { l.Id, l.ParentId, l.LocationType })
+                            .FirstOrDefaultAsync();
+
+                        if (loc == null)
+                        {
+                            break;
+                        }
+
+                        switch (loc.LocationType)
+                        {
+                            case var t when t == LocationType.City:
+                                cityId ??= loc.Id;
+                                break;
+                            case var t when t == LocationType.State:
+                                stateId ??= loc.Id;
+                                break;
+                            case var t when t == LocationType.Country:
+                                countryId ??= loc.Id;
+                                break;
+                        }
+
+                        currentId = loc.ParentId;
+                    }
+                }
+
 
                 return new(OperationResult.Succeeded)
                 {
                     Data = new ProfileSettingsDto
                     {
                         TimeZoneId = timeZone,
-                        CountryId = country,
-                        SchoolId = school,
-                        StateId = state,
+                        SchoolId = schoolId.ToString(),
+                        CityId = cityId.ToString(),
+                        StateId = stateId.ToString(),
+                        CountryId = countryId.ToString()
                     }
                 };
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
-                return new(OperationResult.Failed) { Errors = new[] { new Error { Message = exc.Message } } };
+
+                return new(OperationResult.Failed)
+                {
+                    Errors = new[] { new Error { Message = exc.Message } }
+                };
             }
         }
 
@@ -864,53 +933,6 @@ namespace GamaEdtech.Application.Service
                 return UtcTimeZoneId;
             }
         }
-
-        private async Task<string> GetCountryIdAsync(int userId)
-        {
-            try
-            {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var countryId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == CountryIdClaim)
-                    .Select(t => t.ClaimValue).FirstOrDefaultAsync();
-
-                return !string.IsNullOrEmpty(countryId) ? countryId : UtcTimeZoneId;
-            }
-            catch
-            {
-                return UtcTimeZoneId;
-            }
-        }
-        private async Task<string> GetSchoolIdAsync(int userId)
-        {
-            try
-            {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var countryId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == CountryIdClaim)
-                    .Select(t => t.ClaimValue).FirstOrDefaultAsync();
-
-                return !string.IsNullOrEmpty(countryId) ? countryId : UtcTimeZoneId;
-            }
-            catch
-            {
-                return UtcTimeZoneId;
-            }
-        }
-        private async Task<string> GetStateIdAsync(int userId)
-        {
-            try
-            {
-                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var countryId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == CountryIdClaim)
-                    .Select(t => t.ClaimValue).FirstOrDefaultAsync();
-
-                return !string.IsNullOrEmpty(countryId) ? countryId : UtcTimeZoneId;
-            }
-            catch
-            {
-                return UtcTimeZoneId;
-            }
-        }
-
         private static IEnumerable<Error> MapUserManagerErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

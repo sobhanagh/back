@@ -347,6 +347,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         CountryId = result.Data?.CountryId,
                         SchoolId = result.Data?.SchoolId,
                         StateId = result.Data?.StateId,
+
                     },
                 });
             }

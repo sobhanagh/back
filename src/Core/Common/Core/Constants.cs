@@ -53,7 +53,6 @@ namespace GamaEdtech.Common.Core
         public const string PagePostfix = "Model";
         public const string UtcTimeZoneId = "Coordinated Universal Time";
         public const string TimeZoneIdClaim = "TimeZoneId";
-        public const string CountryIdClaim = "CountryId";
         public static readonly TimeSpan BaseUtcOffset = new(0, 0, 0);
 
         internal const string HttpClientIgnoreSslAndAutoRedirect = "HttpClientIgnoreSslAndAutoRedirect";
