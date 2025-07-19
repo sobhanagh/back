@@ -90,6 +90,9 @@ namespace GamaEdtech.Domain.Entity
         [Column(nameof(IsDeleted), DataType.Boolean)]
         public bool IsDeleted { get; set; }
 
+        [Column(nameof(Tuition), DataType.Decimal)]
+        public decimal? Tuition { get; set; }
+
         [Column(nameof(DefaultImageId), DataType.Long)]
         public long? DefaultImageId { get; set; }
         public SchoolImage? DefaultImage { get; set; }
