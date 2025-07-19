@@ -756,11 +756,18 @@ namespace GamaEdtech.Application.Service
                     };
                 }
                 var timeZone = await GetTimeZoneIdAsync(userId.Value);
+                var country = await GetCountryIdAsync(userId.Value);
+                var school = await GetSchoolIdAsync(userId.Value);
+                var state = await GetStateIdAsync(userId.Value);
+
                 return new(OperationResult.Succeeded)
                 {
                     Data = new ProfileSettingsDto
                     {
                         TimeZoneId = timeZone,
+                        CountryId = country,
+                        SchoolId = school,
+                        StateId = state,
                     }
                 };
             }
@@ -851,6 +858,52 @@ namespace GamaEdtech.Application.Service
                     .Select(t => t.ClaimValue).FirstOrDefaultAsync();
 
                 return !string.IsNullOrEmpty(timeZoneId) ? timeZoneId : UtcTimeZoneId;
+            }
+            catch
+            {
+                return UtcTimeZoneId;
+            }
+        }
+
+        private async Task<string> GetCountryIdAsync(int userId)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var countryId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == CountryIdClaim)
+                    .Select(t => t.ClaimValue).FirstOrDefaultAsync();
+
+                return !string.IsNullOrEmpty(countryId) ? countryId : UtcTimeZoneId;
+            }
+            catch
+            {
+                return UtcTimeZoneId;
+            }
+        }
+        private async Task<string> GetSchoolIdAsync(int userId)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var countryId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == CountryIdClaim)
+                    .Select(t => t.ClaimValue).FirstOrDefaultAsync();
+
+                return !string.IsNullOrEmpty(countryId) ? countryId : UtcTimeZoneId;
+            }
+            catch
+            {
+                return UtcTimeZoneId;
+            }
+        }
+        private async Task<string> GetStateIdAsync(int userId)
+        {
+            try
+            {
+                var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
+                var countryId = await uow.GetRepository<ApplicationUserClaim, int>().GetManyQueryable(t => t.UserId == userId && t.ClaimType == CountryIdClaim)
+                    .Select(t => t.ClaimValue).FirstOrDefaultAsync();
+
+                return !string.IsNullOrEmpty(countryId) ? countryId : UtcTimeZoneId;
             }
             catch
             {
