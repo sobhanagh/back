@@ -16,6 +16,7 @@ namespace GamaEdtech.Infrastructure.Provider.Authentication
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Logging;
+    using System.Text.Json;
 
 
     using static GamaEdtech.Common.Core.Constants;
@@ -33,7 +34,7 @@ namespace GamaEdtech.Infrastructure.Provider.Authentication
         {
             try
             {
-                var solanaAuth = System.Text.Json.JsonSerializer.Deserialize<SolanaAuthenticationDto>(requestDto.Username);
+                var solanaAuth = JsonSerializer.Deserialize<SolanaAuthenticationDto>(requestDto.Username);
                 if (solanaAuth is null)
                 {
                     return Task.FromResult(new ResultData<AuthenticationResponseDto>(OperationResult.NotValid)
