@@ -209,6 +209,7 @@ namespace GamaEdtech.Application.Service
                     t.Email,
                     t.Quarter,
                     t.OsmId,
+                    t.Tuition,
                     DefaultImageId = t.DefaultImage != null ? t.DefaultImage.FileId : null,
                     Tags = t.SchoolTags.Select(s => new TagDto
                     {
@@ -248,6 +249,7 @@ namespace GamaEdtech.Application.Service
                     Email = school.Email,
                     Quarter = school.Quarter,
                     OsmId = school.OsmId,
+                    Tuition = school.Tuition,
                     DefaultImageUri = fileService.Value.GetFileUri(school.DefaultImageId, ContainerType.School).Data,
                     Tags = school.Tags,
                 };
@@ -311,6 +313,7 @@ namespace GamaEdtech.Application.Service
                     school.CityId = requestDto.CityId ?? school.CityId;
                     school.CountryId = requestDto.CountryId ?? school.CountryId;
                     school.OsmId = requestDto.OsmId ?? school.OsmId;
+                    school.Tuition = requestDto.Tuition ?? school.Tuition;
                     school.LastModifyDate = requestDto.Date;
                     school.LastModifyUserId = requestDto.UserId;
 
@@ -366,6 +369,7 @@ namespace GamaEdtech.Application.Service
                         CityId = requestDto.CityId,
                         CountryId = requestDto.CountryId,
                         OsmId = requestDto.OsmId,
+                        Tuition = requestDto.Tuition,
                     };
                     if (requestDto.Tags is not null)
                     {
@@ -1158,23 +1162,24 @@ namespace GamaEdtech.Application.Service
                 ManageSchoolRequestDto manageSchoolRequestDto = new()
                 {
                     Address = contributionResult.Data.Data!.Address,
-                    CityId = contributionResult.Data.Data!.CityId,
-                    CountryId = contributionResult.Data.Data!.CountryId,
-                    Email = contributionResult.Data.Data!.Email,
-                    FaxNumber = contributionResult.Data.Data!.FaxNumber,
-                    LocalAddress = contributionResult.Data.Data!.LocalAddress,
-                    LocalName = contributionResult.Data.Data!.LocalName,
-                    Name = contributionResult.Data.Data!.Name,
-                    PhoneNumber = contributionResult.Data.Data!.PhoneNumber,
-                    Quarter = contributionResult.Data.Data!.Quarter,
-                    SchoolType = contributionResult.Data.Data!.SchoolType,
-                    StateId = contributionResult.Data.Data!.StateId,
-                    WebSite = contributionResult.Data.Data!.WebSite,
-                    ZipCode = contributionResult.Data.Data!.ZipCode,
+                    CityId = contributionResult.Data.Data.CityId,
+                    CountryId = contributionResult.Data.Data.CountryId,
+                    Email = contributionResult.Data.Data.Email,
+                    FaxNumber = contributionResult.Data.Data.FaxNumber,
+                    LocalAddress = contributionResult.Data.Data.LocalAddress,
+                    LocalName = contributionResult.Data.Data.LocalName,
+                    Name = contributionResult.Data.Data.Name,
+                    PhoneNumber = contributionResult.Data.Data.PhoneNumber,
+                    Quarter = contributionResult.Data.Data.Quarter,
+                    SchoolType = contributionResult.Data.Data.SchoolType,
+                    StateId = contributionResult.Data.Data.StateId,
+                    WebSite = contributionResult.Data.Data.WebSite,
+                    ZipCode = contributionResult.Data.Data.ZipCode,
                     Id = requestDto.SchoolId,
                     Tags = contributionResult.Data.Data!.Tags,
                     UserId = contributionResult.Data.CreationUserId,
                     Date = contributionResult.Data.CreationDate,
+                    Tuition = contributionResult.Data.Data.Tuition,
                 };
                 if (contributionResult.Data.Data!.Latitude.HasValue && contributionResult.Data.Data!.Longitude.HasValue)
                 {

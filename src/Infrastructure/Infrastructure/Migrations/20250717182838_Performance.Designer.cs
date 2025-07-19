@@ -4,6 +4,7 @@ using GamaEdtech.Infrastructure.EntityFramework.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace GamaEdtech.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250717182838_Performance")]
+    partial class Performance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1088,10 +1091,6 @@ namespace GamaEdtech.Infrastructure.Migrations
                     b.Property<int?>("StateId")
                         .HasColumnType("int")
                         .HasColumnName("StateId");
-
-                    b.Property<decimal?>("Tuition")
-                        .HasColumnType("numeric")
-                        .HasColumnName("Tuition");
 
                     b.Property<string>("WebSite")
                         .HasMaxLength(300)
