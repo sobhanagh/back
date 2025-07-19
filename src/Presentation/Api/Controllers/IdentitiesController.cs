@@ -79,7 +79,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 // Map ViewModel to DTO
                 var solanaDto = new SolanaAuthenticationDto
                 {
-                    WalletAddress = request.WalletAddress!,
+                    WalletAddress = request.WalletAddress,
                     Signature = request.Signature,
                     Message = request.Message,
                     Nonce = request.Nonce
