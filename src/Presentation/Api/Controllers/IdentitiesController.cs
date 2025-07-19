@@ -15,6 +15,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
     using GamaEdtech.Data.Dto.Identity;
     using GamaEdtech.Domain.Entity.Identity;
     using GamaEdtech.Domain.Enumeration;
+    using GamaEdtech.Infrastructure.Provider.Authentication;
     using GamaEdtech.Presentation.ViewModel.Identity;
 
     using Microsoft.AspNetCore.Authorization;
@@ -117,6 +118,23 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
+        [HttpPost("challenge/solana")]
+        [Produces(typeof(ApiResponse<SolanaChallengeResponseDto>))]
+        public IActionResult GetSolanaChallenge([FromBody] SolanaChallengeRequestViewModel request)
+        {
+            if (request is null || string.IsNullOrWhiteSpace(request.WalletAddress))
+            {
+                return Ok(new ApiResponse<SolanaChallengeResponseDto>(new Error { Message = "WalletAddress is required." }));
+            }
+
+            // This static method creates the unique message and stores it on the server
+            var challengeDto = SolanaAuthenticationProvider.GenerateChallenge(request.WalletAddress);
+
+            return Ok(new ApiResponse<SolanaChallengeResponseDto>
+            {
+                Data = challengeDto
+            });
+        }
 
         [HttpPost("register"), Produces(typeof(ApiResponse<Void>))]
         [AllowAnonymous]
