@@ -343,7 +343,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 {
                     Data = new()
                     {
-                        TimeZoneId = result.Data?.TimeZoneId,
                         CountryId = result.Data?.CountryId,
                         SchoolId = result.Data?.SchoolId,
                         StateId = result.Data?.StateId,
@@ -367,7 +366,6 @@ namespace GamaEdtech.Presentation.Api.Controllers
             {
                 var result = await identityService.Value.UpdateProfileSettingsAsync(new ProfileSettingsDto
                 {
-                    TimeZoneId = request.TimeZoneId,
                     CityId = request.CityId,
                     SchoolId = request.SchoolId,
                 });
