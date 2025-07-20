@@ -368,9 +368,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                 var result = await identityService.Value.UpdateProfileSettingsAsync(new ProfileSettingsDto
                 {
                     TimeZoneId = request.TimeZoneId,
-                    CountryId = request.CountryId,
+                    CityId = request.CityId,
                     SchoolId = request.SchoolId,
-                    StateId = request.StateId,
                 });
 
                 return Ok<Void>(new(result.Errors));
