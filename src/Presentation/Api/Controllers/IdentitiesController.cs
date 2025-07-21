@@ -358,9 +358,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
             }
         }
 
-        [HttpPut("profiles"), Produces(typeof(ApiResponse<Void>))]
+        [HttpPut("profiles"), Produces(typeof(ApiResponse<ProfileSettingsUpdateResultDto>))]
         [Permission(policy: null)]
-        public async Task<IActionResult<Void>> UpdateProfileSettings([NotNull] ProfileSettingsRequestViewModel request)
+        public async Task<IActionResult> UpdateProfileSettings([NotNull] ProfileSettingsRequestViewModel request)
         {
             try
             {
@@ -370,15 +370,30 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     SchoolId = request.SchoolId,
                 });
 
-                return Ok<Void>(new(result.Errors));
+                var success = result.OperationResult == OperationResult.Succeeded;
+
+                if (!success)
+                {
+                    return Ok(new ApiResponse<ProfileSettingsUpdateResultDto>(result.Errors));
+                }
+
+                var response = new ApiResponse<ProfileSettingsUpdateResultDto>
+                {
+                    Data = result.Data,
+                    Errors = null,
+                };
+
+                return Ok(response);
             }
             catch (Exception exc)
             {
                 Logger.Value.LogException(exc);
 
-                return Ok<Void>(new(new Error { Message = exc.Message }));
+                return Ok(new ApiResponse<ProfileSettingsUpdateResultDto>(new Error { Message = exc.Message }));
             }
         }
+
+
 
 #pragma warning disable CA1034 // Nested types should not be visible
         //this is temporary, must delete

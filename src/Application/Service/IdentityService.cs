@@ -834,7 +834,7 @@ namespace GamaEdtech.Application.Service
             }
         }
 
-        public async Task<ResultData<Void>> UpdateProfileSettingsAsync([NotNull] ProfileSettingsDto requestDto)
+        public async Task<ResultData<ProfileSettingsUpdateResultDto>> UpdateProfileSettingsAsync([NotNull] ProfileSettingsDto requestDto)
         {
             try
             {
@@ -869,7 +869,14 @@ namespace GamaEdtech.Application.Service
                 _ = userRepo.Update(user);
                 _ = await uow.SaveChangesAsync();
 
-                return new(OperationResult.Succeeded);
+                return new(OperationResult.Succeeded)
+                {
+                    Data = new ProfileSettingsUpdateResultDto
+                    {
+                        SchoolId = user.SchoolId,
+                        CityId = user.CityId
+                    }
+                };
             }
             catch (Exception exc)
             {
