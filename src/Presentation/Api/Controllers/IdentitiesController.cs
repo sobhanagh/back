@@ -344,9 +344,9 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     Data = new()
                     {
                         CountryId = result.Data?.CountryId,
-                        SchoolId = result.Data?.SchoolId,
                         StateId = result.Data?.StateId,
-
+                        CityId = result.Data?.CityId,
+                        SchoolId = result.Data?.SchoolId,
                     },
                 });
             }

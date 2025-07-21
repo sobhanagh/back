@@ -743,6 +743,7 @@ namespace GamaEdtech.Application.Service
                 };
             }
         }
+
         public async Task<ResultData<ProfileSettingsDto>> GetProfileSettingsAsync()
         {
             try
@@ -758,49 +759,29 @@ namespace GamaEdtech.Application.Service
 
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
                 var userRepo = uow.GetRepository<ApplicationUser, int>();
-                var claimRepo = uow.GetRepository<ApplicationUserClaim, int>();
                 var locationRepo = uow.GetRepository<Location, int>();
 
-                // Get claims for SchoolId and CityId
-                var claims = await claimRepo.GetManyQueryable(c =>
-                        c.UserId == userId.Value &&
-                        (c.ClaimType == "SchoolId" || c.ClaimType == "CityId"))
-                    .ToListAsync();
+                // Get SchoolId and CityId from user table
+                var userInfo = await userRepo
+                    .GetManyQueryable(u => u.Id == userId.Value)
+                    .Select(u => new { u.SchoolId, u.CityId })
+                    .FirstOrDefaultAsync();
 
-                int? schoolId = claims
-                    .FirstOrDefault(c => c.ClaimType == "SchoolId")?.ClaimValue is string schoolClaim &&
-                    int.TryParse(schoolClaim, out var parsedSchoolId)
-                    ? parsedSchoolId
-                    : null;
-
-                int? cityId = claims
-                    .FirstOrDefault(c => c.ClaimType == "CityId")?.ClaimValue is string cityClaim &&
-                    int.TryParse(cityClaim, out var parsedCityId)
-                    ? parsedCityId
-                    : null;
-
-                // Fall back to user table for SchoolId
-                if (!schoolId.HasValue)
-                {
-                    schoolId = await userRepo
-                        .GetManyQueryable(u => u.Id == userId.Value)
-                        .Select(u => (int?)u.SchoolId)
-                        .FirstOrDefaultAsync();
-                }
-
-                if (!schoolId.HasValue || schoolId == 0)
+                if (userInfo == null)
                 {
                     return new(OperationResult.Failed)
                     {
-                        Errors = new[] { new Error { Message = "School ID is not set for this user." } }
+                        Errors = new[] { new Error { Message = "User not found." } }
                     };
                 }
 
+                int? cityId = userInfo.CityId != 0 ? userInfo.CityId : null;
                 int? stateId = null;
                 int? countryId = null;
-                var currentId = schoolId;
 
-                // Traverse the hierarchy from school upward
+                // Traverse from City → State → Country
+                var currentId = cityId;
+
                 while (currentId.HasValue)
                 {
                     var location = await locationRepo
@@ -810,21 +791,20 @@ namespace GamaEdtech.Application.Service
 
                     if (location == null)
                     {
+
                         break;
                     }
 
                     if (location.LocationType != null)
                     {
-                        if (location.LocationType == LocationType.City)
-                        {
-                            cityId ??= location.Id;
-                        }
-                        else if (location.LocationType == LocationType.State)
+                        if (location.LocationType == LocationType.State)
                         {
                             stateId ??= location.Id;
+
                         }
                         else if (location.LocationType == LocationType.Country)
                         {
+
                             countryId ??= location.Id;
                         }
                     }
@@ -836,7 +816,7 @@ namespace GamaEdtech.Application.Service
                 {
                     Data = new ProfileSettingsDto
                     {
-                        SchoolId = schoolId.Value,
+                        SchoolId = userInfo.SchoolId != 0 ? userInfo.SchoolId : null,
                         CityId = cityId,
                         StateId = stateId,
                         CountryId = countryId
@@ -863,41 +843,32 @@ namespace GamaEdtech.Application.Service
                 {
                     return new(OperationResult.Failed)
                     {
-                        Errors = new Error[] { new() { Message = Localizer.Value["AuthenticationError"].Value }, },
+                        Errors = new[] { new Error { Message = Localizer.Value["AuthenticationError"].Value } },
                     };
                 }
 
                 var uow = UnitOfWorkProvider.Value.CreateUnitOfWork();
-                var userClaimRepository = uow.GetRepository<ApplicationUserClaim, int>();
+                var userRepo = uow.GetRepository<ApplicationUser, int>();
 
-                // Handle SchoolId Claim
-                var schoolIdClaim = await userClaimRepository.GetManyQueryable(
-                    t => t.UserId == userId.Value && t.ClaimType == SchoolIdClaim
-                ).FirstOrDefaultAsync();
+                var user = await userRepo
+                    .GetManyQueryable(u => u.Id == userId.Value)
+                    .FirstOrDefaultAsync();
 
-                if (schoolIdClaim is null)
+                if (user == null)
                 {
-                    if (requestDto.SchoolId > 0)
+                    return new(OperationResult.Failed)
                     {
-                        userClaimRepository.Add(new ApplicationUserClaim
-                        {
-                            UserId = userId.Value,
-                            ClaimType = SchoolIdClaim,
-                            ClaimValue = requestDto.SchoolId.ToString(),
-                        });
-                    }
-                }
-                else if (requestDto.SchoolId <= 0)
-                {
-                    userClaimRepository.Remove(schoolIdClaim);
-                }
-                else
-                {
-                    schoolIdClaim.ClaimValue = requestDto.SchoolId.ToString();
-                    _ = userClaimRepository.Update(schoolIdClaim);
+                        Errors = new[] { new Error { Message = "User not found." } }
+                    };
                 }
 
+                // Update CityId and SchoolId (default to 0 if null)
+                user.CityId = requestDto.CityId ?? 0;
+                user.SchoolId = requestDto.SchoolId ?? 0;
+
+                _ = userRepo.Update(user);
                 _ = await uow.SaveChangesAsync();
+
                 return new(OperationResult.Succeeded);
             }
             catch (Exception exc)
