@@ -71,6 +71,12 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
                 }
 
+                if (request.Tuition is not null)
+                {
+                    var specification = new TuitionSpecification(request.Tuition.Start, request.Tuition.End);
+                    baseSpecification = baseSpecification is null ? specification : baseSpecification.And(specification);
+                }
+
                 Point? point = null;
                 if (request.Location is not null)
                 {
@@ -158,6 +164,8 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         Quarter = result.Data.Quarter,
                         OsmId = result.Data.OsmId,
                         DefaultImageUri = result.Data.DefaultImageUri,
+                        Tuition = result.Data.Tuition,
+                        Slug = result.Data.Name.Slugify(),
                         Tags = result.Data.Tags?.Select(t => new TagResponseViewModel
                         {
                             Id = t.Id,
@@ -529,6 +537,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         ZipCode = request.ZipCode,
                         Tags = request.Tags,
                         DefaultImageId = request.DefaultImageId,
+                        Tuition = request.Tuition,
                     },
                 });
 
@@ -576,6 +585,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         ZipCode = request.ZipCode,
                         Tags = request.Tags,
                         DefaultImageId = request.DefaultImageId,
+                        Tuition = request.Tuition,
                     },
                 });
 
@@ -620,6 +630,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                         WebSite = request.WebSite,
                         ZipCode = request.ZipCode,
                         Tags = request.Tags,
+                        Tuition = request.Tuition,
                     },
                 });
 
@@ -738,6 +749,7 @@ namespace GamaEdtech.Presentation.Api.Controllers
                     WebSite = dto.WebSite,
                     ZipCode = dto.ZipCode,
                     Tags = dto.Tags,
+                    Tuition = dto.Tuition,
                 };
     }
 }
