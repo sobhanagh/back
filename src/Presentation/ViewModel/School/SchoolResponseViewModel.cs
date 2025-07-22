@@ -31,8 +31,10 @@ namespace GamaEdtech.Presentation.ViewModel.School
         public string? FaxNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Quarter { get; set; }
+        public string? Slug { get; set; }
         public long? OsmId { get; set; }
         public IEnumerable<TagResponseViewModel>? Tags { get; set; }
         public Uri? DefaultImageUri { get; set; }
+        public decimal? Tuition { get; set; }
     }
 }

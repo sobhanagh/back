@@ -26,6 +26,7 @@ namespace GamaEdtech.Data.Dto.School
         public int? CountryId { get; set; }
         public int? StateId { get; set; }
         public long? OsmId { get; set; }
+        public decimal? Tuition { get; set; }
         public IEnumerable<long>? Tags { get; set; }
         public int UserId { get; set; }
         public DateTimeOffset Date { get; set; }
